@@ -39,8 +39,8 @@ fn setup(
 
     // Camera
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(100.0, 100.0, 150.0)
-            .looking_at(Vec3::new(0.0, 20.0, 0.0), Vec3::Y),
+        transform: Transform::from_xyz(15.0, 10.0, 10.0)
+            .looking_at(Vec3::new(0.0, 0.0, 0.0), Vec3::Y),
         ..default()
     });
 
@@ -70,6 +70,7 @@ fn setup(
     // Fox
     commands.spawn(SceneBundle {
         scene: asset_server.load("models/Wheel.glb#Scene0"),
+        transform: Transform::from_xyz(0.0, 1.1, 0.0),
         ..default()
     });
 
