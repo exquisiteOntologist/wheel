@@ -34,7 +34,7 @@ fn setup(
         // asset_server.load("models/animated/Fox.glb#Animation2"),
         // asset_server.load("models/animated/Fox.glb#Animation1"),
         // asset_server.load("models/animated/Fox.glb#Animation0"),
-        asset_server.load("models/Wheel.glb#Mesh0"),
+        // asset_server.load("models/Wheel.glb#x"),
     ]));
 
     // Camera
@@ -46,7 +46,7 @@ fn setup(
     // Plane
     commands.spawn(PbrBundle {
         mesh: meshes.add(Plane3d::default().mesh().size(500000.0, 500000.0)),
-        material: materials.add(Color::rgb(0.0, 0.0, 0.3)),
+        material: materials.add(Color::hex("#887A63").unwrap().as_rgba()),
         ..default()
     });
 
@@ -69,7 +69,7 @@ fn setup(
     // Fox
     commands.spawn(SceneBundle {
         scene: asset_server.load("models/Wheel.glb#Scene0"),
-        transform: Transform::from_xyz(0.0, 1.1, 0.0),
+        transform: Transform::from_xyz(0.0, 1.2, 0.0),
         ..default()
     });
 
