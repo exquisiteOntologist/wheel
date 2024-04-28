@@ -137,19 +137,19 @@ fn keyboard_animation_control(
     println!("Wheel Y speed {:?}", game.player_wheel.speed_y);
     println!("players empty? {:?}", &animation_players.is_empty());
 
-    if keyboard_input.just_pressed(KeyCode::ArrowUp) {
+    if keyboard_input.any_just_pressed([KeyCode::ArrowUp, KeyCode::KeyW]) {
         game.player_wheel.speed_z += 0.01;
     }
 
-    if keyboard_input.just_pressed(KeyCode::ArrowDown) {
+    if keyboard_input.any_just_pressed([KeyCode::ArrowDown, KeyCode::KeyS]) {
         game.player_wheel.speed_z -= 0.01;
     }
 
-    if keyboard_input.just_pressed(KeyCode::ArrowLeft) {
+    if keyboard_input.any_just_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
         game.player_wheel.speed_y += 0.01;
     }
 
-    if keyboard_input.just_pressed(KeyCode::ArrowRight) {
+    if keyboard_input.any_just_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         game.player_wheel.speed_y -= 0.01;
     }
 
