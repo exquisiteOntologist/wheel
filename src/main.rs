@@ -33,6 +33,7 @@ fn setup(
     asset_server: Res<AssetServer>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    mut game: ResMut<Game>,
 ) {
     // Insert a resource with the current scene information
     commands.insert_resource(Animations(vec![
@@ -82,6 +83,8 @@ fn setup(
         Wheel,
     ));
 
+    game.player_wheel.speed_z = 0.02;
+
     // println!("Animation controls:");
     // println!("  - spacebar: play / pause");
     // println!("  - arrow up / down: speed up / slow down animation playback");
@@ -120,7 +123,7 @@ fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: 
     // note that the wheel is
     for mut t in &mut q {
         t.rotate_y(game.player_wheel.speed_y);
-        t.rotate_local_z(time.delta_seconds());
+        t.rotate_local_z(game.player_wheel.speed_z);
     }
 }
 
@@ -133,6 +136,14 @@ fn keyboard_animation_control(
 ) {
     println!("Wheel Y speed {:?}", game.player_wheel.speed_y);
     println!("players empty? {:?}", &animation_players.is_empty());
+
+    if keyboard_input.just_pressed(KeyCode::ArrowUp) {
+        game.player_wheel.speed_z += 0.01;
+    }
+
+    if keyboard_input.just_pressed(KeyCode::ArrowDown) {
+        game.player_wheel.speed_z -= 0.01;
+    }
 
     if keyboard_input.just_pressed(KeyCode::ArrowLeft) {
         game.player_wheel.speed_y += 0.01;
