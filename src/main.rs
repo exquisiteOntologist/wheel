@@ -11,6 +11,7 @@ fn main() {
             color: Color::WHITE,
             brightness: 2000.,
         })
+        .init_resource::<Game>()
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, setup)
         .add_systems(
@@ -70,20 +71,21 @@ fn setup(
         ..default()
     });
 
-    // Fox
+    // Wheel
     commands.spawn((
         SceneBundle {
             scene: asset_server.load("models/Wheel.glb#Scene0"),
             transform: Transform::from_xyz(0.0, 1.2, 0.0),
             ..default()
         },
-        Rotate,
+        Wheel,
     ));
 
     // println!("Animation controls:");
     // println!("  - spacebar: play / pause");
     // println!("  - arrow up / down: speed up / slow down animation playback");
     // println!("  - arrow left / right: seek backward / forward");
+    println!("  - arrow left / right: turn direction");
     // println!("  - digit 1 / 3 / 5: play the animation <digit> times");
     // println!("  - L: loop the animation forever");
     // println!("  - return: change animation");
@@ -100,11 +102,24 @@ fn setup_scene_once_loaded(
 }
 
 #[derive(Component)]
-struct Rotate;
+struct Wheel;
 
-fn spin_wheel(mut q: Query<&mut Transform, With<Rotate>>, time: Res<Time>) {
+#[derive(Component, Default)]
+struct WheelState {
+    speed_y: f32,
+    speed_z: f32,
+}
+
+#[derive(Resource, Default)]
+struct Game {
+    player_wheel: WheelState,
+}
+
+fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: ResMut<Game>) {
+    // note that the wheel is
     for mut t in &mut q {
-        t.rotate_z(time.delta_seconds());
+        t.rotate_y(game.player_wheel.speed_y);
+        t.rotate_local_z(time.delta_seconds());
     }
 }
 
@@ -113,7 +128,19 @@ fn keyboard_animation_control(
     mut animation_players: Query<&mut AnimationPlayer>,
     animations: Res<Animations>,
     mut current_animation: Local<usize>,
+    mut game: ResMut<Game>,
 ) {
+    println!("Wheel Y speed {:?}", game.player_wheel.speed_y);
+    println!("players empty? {:?}", &animation_players.is_empty());
+
+    if keyboard_input.just_pressed(KeyCode::ArrowLeft) {
+        game.player_wheel.speed_y += 0.01;
+    }
+
+    if keyboard_input.just_pressed(KeyCode::ArrowRight) {
+        game.player_wheel.speed_y -= 0.01;
+    }
+
     for mut player in &mut animation_players {
         if keyboard_input.just_pressed(KeyCode::Space) {
             if player.is_paused() {
