@@ -12,7 +12,15 @@ fn main() {
             brightness: 2000.,
         })
         .init_resource::<Game>()
-        .add_plugins(DefaultPlugins)
+        .add_plugins((DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                title: "Wheel".into(),
+                name: Some("Wheel.app".into()),
+                // resolution: (500., 300.).into(),
+                ..default()
+            }),
+            ..default()
+        }),))
         .add_systems(Startup, setup)
         .add_systems(
             Update,
@@ -46,7 +54,7 @@ fn setup(
     // Camera
     commands.spawn(Camera3dBundle {
         transform: Transform::from_xyz(10.0, 3.0, 0.0)
-            .looking_at(Vec3::new(0.0, 1.0, 0.0), Vec3::Y),
+            .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
         ..default()
     });
 
