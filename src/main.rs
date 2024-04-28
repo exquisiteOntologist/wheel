@@ -15,7 +15,11 @@ fn main() {
         .add_systems(Startup, setup)
         .add_systems(
             Update,
-            (setup_scene_once_loaded, keyboard_animation_control),
+            (
+                setup_scene_once_loaded,
+                spin_wheel,
+                keyboard_animation_control,
+            ),
         )
         .run();
 }
@@ -67,19 +71,22 @@ fn setup(
     });
 
     // Fox
-    commands.spawn(SceneBundle {
-        scene: asset_server.load("models/Wheel.glb#Scene0"),
-        transform: Transform::from_xyz(0.0, 1.2, 0.0),
-        ..default()
-    });
+    commands.spawn((
+        SceneBundle {
+            scene: asset_server.load("models/Wheel.glb#Scene0"),
+            transform: Transform::from_xyz(0.0, 1.2, 0.0),
+            ..default()
+        },
+        Rotate,
+    ));
 
-    println!("Animation controls:");
-    println!("  - spacebar: play / pause");
-    println!("  - arrow up / down: speed up / slow down animation playback");
-    println!("  - arrow left / right: seek backward / forward");
-    println!("  - digit 1 / 3 / 5: play the animation <digit> times");
-    println!("  - L: loop the animation forever");
-    println!("  - return: change animation");
+    // println!("Animation controls:");
+    // println!("  - spacebar: play / pause");
+    // println!("  - arrow up / down: speed up / slow down animation playback");
+    // println!("  - arrow left / right: seek backward / forward");
+    // println!("  - digit 1 / 3 / 5: play the animation <digit> times");
+    // println!("  - L: loop the animation forever");
+    // println!("  - return: change animation");
 }
 
 // Once the scene is loaded, start the animation
@@ -89,6 +96,15 @@ fn setup_scene_once_loaded(
 ) {
     for mut player in &mut players {
         player.play(animations.0[0].clone_weak()).repeat();
+    }
+}
+
+#[derive(Component)]
+struct Rotate;
+
+fn spin_wheel(mut q: Query<&mut Transform, With<Rotate>>, time: Res<Time>) {
+    for mut t in &mut q {
+        t.rotate_z(time.delta_seconds());
     }
 }
 
