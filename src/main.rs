@@ -171,16 +171,16 @@ fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut ga
 
     // Slow down speed
     if game.player_wheel.speed_z > 0.0 {
-        game.player_wheel.speed_z -= FORWARD_SPEED * 0.3;
+        game.player_wheel.speed_z -= FORWARD_SPEED * (game.player_wheel.speed_z / MAX_SPEED);
     } else if game.player_wheel.speed_z < 0.0 {
-        game.player_wheel.speed_z += FORWARD_SPEED * 0.3;
+        game.player_wheel.speed_z += FORWARD_SPEED * (game.player_wheel.speed_z / -MAX_SPEED);
     }
 
     // Slow down turn
     if game.player_wheel.speed_y > 0.0 {
-        game.player_wheel.speed_y -= TURN_SPEED * 0.5;
+        game.player_wheel.speed_y -= TURN_SPEED * (game.player_wheel.speed_y / MAX_TURN_SPEED);
     } else if game.player_wheel.speed_y < 0.0 {
-        game.player_wheel.speed_y += TURN_SPEED * 0.5;
+        game.player_wheel.speed_y += TURN_SPEED * (game.player_wheel.speed_y / -MAX_TURN_SPEED);
     }
 }
 
