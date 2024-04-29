@@ -164,9 +164,23 @@ fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: 
     }
 }
 
-fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: ResMut<Game>) {
+fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut game: ResMut<Game>) {
     for mut t in &mut q {
         //
+    }
+
+    // Slow down speed
+    if game.player_wheel.speed_z > 0.0 {
+        game.player_wheel.speed_z -= FORWARD_SPEED * 0.3;
+    } else if game.player_wheel.speed_z < 0.0 {
+        game.player_wheel.speed_z += FORWARD_SPEED * 0.3;
+    }
+
+    // Slow down turn
+    if game.player_wheel.speed_y > 0.0 {
+        game.player_wheel.speed_y -= TURN_SPEED * 0.5;
+    } else if game.player_wheel.speed_y < 0.0 {
+        game.player_wheel.speed_y += TURN_SPEED * 0.5;
     }
 }
 
@@ -183,9 +197,7 @@ fn keyboard_animation_control(keyboard_input: Res<ButtonInput<KeyCode>>, mut gam
         if game.player_wheel.speed_z < MAX_SPEED {
             game.player_wheel.speed_z += FORWARD_SPEED;
         }
-    }
-
-    if keyboard_input.any_pressed([KeyCode::ArrowDown, KeyCode::KeyS]) {
+    } else if keyboard_input.any_pressed([KeyCode::ArrowDown, KeyCode::KeyS]) {
         if game.player_wheel.speed_z > -MAX_SPEED {
             game.player_wheel.speed_z -= FORWARD_SPEED;
         }
@@ -195,9 +207,7 @@ fn keyboard_animation_control(keyboard_input: Res<ButtonInput<KeyCode>>, mut gam
         if game.player_wheel.speed_y < MAX_TURN_SPEED {
             game.player_wheel.speed_y += TURN_SPEED;
         }
-    }
-
-    if keyboard_input.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
+    } else if keyboard_input.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         if game.player_wheel.speed_y > -MAX_TURN_SPEED {
             game.player_wheel.speed_y -= TURN_SPEED;
         }
