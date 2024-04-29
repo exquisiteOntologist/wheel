@@ -4,8 +4,11 @@ use std::f32::consts::PI;
 
 use bevy::{pbr::CascadeShadowConfigBuilder, prelude::*};
 
+// theoretically we could exceed the limit outside of the player speed (going down hill)
 const TURN_SPEED: f32 = 0.001;
+const MAX_TURN_SPEED: f32 = 0.03;
 const FORWARD_SPEED: f32 = 0.001;
+const MAX_SPEED: f32 = 0.05;
 
 fn main() {
     App::new()
@@ -29,6 +32,8 @@ fn main() {
             (
                 setup_scene_once_loaded,
                 spin_wheel,
+                move_wheel,
+                move_camera,
                 keyboard_animation_control,
             ),
         )
@@ -159,87 +164,42 @@ fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: 
     }
 }
 
-fn keyboard_animation_control(
-    keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut _animation_players: Query<&mut AnimationPlayer>,
-    _animations: Res<Animations>,
-    mut _current_animation: Local<usize>,
-    mut game: ResMut<Game>,
-) {
+fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: ResMut<Game>) {
+    for mut t in &mut q {
+        //
+    }
+}
+
+fn move_camera(time: Res<Time>, game: ResMut<Game>) {
+    // for mut t in &mut q {
+    //     //
+    // }
+}
+
+fn keyboard_animation_control(keyboard_input: Res<ButtonInput<KeyCode>>, mut game: ResMut<Game>) {
     println!("Wheel Y speed {:?}", game.player_wheel.speed_y);
 
     if keyboard_input.any_pressed([KeyCode::ArrowUp, KeyCode::KeyW]) {
-        game.player_wheel.speed_z += FORWARD_SPEED;
+        if game.player_wheel.speed_z < MAX_SPEED {
+            game.player_wheel.speed_z += FORWARD_SPEED;
+        }
     }
 
     if keyboard_input.any_pressed([KeyCode::ArrowDown, KeyCode::KeyS]) {
-        game.player_wheel.speed_z -= FORWARD_SPEED;
+        if game.player_wheel.speed_z > -MAX_SPEED {
+            game.player_wheel.speed_z -= FORWARD_SPEED;
+        }
     }
 
     if keyboard_input.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
-        game.player_wheel.speed_y += TURN_SPEED;
+        if game.player_wheel.speed_y < MAX_TURN_SPEED {
+            game.player_wheel.speed_y += TURN_SPEED;
+        }
     }
 
     if keyboard_input.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
-        game.player_wheel.speed_y -= TURN_SPEED;
+        if game.player_wheel.speed_y > -MAX_TURN_SPEED {
+            game.player_wheel.speed_y -= TURN_SPEED;
+        }
     }
-
-    // for mut player in &mut animation_players {
-    //     if keyboard_input.just_pressed(KeyCode::Space) {
-    //         if player.is_paused() {
-    //             player.resume();
-    //         } else {
-    //             player.pause();
-    //         }
-    //     }
-
-    //     if keyboard_input.just_pressed(KeyCode::ArrowUp) {
-    //         let speed = player.speed();
-    //         player.set_speed(speed * 1.2);
-    //     }
-
-    //     if keyboard_input.just_pressed(KeyCode::ArrowDown) {
-    //         let speed = player.speed();
-    //         player.set_speed(speed * 0.8);
-    //     }
-
-    //     if keyboard_input.just_pressed(KeyCode::ArrowLeft) {
-    //         let elapsed = player.seek_time();
-    //         player.seek_to(elapsed - 0.1);
-    //     }
-
-    //     if keyboard_input.just_pressed(KeyCode::ArrowRight) {
-    //         let elapsed = player.seek_time();
-    //         player.seek_to(elapsed + 0.1);
-    //     }
-
-    //     if keyboard_input.just_pressed(KeyCode::Enter) {
-    //         *current_animation = (*current_animation + 1) % animations.0.len();
-    //         player
-    //             .play_with_transition(
-    //                 animations.0[*current_animation].clone_weak(),
-    //                 Duration::from_millis(250),
-    //             )
-    //             .repeat();
-    //     }
-
-    //     if keyboard_input.just_pressed(KeyCode::Digit1) {
-    //         player.set_repeat(RepeatAnimation::Count(1));
-    //         player.replay();
-    //     }
-
-    //     if keyboard_input.just_pressed(KeyCode::Digit3) {
-    //         player.set_repeat(RepeatAnimation::Count(3));
-    //         player.replay();
-    //     }
-
-    //     if keyboard_input.just_pressed(KeyCode::Digit5) {
-    //         player.set_repeat(RepeatAnimation::Count(5));
-    //         player.replay();
-    //     }
-
-    //     if keyboard_input.just_pressed(KeyCode::KeyL) {
-    //         player.set_repeat(RepeatAnimation::Forever);
-    //     }
-    // }
 }
