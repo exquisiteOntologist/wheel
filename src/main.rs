@@ -1,9 +1,11 @@
-//! Plays animations from a skinned glTF.
+//! Rolls a player-controlled wheel
 
 use std::f32::consts::PI;
-use std::time::Duration;
 
-use bevy::{animation::RepeatAnimation, pbr::CascadeShadowConfigBuilder, prelude::*};
+use bevy::{pbr::CascadeShadowConfigBuilder, prelude::*};
+
+const TURN_SPEED: f32 = 0.001;
+const FORWARD_SPEED: f32 = 0.001;
 
 fn main() {
     App::new()
@@ -67,8 +69,10 @@ fn setup(
 
     // Light
     commands.spawn(DirectionalLightBundle {
-        transform: Transform::from_rotation(Quat::from_euler(EulerRot::ZYX, 0.0, 1.0, -PI / 4.)),
+        transform: Transform::from_rotation(Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, -PI / 3.5)),
         directional_light: DirectionalLight {
+            color: Color::rgb(1.0, 1.0, 1.0),
+            illuminance: light_consts::lux::AMBIENT_DAYLIGHT,
             shadows_enabled: true,
             ..default()
         },
@@ -95,7 +99,7 @@ fn setup(
 
     // println!("Animation controls:");
     // println!("  - spacebar: play / pause");
-    // println!("  - arrow up / down: speed up / slow down animation playback");
+    println!("  - arrow up / down: roll");
     // println!("  - arrow left / right: seek backward / forward");
     println!("  - arrow left / right: turn direction");
     // println!("  - digit 1 / 3 / 5: play the animation <digit> times");
@@ -116,7 +120,7 @@ fn setup_scene_once_loaded(
 #[derive(Component)]
 struct Wheel;
 
-#[derive(Component, Default)]
+#[derive(Default)]
 struct WheelState {
     speed_y: f32,
     speed_z: f32,
@@ -130,93 +134,112 @@ struct Game {
 fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: ResMut<Game>) {
     // note that the wheel is
     for mut t in &mut q {
-        t.rotate_y(game.player_wheel.speed_y);
         t.rotate_local_z(game.player_wheel.speed_z);
+
+        // turning
+        if game.player_wheel.speed_y != 0.0 {
+            if game.player_wheel.speed_y < 0.0 {
+                // t.rotate_local_x(-0.1);
+                // t.rotate_x(-0.1);
+                // rotation.x = -0.3;
+            } else if game.player_wheel.speed_y > 0.0 {
+                // t.rotate_local_x(0.1);
+                // t.rotate_x(0.1);
+                // rotation.x = 0.3;
+            }
+            t.rotate_y(game.player_wheel.speed_y);
+        }
+        let mut rotation = t.rotation;
+        println!("Y rotation {:?}", rotation.y);
+        // t.transfor
+        // rotation.x = 2.0;
+        // t.rotate(rotation);
+        // t.rotatea
+        // t.with_rotation(rotation);
     }
 }
 
 fn keyboard_animation_control(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut animation_players: Query<&mut AnimationPlayer>,
-    animations: Res<Animations>,
-    mut current_animation: Local<usize>,
+    mut _animation_players: Query<&mut AnimationPlayer>,
+    _animations: Res<Animations>,
+    mut _current_animation: Local<usize>,
     mut game: ResMut<Game>,
 ) {
     println!("Wheel Y speed {:?}", game.player_wheel.speed_y);
-    println!("players empty? {:?}", &animation_players.is_empty());
 
     if keyboard_input.any_pressed([KeyCode::ArrowUp, KeyCode::KeyW]) {
-        game.player_wheel.speed_z += 0.001;
+        game.player_wheel.speed_z += FORWARD_SPEED;
     }
 
     if keyboard_input.any_pressed([KeyCode::ArrowDown, KeyCode::KeyS]) {
-        game.player_wheel.speed_z -= 0.001;
+        game.player_wheel.speed_z -= FORWARD_SPEED;
     }
 
     if keyboard_input.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
-        game.player_wheel.speed_y += 0.001;
+        game.player_wheel.speed_y += TURN_SPEED;
     }
 
     if keyboard_input.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
-        game.player_wheel.speed_y -= 0.001;
+        game.player_wheel.speed_y -= TURN_SPEED;
     }
 
-    for mut player in &mut animation_players {
-        if keyboard_input.just_pressed(KeyCode::Space) {
-            if player.is_paused() {
-                player.resume();
-            } else {
-                player.pause();
-            }
-        }
+    // for mut player in &mut animation_players {
+    //     if keyboard_input.just_pressed(KeyCode::Space) {
+    //         if player.is_paused() {
+    //             player.resume();
+    //         } else {
+    //             player.pause();
+    //         }
+    //     }
 
-        if keyboard_input.just_pressed(KeyCode::ArrowUp) {
-            let speed = player.speed();
-            player.set_speed(speed * 1.2);
-        }
+    //     if keyboard_input.just_pressed(KeyCode::ArrowUp) {
+    //         let speed = player.speed();
+    //         player.set_speed(speed * 1.2);
+    //     }
 
-        if keyboard_input.just_pressed(KeyCode::ArrowDown) {
-            let speed = player.speed();
-            player.set_speed(speed * 0.8);
-        }
+    //     if keyboard_input.just_pressed(KeyCode::ArrowDown) {
+    //         let speed = player.speed();
+    //         player.set_speed(speed * 0.8);
+    //     }
 
-        if keyboard_input.just_pressed(KeyCode::ArrowLeft) {
-            let elapsed = player.seek_time();
-            player.seek_to(elapsed - 0.1);
-        }
+    //     if keyboard_input.just_pressed(KeyCode::ArrowLeft) {
+    //         let elapsed = player.seek_time();
+    //         player.seek_to(elapsed - 0.1);
+    //     }
 
-        if keyboard_input.just_pressed(KeyCode::ArrowRight) {
-            let elapsed = player.seek_time();
-            player.seek_to(elapsed + 0.1);
-        }
+    //     if keyboard_input.just_pressed(KeyCode::ArrowRight) {
+    //         let elapsed = player.seek_time();
+    //         player.seek_to(elapsed + 0.1);
+    //     }
 
-        if keyboard_input.just_pressed(KeyCode::Enter) {
-            *current_animation = (*current_animation + 1) % animations.0.len();
-            player
-                .play_with_transition(
-                    animations.0[*current_animation].clone_weak(),
-                    Duration::from_millis(250),
-                )
-                .repeat();
-        }
+    //     if keyboard_input.just_pressed(KeyCode::Enter) {
+    //         *current_animation = (*current_animation + 1) % animations.0.len();
+    //         player
+    //             .play_with_transition(
+    //                 animations.0[*current_animation].clone_weak(),
+    //                 Duration::from_millis(250),
+    //             )
+    //             .repeat();
+    //     }
 
-        if keyboard_input.just_pressed(KeyCode::Digit1) {
-            player.set_repeat(RepeatAnimation::Count(1));
-            player.replay();
-        }
+    //     if keyboard_input.just_pressed(KeyCode::Digit1) {
+    //         player.set_repeat(RepeatAnimation::Count(1));
+    //         player.replay();
+    //     }
 
-        if keyboard_input.just_pressed(KeyCode::Digit3) {
-            player.set_repeat(RepeatAnimation::Count(3));
-            player.replay();
-        }
+    //     if keyboard_input.just_pressed(KeyCode::Digit3) {
+    //         player.set_repeat(RepeatAnimation::Count(3));
+    //         player.replay();
+    //     }
 
-        if keyboard_input.just_pressed(KeyCode::Digit5) {
-            player.set_repeat(RepeatAnimation::Count(5));
-            player.replay();
-        }
+    //     if keyboard_input.just_pressed(KeyCode::Digit5) {
+    //         player.set_repeat(RepeatAnimation::Count(5));
+    //         player.replay();
+    //     }
 
-        if keyboard_input.just_pressed(KeyCode::KeyL) {
-            player.set_repeat(RepeatAnimation::Forever);
-        }
-    }
+    //     if keyboard_input.just_pressed(KeyCode::KeyL) {
+    //         player.set_repeat(RepeatAnimation::Forever);
+    //     }
+    // }
 }
