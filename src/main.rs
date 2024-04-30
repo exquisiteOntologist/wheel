@@ -164,7 +164,8 @@ fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut ga
     for mut t in &mut q {
         // https://allenchou.net/2019/08/trigonometry-basics-sine-cosine/
         // https://stackoverflow.com/questions/46697502/how-to-move-a-sprite-according-to-an-angle-in-pygame
-        //
+        // https://bevyengine.org/examples/Transforms/transform/
+
         // let d = t.forward();
         // t.di
         // t.translation += direction * game.player_wheel.speed_z;
@@ -202,8 +203,30 @@ fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut ga
 
         // new_t.forward()
         //
-        let forward = t.forward();
-        t.translation += forward * (speed * 10.) * time.delta_seconds();
+        let forward = t.local_x();
+        let mut rotation = t.rotation.normalize();
+        rotation.z = 0.;
+        rotation.x = 0.;
+        // rotation.y *= -1.;
+        // rotation.
+        let jon_x = Direction3d::new(rotation * -Vec3::X).unwrap();
+        // let alt_t = Transform::from_xyz(t.translation.x, t.translation.y, 0.);
+        // let forward = t.forward();
+        // t.local
+        // t.translation.forw
+        t.translation += jon_x * (speed * 100.) * time.delta_seconds();
+        // t.translation += forward * (speed * 100.) * time.delta_seconds();
+
+        // NOTE: The reason it rotates weird is because we are spinning z
+        //
+        // > > > The solution is to have a seperate mesh object for the wheel to the position object.
+        // > > > The mesh will need to be parented to the position object.
+        //
+        // ! ! !
+
+        // let dir = Direction3d::from_xyz(t.translation.x, t.translation.y, 1.).unwrap();
+        // Direction3d::
+        // t.translation += dir * (speed * 10.) * time.delta_seconds();
 
         // 3.0.cos
         //
