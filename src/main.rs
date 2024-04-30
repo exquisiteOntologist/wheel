@@ -133,8 +133,8 @@ struct Game {
 }
 
 fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: ResMut<Game>) {
-    // note that the wheel is
     for mut t in &mut q {
+        // spinning the wheel
         t.rotate_local_z(game.player_wheel.speed_z);
 
         // turning
@@ -143,103 +143,34 @@ fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: 
                 // t.rotate_local_x(-0.1);
                 // t.rotate_x(-0.1);
                 // rotation.x = -0.3;
+                //
+                // TILT
             } else if game.player_wheel.speed_y > 0.0 {
                 // t.rotate_local_x(0.1);
                 // t.rotate_x(0.1);
                 // rotation.x = 0.3;
+                //
+                // TILT
             }
             t.rotate_y(game.player_wheel.speed_y);
         }
-        let mut rotation = t.rotation;
-        // println!("Y rotation {:?}", rotation.y);
-        // t.transfor
-        // rotation.x = 2.0;
-        // t.rotate(rotation);
-        // t.rotatea
-        // t.with_rotation(rotation);
     }
 }
 
 fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut game: ResMut<Game>) {
     for mut t in &mut q {
-        // https://allenchou.net/2019/08/trigonometry-basics-sine-cosine/
-        // https://stackoverflow.com/questions/46697502/how-to-move-a-sprite-according-to-an-angle-in-pygame
-        // https://bevyengine.org/examples/Transforms/transform/
-
-        // let d = t.forward();
-        // t.di
-        // t.translation += direction * game.player_wheel.speed_z;
-        // t.translation += direction * game.player_wheel.speed_z * time.delta_seconds();
-        // t.translation += t.directiono * game.player_wheel.speed_z * time.delta_seconds();
-        // t.translation.mul_add(, b)
-        // t.translation.x += game.player_wheel.speed_z;
-        // t.translation += t.translation.x * t.translation.z * game.player_wheel.speed_z;
-        //
-        // t.translation = t.transform_point(Vec3::new(0.0, t.rotation.y, 0.5));
-        // rot.x
-        // let (_, angle) = t.rotation.to_axis_angle();
         let angle = t.rotation.y;
-        // let angle_rad = Rad(angle); // probably passing in degrees here, not rads
         let speed = game.player_wheel.speed_z;
 
         println!("speed {:?}", speed);
         println!("angle {:?}", angle);
-        // println!("rad   {:?}", angle_rad.0);
-        // Rad::cos(angle_rad);
 
-        let new_x = t.translation.x + (speed * angle.cos());
-        let new_z = t.translation.z + (speed * angle.sin());
-        let new_y = t.translation.y;
-
-        // let d = t.forward();
-        // d.
-        // t.looking_to(direction, up)
-        // t.translation = Vec3::new(new_x, new_y, new_z);
-
-        // let new_t = t
-        //     .with_translation(Vec3::new(speed, 0.0, 0.0))
-        //     // .with_scale(Vec3::splat(0.01))
-        //     .with_rotation(base_rotation * Quat::from_rotation_y(-fox_angle));
-
-        // new_t.forward()
-        //
-        let forward = t.local_x();
+        // since we are also spinning the wheel, for the math to work we only want Y, as the wheel pivots around Y
         let mut rotation = t.rotation.normalize();
         rotation.z = 0.;
         rotation.x = 0.;
-        // rotation.y *= -1.;
-        // rotation.
-        let jon_x = Direction3d::new(rotation * -Vec3::X).unwrap();
-        // let alt_t = Transform::from_xyz(t.translation.x, t.translation.y, 0.);
-        // let forward = t.forward();
-        // t.local
-        // t.translation.forw
-        t.translation += jon_x * (speed * 100.) * time.delta_seconds();
-        // t.translation += forward * (speed * 100.) * time.delta_seconds();
-
-        // NOTE: The reason it rotates weird is because we are spinning z
-        //
-        // > > > The solution is to have a seperate mesh object for the wheel to the position object.
-        // > > > The mesh will need to be parented to the position object.
-        //
-        // ! ! !
-
-        // let dir = Direction3d::from_xyz(t.translation.x, t.translation.y, 1.).unwrap();
-        // Direction3d::
-        // t.translation += dir * (speed * 10.) * time.delta_seconds();
-
-        // 3.0.cos
-        //
-        // t.translation.x += speed;
-
-        //
-        // t.rotation.angle
-        // let move_to = Vec3::new(
-        //     t.local_x(),
-        //     t.local_y(). + game.player_wheel.speed_z,
-        //     t.local_z(),
-        // );
-        // t.translation = move_to;
+        let direction = Direction3d::new(rotation * -Vec3::X).unwrap();
+        t.translation += direction * (speed * 100.) * time.delta_seconds();
     }
 
     // Slow down speed
