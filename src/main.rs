@@ -155,7 +155,7 @@ fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: 
             t.rotate_y(game.player_wheel.speed_y);
         }
         let mut rotation = t.rotation;
-        println!("Y rotation {:?}", rotation.y);
+        // println!("Y rotation {:?}", rotation.y);
         // t.transfor
         // rotation.x = 2.0;
         // t.rotate(rotation);
@@ -193,7 +193,7 @@ fn move_camera(time: Res<Time>, game: ResMut<Game>) {
 }
 
 fn keyboard_animation_control(keyboard_input: Res<ButtonInput<KeyCode>>, mut game: ResMut<Game>) {
-    println!("Wheel Y speed {:?}", game.player_wheel.speed_y);
+    // println!("Wheel Y speed {:?}", game.player_wheel.speed_y);
 
     if keyboard_input.any_pressed([KeyCode::ArrowUp, KeyCode::KeyW]) {
         if game.player_wheel.speed_z < MAX_SPEED {
