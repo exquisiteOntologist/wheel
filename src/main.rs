@@ -209,11 +209,19 @@ fn keyboard_animation_control(keyboard_input: Res<ButtonInput<KeyCode>>, mut gam
 
     if keyboard_input.any_pressed([KeyCode::ArrowLeft, KeyCode::KeyA]) {
         if game.player_wheel.speed_y < MAX_TURN_SPEED {
-            game.player_wheel.speed_y += TURN_SPEED;
+            if game.player_wheel.speed_z >= 0. {
+                game.player_wheel.speed_y += TURN_SPEED;
+            } else {
+                game.player_wheel.speed_y -= TURN_SPEED;
+            }
         }
     } else if keyboard_input.any_pressed([KeyCode::ArrowRight, KeyCode::KeyD]) {
         if game.player_wheel.speed_y > -MAX_TURN_SPEED {
-            game.player_wheel.speed_y -= TURN_SPEED;
+            if game.player_wheel.speed_z >= 0. {
+                game.player_wheel.speed_y -= TURN_SPEED;
+            } else {
+                game.player_wheel.speed_y += TURN_SPEED;
+            }
         }
     }
 }
