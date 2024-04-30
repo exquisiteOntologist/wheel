@@ -3,6 +3,7 @@
 use std::f32::consts::PI;
 
 use bevy::{pbr::CascadeShadowConfigBuilder, prelude::*};
+use cgmath::{Angle, Rad};
 
 // theoretically we could exceed the limit outside of the player speed (going down hill)
 const TURN_SPEED: f32 = 0.001;
@@ -100,16 +101,11 @@ fn setup(
         Wheel,
     ));
 
-    game.player_wheel.speed_z = 0.02;
+    game.player_wheel.speed_z = MAX_SPEED;
 
-    // println!("Animation controls:");
-    // println!("  - spacebar: play / pause");
+    println!("Controls:");
     println!("  - arrow up / down: roll");
-    // println!("  - arrow left / right: seek backward / forward");
     println!("  - arrow left / right: turn direction");
-    // println!("  - digit 1 / 3 / 5: play the animation <digit> times");
-    // println!("  - L: loop the animation forever");
-    // println!("  - return: change animation");
 }
 
 // Once the scene is loaded, start the animation
@@ -169,6 +165,33 @@ fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut ga
         //
         // let d = t.forward();
         // t.di
+        // t.translation += direction * game.player_wheel.speed_z;
+        // t.translation += direction * game.player_wheel.speed_z * time.delta_seconds();
+        // t.translation += t.directiono * game.player_wheel.speed_z * time.delta_seconds();
+        // t.translation.mul_add(, b)
+        // t.translation.x += game.player_wheel.speed_z;
+        // t.translation += t.translation.x * t.translation.z * game.player_wheel.speed_z;
+        //
+        // t.translation = t.transform_point(Vec3::new(0.0, t.rotation.y, 0.5));
+        // rot.x
+        let (_, angle) = t.rotation.to_axis_angle();
+        let angle_rad = Rad(angle);
+        let speed = game.player_wheel.speed_z;
+
+        let new_x = t.translation.x + (speed * Rad::cos(angle_rad));
+        let new_z = t.translation.z + (speed * Rad::sin(angle_rad));
+        let new_y = t.translation.y;
+
+        t.translation = Vec3::new(new_x, new_y, new_z)
+
+        //
+        // t.rotation.angle
+        // let move_to = Vec3::new(
+        //     t.local_x(),
+        //     t.local_y(). + game.player_wheel.speed_z,
+        //     t.local_z(),
+        // );
+        // t.translation = move_to;
     }
 
     // Slow down speed
