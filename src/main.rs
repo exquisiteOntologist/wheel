@@ -162,6 +162,8 @@ fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: 
 
 fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut game: ResMut<Game>) {
     for mut t in &mut q {
+        // https://allenchou.net/2019/08/trigonometry-basics-sine-cosine/
+        // https://stackoverflow.com/questions/46697502/how-to-move-a-sprite-according-to-an-angle-in-pygame
         //
         // let d = t.forward();
         // t.di
@@ -174,15 +176,38 @@ fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut ga
         //
         // t.translation = t.transform_point(Vec3::new(0.0, t.rotation.y, 0.5));
         // rot.x
-        let (_, angle) = t.rotation.to_axis_angle();
-        let angle_rad = Rad(angle);
+        // let (_, angle) = t.rotation.to_axis_angle();
+        let angle = t.rotation.y;
+        // let angle_rad = Rad(angle); // probably passing in degrees here, not rads
         let speed = game.player_wheel.speed_z;
 
-        let new_x = t.translation.x + (speed * Rad::cos(angle_rad));
-        let new_z = t.translation.z + (speed * Rad::sin(angle_rad));
+        println!("speed {:?}", speed);
+        println!("angle {:?}", angle);
+        // println!("rad   {:?}", angle_rad.0);
+        // Rad::cos(angle_rad);
+
+        let new_x = t.translation.x + (speed * angle.cos());
+        let new_z = t.translation.z + (speed * angle.sin());
         let new_y = t.translation.y;
 
-        t.translation = Vec3::new(new_x, new_y, new_z)
+        // let d = t.forward();
+        // d.
+        // t.looking_to(direction, up)
+        // t.translation = Vec3::new(new_x, new_y, new_z);
+
+        // let new_t = t
+        //     .with_translation(Vec3::new(speed, 0.0, 0.0))
+        //     // .with_scale(Vec3::splat(0.01))
+        //     .with_rotation(base_rotation * Quat::from_rotation_y(-fox_angle));
+
+        // new_t.forward()
+        //
+        let forward = t.forward();
+        t.translation += forward * (speed * 10.) * time.delta_seconds();
+
+        // 3.0.cos
+        //
+        // t.translation.x += speed;
 
         //
         // t.rotation.angle
