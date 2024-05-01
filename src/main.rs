@@ -2,7 +2,10 @@
 
 use std::f32::consts::PI;
 
-use bevy::{pbr::CascadeShadowConfigBuilder, prelude::*};
+use bevy::{
+    pbr::{CascadeShadowConfigBuilder, DirectionalLightShadowMap},
+    prelude::*,
+};
 use cgmath::{Angle, Rad};
 
 // theoretically we could exceed the limit outside of the player speed (going down hill)
@@ -17,6 +20,7 @@ fn main() {
             color: Color::WHITE,
             brightness: 2000.,
         })
+        .insert_resource(DirectionalLightShadowMap { size: 8192 })
         .init_resource::<Game>()
         .add_plugins((DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
@@ -78,7 +82,7 @@ fn setup(
 
     // Light
     commands.spawn(DirectionalLightBundle {
-        transform: Transform::from_rotation(Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, -PI / 3.5)),
+        transform: Transform::from_rotation(Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, -PI / 2.5)),
         directional_light: DirectionalLight {
             color: Color::rgb(1.0, 1.0, 1.0),
             illuminance: light_consts::lux::AMBIENT_DAYLIGHT,
@@ -176,8 +180,8 @@ fn move_wheel(
         let angle = t.rotation.y;
         let speed = game.player_wheel.speed_z;
 
-        println!("speed {:?}", speed);
-        println!("angle {:?}", angle);
+        // println!("speed {:?}", speed);
+        // println!("angle {:?}", angle);
 
         // since we are also spinning the wheel, for the math to work we only want Y, as the wheel pivots around Y
         let mut rotation = t.rotation.normalize();
@@ -218,8 +222,8 @@ fn move_camera(
 ) {
     let t_char = q_char.single_mut();
     let t_cam = q_cam.single_mut();
-    println!("I'm a character Y: {:?}", t_char.1.local_y());
-    println!("I'm a camera Y: {:?}", t_cam.1.local_y());
+    // println!("I'm a character Y: {:?}", t_char.1.local_y());
+    // println!("I'm a camera Y: {:?}", t_cam.1.local_y());
 }
 
 fn keyboard_animation_control(keyboard_input: Res<ButtonInput<KeyCode>>, mut game: ResMut<Game>) {
