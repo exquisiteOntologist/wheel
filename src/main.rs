@@ -60,11 +60,14 @@ fn setup(
     ]));
 
     // Camera
-    commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(10.0, 3.0, 0.0)
-            .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
-        ..default()
-    });
+    commands.spawn((
+        Camera3dBundle {
+            transform: Transform::from_xyz(10.0, 3.0, 0.0)
+                .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
+            ..default()
+        },
+        PlayerCamera,
+    ));
 
     // Plane
     commands.spawn(PbrBundle {
@@ -98,7 +101,7 @@ fn setup(
             transform: Transform::from_xyz(0.0, 1.2, 0.0),
             ..default()
         },
-        Wheel,
+        PlayerCharacter,
     ));
 
     game.player_wheel.speed_z = MAX_SPEED;
@@ -119,7 +122,10 @@ fn setup_scene_once_loaded(
 }
 
 #[derive(Component)]
-struct Wheel;
+struct PlayerCamera;
+
+#[derive(Component)]
+struct PlayerCharacter;
 
 #[derive(Default)]
 struct WheelState {
@@ -132,7 +138,11 @@ struct Game {
     player_wheel: WheelState,
 }
 
-fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: ResMut<Game>) {
+fn spin_wheel(
+    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+    time: Res<Time>,
+    game: ResMut<Game>,
+) {
     for mut t in &mut q {
         // spinning the wheel
         t.rotate_local_z(game.player_wheel.speed_z);
@@ -157,7 +167,11 @@ fn spin_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, game: 
     }
 }
 
-fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut game: ResMut<Game>) {
+fn move_wheel(
+    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+    time: Res<Time>,
+    mut game: ResMut<Game>,
+) {
     for mut t in &mut q {
         let angle = t.rotation.y;
         let speed = game.player_wheel.speed_z;
@@ -180,18 +194,39 @@ fn move_wheel(mut q: Query<&mut Transform, With<Wheel>>, time: Res<Time>, mut ga
         game.player_wheel.speed_z += FORWARD_SPEED * (game.player_wheel.speed_z / -MAX_SPEED) * 0.5;
     }
 
+    if !(game.player_wheel.speed_z > 0.0001 || game.player_wheel.speed_z < -0.0001) {
+        game.player_wheel.speed_z = 0.;
+    }
+
     // Slow down turn
     if game.player_wheel.speed_y > 0.0 {
         game.player_wheel.speed_y -= TURN_SPEED * (game.player_wheel.speed_y / MAX_TURN_SPEED);
     } else if game.player_wheel.speed_y < 0.0 {
         game.player_wheel.speed_y += TURN_SPEED * (game.player_wheel.speed_y / -MAX_TURN_SPEED);
     }
+
+    if !(game.player_wheel.speed_y > 0.0001 || game.player_wheel.speed_y < -0.0001) {
+        game.player_wheel.speed_y = 0.;
+    }
 }
 
-fn move_camera(time: Res<Time>, game: ResMut<Game>) {
-    // for mut t in &mut q {
-    //     //
-    // }
+fn move_camera(
+    time: Res<Time>,
+    game: ResMut<Game>,
+    // mut qChar: Query<&mut Transform, With<PlayerCharacter>>,
+    // mut qCam: Query<&mut Transform, With<PlayerCamera>>,
+    mut set: ParamSet<(
+        Query<&mut Transform, With<PlayerCharacter>>,
+        Query<&mut Transform, With<PlayerCamera>>,
+    )>,
+) {
+    for mut t in set.p0().iter_mut() {
+        println!("I'm a character");
+    }
+
+    for mut t in set.p1().iter_mut() {
+        println!("I'm a camera");
+    }
 }
 
 fn keyboard_animation_control(keyboard_input: Res<ButtonInput<KeyCode>>, mut game: ResMut<Game>) {
