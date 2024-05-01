@@ -82,7 +82,7 @@ fn setup(
 
     // Light
     commands.spawn(DirectionalLightBundle {
-        transform: Transform::from_rotation(Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, -PI / 2.5)),
+        transform: Transform::from_rotation(Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, -PI / 3.5)),
         directional_light: DirectionalLight {
             color: Color::rgb(1.0, 1.0, 1.0),
             illuminance: light_consts::lux::AMBIENT_DAYLIGHT,
@@ -90,8 +90,10 @@ fn setup(
             ..default()
         },
         cascade_shadow_config: CascadeShadowConfigBuilder {
-            first_cascade_far_bound: 200.0,
+            // first_cascade_far_bound: 200.0,
+            // maximum_distance: 400.0,
             maximum_distance: 400.0,
+            first_cascade_far_bound: 0.9,
             ..default()
         }
         .into(),
