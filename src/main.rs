@@ -213,20 +213,13 @@ fn move_wheel(
 fn move_camera(
     time: Res<Time>,
     game: ResMut<Game>,
-    // mut qChar: Query<&mut Transform, With<PlayerCharacter>>,
-    // mut qCam: Query<&mut Transform, With<PlayerCamera>>,
-    mut set: ParamSet<(
-        Query<&mut Transform, With<PlayerCharacter>>,
-        Query<&mut Transform, With<PlayerCamera>>,
-    )>,
+    mut q_char: Query<(&PlayerCharacter, &mut Transform)>,
+    mut q_cam: Query<(&PlayerCamera, &mut Transform), Without<PlayerCharacter>>,
 ) {
-    for mut t in set.p0().iter_mut() {
-        println!("I'm a character");
-    }
-
-    for mut t in set.p1().iter_mut() {
-        println!("I'm a camera");
-    }
+    let t_char = q_char.single_mut();
+    let t_cam = q_cam.single_mut();
+    println!("I'm a character Y: {:?}", t_char.1.local_y());
+    println!("I'm a camera Y: {:?}", t_cam.1.local_y());
 }
 
 fn keyboard_animation_control(keyboard_input: Res<ButtonInput<KeyCode>>, mut game: ResMut<Game>) {
