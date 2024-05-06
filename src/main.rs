@@ -6,7 +6,6 @@ use bevy::{
     pbr::{CascadeShadowConfigBuilder, DirectionalLightShadowMap},
     prelude::*,
 };
-use cgmath::{Angle, Rad};
 
 // theoretically we could exceed the limit outside of the player speed (going down hill)
 const TURN_SPEED: f32 = 0.001;
@@ -139,14 +138,16 @@ struct PlayerCamera;
 struct PlayerCharacter;
 
 #[derive(Default)]
-struct WheelState {
+struct MotionState {
+    speed_x: f32,
     speed_y: f32,
     speed_z: f32,
 }
 
 #[derive(Resource, Default)]
 struct Game {
-    player_wheel: WheelState,
+    camera: MotionState,
+    player_wheel: MotionState,
 }
 
 fn spin_wheel(
@@ -223,7 +224,7 @@ fn move_wheel(
 
 fn move_camera(
     time: Res<Time>,
-    game: ResMut<Game>,
+    mut game: ResMut<Game>,
     mut q_char: Query<(&PlayerCharacter, &mut Transform)>,
     mut q_cam: Query<(&PlayerCamera, &mut Transform), Without<PlayerCharacter>>,
 ) {
@@ -234,15 +235,37 @@ fn move_camera(
     let distance_z = t_char.translation.z - t_cam.translation.z;
     let camera_should_move_x = distance_x > MAX_CAM_DISTANCE || distance_x < -MAX_CAM_DISTANCE;
     let camera_should_move_z = distance_z > MAX_CAM_DISTANCE || distance_z < -MAX_CAM_DISTANCE;
-    let mX = if distance_x > 0. { 1. } else { -1. };
-    let mZ = if distance_z > 0. { 1. } else { -1. };
+    let m_x = if distance_x > 0. { 1. } else { -1. };
+    let m_z = if distance_z > 0. { 1. } else { -1. };
 
     println!("Distance X {:?}", distance_x);
     println!("Move camera? {:?}", camera_should_move_x);
 
     if camera_should_move_x {
-        t_cam.translation.x += 0.05 * mX;
-        t_cam.translation.z += 0.05 * mZ;
+        game.camera.speed_x += FORWARD_SPEED * m_x;
+    }
+
+    if camera_should_move_z {
+        game.camera.speed_z += FORWARD_SPEED * m_z;
+    };
+
+    t_cam.translation.x += game.camera.speed_x;
+    t_cam.translation.z += game.camera.speed_z;
+
+    if game.camera.speed_x != 0. {
+        game.camera.speed_x -= FORWARD_SPEED * (game.camera.speed_x / MAX_SPEED) * 0.5;
+    }
+
+    if !(game.camera.speed_x > 0.0001 || game.camera.speed_x < -0.0001) {
+        game.camera.speed_x = 0.;
+    }
+
+    if game.camera.speed_z != 0. {
+        game.camera.speed_z -= FORWARD_SPEED * (game.camera.speed_z / MAX_SPEED) * 0.5;
+    }
+
+    if !(game.camera.speed_z > 0.0001 || game.camera.speed_z < -0.0001) {
+        game.camera.speed_z = 0.;
     }
 
     let t_cam_face_char = t_cam.looking_to(t_char.translation, Vec3::Y);
