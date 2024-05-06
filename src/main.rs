@@ -179,25 +179,26 @@ fn spin_wheel(
     }
 }
 
+/// because the wheel spins and turns, get just y for the turn
+fn wheel_y_rotation(rotation: &Quat) -> Quat {
+    let mut rotation_y = rotation.normalize();
+    rotation_y.z = 0.;
+    rotation_y.x = 0.;
+    rotation_y
+}
+
 fn move_wheel(
     mut q: Query<&mut Transform, With<PlayerCharacter>>,
     time: Res<Time>,
     mut game: ResMut<Game>,
 ) {
-    for mut t in &mut q {
-        let angle = t.rotation.y;
-        let speed = game.player_wheel.speed_z;
+    let mut t = q.single_mut();
+    let speed = game.player_wheel.speed_z;
 
-        // println!("speed {:?}", speed);
-        // println!("angle {:?}", angle);
-
-        // since we are also spinning the wheel, for the math to work we only want Y, as the wheel pivots around Y
-        let mut rotation = t.rotation.normalize();
-        rotation.z = 0.;
-        rotation.x = 0.;
-        let direction = Direction3d::new(rotation * -Vec3::X).unwrap();
-        t.translation += direction * (speed * 100.) * time.delta_seconds();
-    }
+    // since we are also spinning the wheel, for the math to work we only want Y, as the wheel pivots around Y
+    let rotation = wheel_y_rotation(&t.rotation);
+    let direction = Direction3d::new(rotation * -Vec3::X).unwrap();
+    t.translation += direction * (speed * 100.) * time.delta_seconds();
 
     // Slow down speed
     if game.player_wheel.speed_z > 0.0 {
@@ -242,18 +243,42 @@ fn move_camera(
     println!("Move camera? {:?}", camera_should_move_x);
 
     if camera_should_move_x {
-        game.camera.speed_x += FORWARD_SPEED * m_x;
+        game.camera.speed_x += (FORWARD_SPEED * 2.) * m_x;
     }
 
     if camera_should_move_z {
         game.camera.speed_z += FORWARD_SPEED * m_z;
     };
 
-    t_cam.translation.x += game.camera.speed_x;
-    t_cam.translation.z += game.camera.speed_z;
+    // BEGIN char & cam translation lock
+    // If not wanted it is still useful for debugging
+    // let mut trans_char = t_char.translation + (t_char.right() * -5. * time.delta_seconds());
+    // // trans_char.z -= 10.;
+
+    // let mut trans_form = t_char.with_translation(trans_char);
+    // trans_form.translation.y = 3.;
+    // trans_form.translation.z + 10.;
+
+    // // t_cam.translation = trans_char;
+    // // t_cam.translation.y = 3.;
+    t_cam.translation.x = t_char.translation.x;
+    t_cam.translation.z = t_char.translation.z + 10.;
+    // let otter = t_cam.translation.angle_between(t_char.translation);
+    // let rotation = wheel_y_rotation(&t_char.rotation);
+    // // t_cam.rotate_around(t_char.translation, rotation);
+    // // t_cam.rotation.y -= otter;
+    // t_cam.translate_around(trans_form.translation, rotation);
+    // t_cam.rotate_around(t_char.translation, rotation);
+    // t_cam.rotation.y = rotation.y;
+    // t_cam.translation.x -= 10.;
+    // END
+
+    // t_cam.translation.x += game.camera.speed_x;
+    // t_cam.translation.z += game.camera.speed_z;
 
     if game.camera.speed_x != 0. {
-        game.camera.speed_x -= FORWARD_SPEED * (game.camera.speed_x / MAX_SPEED) * 0.5;
+        let dir_m = (m_x);
+        game.camera.speed_x += FORWARD_SPEED * (game.camera.speed_x / MAX_SPEED) * 0.5 * dir_m;
     }
 
     if !(game.camera.speed_x > 0.0001 || game.camera.speed_x < -0.0001) {
@@ -261,14 +286,49 @@ fn move_camera(
     }
 
     if game.camera.speed_z != 0. {
-        game.camera.speed_z -= FORWARD_SPEED * (game.camera.speed_z / MAX_SPEED) * 0.5;
+        let dir_m = (m_z);
+        game.camera.speed_z += FORWARD_SPEED * (game.camera.speed_z / MAX_SPEED) * 0.5 * dir_m;
     }
 
     if !(game.camera.speed_z > 0.0001 || game.camera.speed_z < -0.0001) {
         game.camera.speed_z = 0.;
     }
 
-    let t_cam_face_char = t_cam.looking_to(t_char.translation, Vec3::Y);
+    let t_cam_face_char = t_cam.looking_at(
+        Vec3::new(t_char.translation.x, 1.0, t_char.translation.z),
+        Vec3::Y,
+    );
+    let dir = Direction3d::new(t_cam_face_char.rotation * -Vec3::X).unwrap();
+    // t_cam.rotation.y = t_cam_face_char.rotation.y;
+    // let cam_rot = t_cam.rotation.normalize();
+    let rot_diff = t_cam.rotation.y - t_cam_face_char.rotation.y;
+    let cam_spin_m = if rot_diff > 0.005 {
+        -1.
+    } else if rot_diff < -0.005 {
+        1.
+    } else {
+        0.
+    };
+
+    println!("rot diff {:?}", rot_diff);
+
+    if cam_spin_m != 0. {
+        // t_cam.rotate_y(0.001 * cam_spin_m);
+        t_cam.rotate_y(0.01 * cam_spin_m);
+
+        // t_cam.translation += dir * FORWARD_SPEED * time.delta_seconds();
+    }
+
+    // let player_translation = t_char.translation.xz();
+    // let to_player = (player_translation - t_cam.translation.xz()).normalize();
+
+    // get the quaternion to rotate from the initial enemy facing direction to the direction
+    // facing the player
+    // let rotate_to_player = Quat::from_rotation_arc(Vec3::Z, to_player.extend(0.));
+
+    // rotate the enemy to face the player
+    // t_cam.rotation = rotate_to_player;
+
     // t_cam.rotate_y(t_cam_face_char.rotation.y);
     // t_cam.len
     // println!("I'm a character Y: {:?}", t_char.1.local_y());
