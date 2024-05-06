@@ -6,13 +6,7 @@ use bevy::{
     pbr::{CascadeShadowConfigBuilder, DirectionalLightShadowMap},
     prelude::*,
 };
-
-// theoretically we could exceed the limit outside of the player speed (going down hill)
-const TURN_SPEED: f32 = 0.001;
-const MAX_TURN_SPEED: f32 = 0.03;
-const FORWARD_SPEED: f32 = 0.001;
-const MAX_SPEED: f32 = 0.05;
-const MAX_CAM_DISTANCE: f32 = 7.;
+use wheel::constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED};
 
 fn main() {
     App::new()
