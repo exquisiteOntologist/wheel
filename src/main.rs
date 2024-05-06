@@ -13,6 +13,7 @@ const TURN_SPEED: f32 = 0.001;
 const MAX_TURN_SPEED: f32 = 0.03;
 const FORWARD_SPEED: f32 = 0.001;
 const MAX_SPEED: f32 = 0.05;
+const MAX_CAM_DISTANCE: f32 = 7.;
 
 fn main() {
     App::new()
@@ -107,6 +108,10 @@ fn setup(
             transform: Transform::from_xyz(0.0, 1.2, 0.0),
             ..default()
         },
+        // PbrBundle {
+        //     mesh: asset_server.load("models/Wheel.glb#Mesh0"),
+        //     ..default()
+        // },
         PlayerCharacter,
     ));
 
@@ -222,8 +227,27 @@ fn move_camera(
     mut q_char: Query<(&PlayerCharacter, &mut Transform)>,
     mut q_cam: Query<(&PlayerCamera, &mut Transform), Without<PlayerCharacter>>,
 ) {
-    let t_char = q_char.single_mut();
-    let t_cam = q_cam.single_mut();
+    let (char, mut t_char) = q_char.single_mut();
+    let (cam, mut t_cam) = q_cam.single_mut();
+
+    let distance_x = t_char.translation.x - t_cam.translation.x;
+    let distance_z = t_char.translation.z - t_cam.translation.z;
+    let camera_should_move_x = distance_x > MAX_CAM_DISTANCE || distance_x < -MAX_CAM_DISTANCE;
+    let camera_should_move_z = distance_z > MAX_CAM_DISTANCE || distance_z < -MAX_CAM_DISTANCE;
+    let mX = if distance_x > 0. { 1. } else { -1. };
+    let mZ = if distance_z > 0. { 1. } else { -1. };
+
+    println!("Distance X {:?}", distance_x);
+    println!("Move camera? {:?}", camera_should_move_x);
+
+    if camera_should_move_x {
+        t_cam.translation.x += 0.05 * mX;
+        t_cam.translation.z += 0.05 * mZ;
+    }
+
+    let t_cam_face_char = t_cam.looking_to(t_char.translation, Vec3::Y);
+    // t_cam.rotate_y(t_cam_face_char.rotation.y);
+    // t_cam.len
     // println!("I'm a character Y: {:?}", t_char.1.local_y());
     // println!("I'm a camera Y: {:?}", t_cam.1.local_y());
 }
