@@ -7,6 +7,7 @@ use bevy::{
     ecs::{
         query::Added,
         system::{Commands, Query, Res, ResMut},
+        world::FromWorld,
     },
     math::{primitives::Plane3d, EulerRot, Quat, Vec3},
     pbr::{
@@ -14,6 +15,7 @@ use bevy::{
         PbrBundle, StandardMaterial,
     },
     render::{
+        camera::{PerspectiveProjection, Projection},
         color::Color,
         mesh::{Mesh, Meshable},
     },
@@ -53,10 +55,20 @@ pub fn setup(
         PlayerCamera,
     ));
 
+    let tex_sand = asset_server.load("textures/tex_exp.png");
+
     // Plane
     commands.spawn(PbrBundle {
         mesh: meshes.add(Plane3d::default().mesh().size(500000.0, 500000.0)),
-        material: materials.add(Color::hex("#887A63").unwrap().as_rgba()),
+        // material: materials.add(Color::hex("#887A63").unwrap().as_rgba()),
+        // see https://bevyengine.org/news/bevy-0-12/#asset-meta-files
+        // see https://github.com/bevyengine/bevy/issues/399#issuecomment-2042133456
+        material: materials.add(StandardMaterial {
+            // base_color: Color::hex("#887A63").unwrap(),
+            base_color_texture: Some(tex_sand.clone()),
+            // alpha_mode: bevy::pbr::AlphaMode::Opaque,
+            ..default()
+        }),
         ..default()
     });
 
