@@ -154,7 +154,17 @@ pub fn move_camera(
         // t_cam.translation += dir * FORWARD_SPEED * time.delta_seconds();
         // t_cam.translation += dir * game.camera.speed_z * time.delta_seconds();
     }
+    // let mut x_cam = t_cam.clone();
+    // x_cam.rotation.y = 0.;
+    // x_cam.rotate_local_y(game.player_wheel.speed_y * 10.);
+    // x_cam.rotate_around(t_char.translation.xyz(), x_cam.rotation);
+
     t_cam.look_at(t_char.translation.xyz(), Vec3::Y);
+    t_cam.rotate_local_y(game.player_wheel.speed_y * 10.); // reveal more of screen in turn-direction
+
+    // t_cam.translation.x += (game.player_wheel.speed_y);
+    // t_cam.translation.x = x_cam.translation.x;
+    // t_cam.translation.z = x_cam.translation.z;
 
     // here we correct the z rotation based on the y rotation
     // https://stackoverflow.com/a/4021898
