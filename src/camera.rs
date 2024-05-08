@@ -65,9 +65,10 @@ pub fn move_camera(
     let rotation = wheel_y_rotation(&t_char.rotation);
     let char_direction = get_char_direction(rotation);
 
-    let dist_behind_char = -15.;
-    let mut tran_behind_char = t_cam.clone();
-    tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char; /* * time.delta_seconds(); */
+    // let dist_behind_char = -15.;
+    // let mut tran_behind_char = t_cam.clone();
+    // tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char; /* * time.delta_seconds(); */
+    let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction);
     // let rotation_behind = wheel_y_rotation(&tran_behind_char.rotation);
     // let direction_to_behind = Direction3d::new(rotation_behind * -Vec3::X).unwrap();
     //
@@ -122,6 +123,17 @@ pub fn move_camera(
         "cam rot (after) X [{:1}] Y [{:2}] Z [{:3}]",
         t_cam.rotation.x, t_cam.rotation.y, t_cam.rotation.z
     );
+}
+
+fn get_tran_behind_char(
+    t_cam: &Transform,
+    t_char: &Transform,
+    char_direction: Direction3d,
+) -> Transform {
+    let dist_behind_char = -15.;
+    let mut tran_behind_char = t_cam.clone();
+    tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char;
+    tran_behind_char
 }
 
 fn move_cam_to(t_cam: &mut Mut<Transform>, t_dest: &Transform) {
