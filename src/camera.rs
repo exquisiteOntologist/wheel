@@ -91,16 +91,33 @@ pub fn move_camera(
     let d = distance.max(game.camera.speed_z);
 
     // BEGIN movement
-    let rotation = wheel_y_rotation(&t_char.rotation);
-    let direction = Direction3d::new(rotation * -Vec3::X).unwrap();
+    // let rotation = wheel_y_rotation(&t_char.rotation);
+    // let direction = Direction3d::new(rotation * -Vec3::X).unwrap();
     // make camera translation match character's, except further back
     // t_cam.translation = t_char.translation + direction * -d;
     // elevate camera
     // t_cam.translation.y = 3.;
     // END movement
+    //
+    let rotation = wheel_y_rotation(&t_char.rotation);
+    let direction = Direction3d::new(rotation * -Vec3::X).unwrap();
+    let dist_behind_char = -15.;
+
+    let mut tran_behind_char = t_cam.clone();
+    tran_behind_char.translation = t_char.translation + direction * dist_behind_char; /* * time.delta_seconds(); */
+    // let rotation_behind = wheel_y_rotation(&tran_behind_char.rotation);
+    // let direction_to_behind = Direction3d::new(rotation_behind * -Vec3::X).unwrap();
+    //
+    // the further away the faster we want to move the camera
     let s_scale = distance / MAX_CAM_DISTANCE;
-    let s_speed_multi = game.player_wheel.speed_z * 100. * s_scale;
-    t_cam.translation += direction * s_speed_multi * time.delta_seconds();
+    // let s_speed_multi = game.player_wheel.speed_z * 100. * s_scale;
+    let s_speed_multi = game.player_wheel.speed_z * 10.;
+
+    // t_cam.translation += direction_to_behind * s_speed_multi * time.delta_seconds();
+    // t_cam.translation = tran_behind_char.translation;
+    // t_cam.translation += direction_to_behind * s_speed_multi * time.delta_seconds();
+    t_cam.translation.x += (tran_behind_char.translation.x - t_cam.translation.x) * 0.01;
+    t_cam.translation.z += (tran_behind_char.translation.z - t_cam.translation.z) * 0.01;
     t_cam.translation.y = 3.;
 
     println!("cam speed {:?}", game.camera.speed_z);
@@ -164,13 +181,13 @@ pub fn move_camera(
         // t_cam.translation += dir * FORWARD_SPEED * time.delta_seconds();
         // t_cam.translation += dir * game.camera.speed_z * time.delta_seconds();
     }
-    let mut x_cam = t_cam.clone();
+    // let mut x_cam = t_cam.clone();
     // x_cam.rotation.y = 0.;
     // x_cam.rotate_local_y(game.player_wheel.speed_y * 10.);
     // x_cam.rotate_around(t_char.translation.xyz(), x_cam.rotation);
 
     t_cam.look_at(t_char.translation.xyz(), Vec3::Y);
-    t_cam.rotate_local_y(game.player_wheel.speed_y * 10.); // reveal more of screen in turn-direction
+    // t_cam.rotate_local_y(game.player_wheel.speed_y * 10.); // reveal more of screen in turn-direction
 
     // let mut t_rot = x_cam.rotation;
     // t_rot.x = 0.;
@@ -188,7 +205,7 @@ pub fn move_camera(
 
     // here we correct the z rotation based on the y rotation
     // https://stackoverflow.com/a/4021898
-    let m_z = if t_cam.rotation.y >= 0. { 1. } else { -1. };
+    // let m_z = if t_cam.rotation.y >= 0. { 1. } else { -1. };
     // t_cam.rotation.z *= m_z;
 
     println!(
