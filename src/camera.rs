@@ -186,8 +186,13 @@ pub fn move_camera(
     // x_cam.rotate_local_y(game.player_wheel.speed_y * 10.);
     // x_cam.rotate_around(t_char.translation.xyz(), x_cam.rotation);
 
-    t_cam.look_at(t_char.translation.xyz(), Vec3::Y);
+    // t_cam.look_at(t_char.translation.xyz(), Vec3::Y);
     // t_cam.rotate_local_y(game.player_wheel.speed_y * 10.); // reveal more of screen in turn-direction
+
+    let mut tran_infront_char = t_cam.clone();
+    let dist_infront_char = 10.;
+    tran_infront_char.translation = t_char.translation + direction * dist_infront_char; /* * time.delta_seconds(); */
+    t_cam.look_at(tran_infront_char.translation.xyz(), Vec3::Y);
 
     // let mut t_rot = x_cam.rotation;
     // t_rot.x = 0.;
