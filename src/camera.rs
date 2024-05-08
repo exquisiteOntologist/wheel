@@ -17,7 +17,7 @@ pub fn move_camera(
     adjust_camera_speed(&t_cam, &t_char, &mut game);
 
     let distance = t_cam.translation.distance(t_char.translation);
-    let d = distance.max(game.camera.speed_z);
+    // let d = distance.max(game.camera.speed_z);
 
     let rotation = wheel_y_rotation(&t_char.rotation);
     let char_direction = get_char_direction(rotation);
@@ -29,10 +29,6 @@ pub fn move_camera(
     // let s_speed_multi = game.player_wheel.speed_z * 100. * s_scale;
     let s_speed_multi = game.player_wheel.speed_z * 10.;
 
-    // t_cam.translation = tran_behind_char.translation; // exactly behind
-    // t_cam.translation += direction_to_behind * s_speed_multi * time.delta_seconds();
-    // t_cam.translation.x += (tran_behind_char.translation.x - t_cam.translation.x) * 0.01;
-    // t_cam.translation.z += (tran_behind_char.translation.z - t_cam.translation.z) * 0.01;
     move_cam_to(&mut t_cam, &tran_behind_char);
     set_cam_height(&mut t_cam);
 
@@ -43,33 +39,7 @@ pub fn move_camera(
         t_cam.rotation.y, t_char.rotation.y
     );
 
-    // let t_cam_face_char = t_cam.looking_at(
-    //     Vec3::new(
-    //         t_char.translation.x,
-    //         t_char.translation.y + 1.,
-    //         t_char.translation.z,
-    //     ),
-    //     // Vec3::new(t_char.translation.x, 1.0, t_char.translation.z),
-    //     Vec3::Y,
-    // );
-    // let rot_diff = t_cam.rotation.y - t_cam_face_char.rotation.y;
-
-    // println!("rot y diff {:?}", rot_diff);
-
-    // let cam_spin_m = if rot_diff > 0.001 {
-    //     -1.
-    // } else if rot_diff < -0.001 {
-    //     1.
-    // } else {
-    //     0.
-    // };
-
-    // if cam_spin_m != 0. {
-    //     // t_cam.rotate_y(0.001 * cam_spin_m);
-    // }
-
     look_in_front(&mut t_cam, &t_char, char_direction);
-    // t_cam.look_at(t_char.translation.xyz(), Vec3::Y);
 
     println!(
         "cam rot (after) X [{:1}] Y [{:2}] Z [{:3}]",
@@ -131,7 +101,7 @@ fn move_cam_to(t_cam: &mut Mut<Transform>, t_dest: &Transform) {
     t_cam.translation.z += (t_dest.translation.z - t_cam.translation.z) * 0.01;
 }
 
-fn move_cam_exactly_behind(
+fn _move_cam_exactly_behind(
     t_cam: &mut Mut<Transform>,
     t_char: &Transform,
     char_direction: Direction3d,
@@ -139,6 +109,29 @@ fn move_cam_exactly_behind(
     // make camera translation match character's, except further back
     t_cam.translation = t_char.translation + char_direction * -10.;
     // t_cam.translation = t_char.translation + char_direction * -d;
+}
+
+fn _turn_move(
+    t_cam: &mut Mut<Transform>,
+    char_direction: Direction3d,
+    game: &mut ResMut<Game>,
+    time: &Res<Time>,
+) {
+    t_cam.translation += char_direction * (game.player_wheel.speed_z * 10.) * time.delta_seconds();
+}
+
+fn _get_turn_multiplier(t_cam: &Transform, t_dest: &Transform) -> f32 {
+    let rot_diff = t_cam.rotation.y - t_dest.rotation.y;
+
+    println!("rot y diff {:?}", rot_diff);
+
+    if rot_diff > 0.001 {
+        -1.
+    } else if rot_diff < -0.001 {
+        1.
+    } else {
+        0.
+    }
 }
 
 fn set_cam_height(t_cam: &mut Mut<Transform>) {
@@ -156,4 +149,8 @@ fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direc
     let dist_infront_char = 5.;
     tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_seconds(); */
     t_cam.look_at(tran_infront_char.translation.xyz(), Vec3::Y);
+}
+
+fn _look_at_char(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>) {
+    t_cam.look_at(t_char.translation.xyz(), Vec3::Y);
 }
