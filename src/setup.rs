@@ -61,9 +61,13 @@ pub fn setup(
     let tex_checkers =
         asset_server.load_with_settings("textures/checkers.png", image_ground_settings);
 
-    let mut ground_mesh: Mesh = Plane3d::default().mesh().size(40., 40.).build();
+    let ground_size = (5000., 5000.);
+    let mut ground_mesh: Mesh = Plane3d::default()
+        .mesh()
+        .size(ground_size.0, ground_size.1)
+        .build();
 
-    mesh_update_uv(&mut ground_mesh, 20., 20.);
+    mesh_update_uv(&mut ground_mesh, ground_size.0 / 2., ground_size.1 / 2.);
 
     // Plane
     commands.spawn(PbrBundle {
