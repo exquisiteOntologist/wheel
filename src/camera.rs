@@ -63,11 +63,11 @@ pub fn move_camera(
     // END "exactly behind"
     //
     let rotation = wheel_y_rotation(&t_char.rotation);
-    let direction = Direction3d::new(rotation * -Vec3::X).unwrap();
-    let dist_behind_char = -15.;
+    let char_direction = get_char_direction(rotation);
 
+    let dist_behind_char = -15.;
     let mut tran_behind_char = t_cam.clone();
-    tran_behind_char.translation = t_char.translation + direction * dist_behind_char; /* * time.delta_seconds(); */
+    tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char; /* * time.delta_seconds(); */
     // let rotation_behind = wheel_y_rotation(&tran_behind_char.rotation);
     // let direction_to_behind = Direction3d::new(rotation_behind * -Vec3::X).unwrap();
     //
@@ -113,14 +113,24 @@ pub fn move_camera(
         // t_cam.rotate_y(0.001 * cam_spin_m);
     }
 
-    let mut tran_infront_char = t_cam.clone();
-    let dist_infront_char = 5.;
-    tran_infront_char.translation = t_char.translation + direction * dist_infront_char; /* * time.delta_seconds(); */
-    t_cam.look_at(tran_infront_char.translation.xyz(), Vec3::Y);
+    look_in_front(&mut t_cam, &t_char, char_direction);
     // t_cam.look_at(t_char.translation.xyz(), Vec3::Y);
 
     println!(
         "cam rot X [{:1}] Y [{:2}] Z [{:3}]",
         t_cam.rotation.x, t_cam.rotation.y, t_cam.rotation.z
     );
+}
+
+fn get_char_direction(rotation: Quat) -> Direction3d {
+    Direction3d::new(rotation * -Vec3::X).unwrap()
+}
+
+/// Make camera look infront of the character.
+/// The direction argument represents the direction the character is facing.
+fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direction: Direction3d) {
+    let mut tran_infront_char = t_cam.clone().to_owned();
+    let dist_infront_char = 5.;
+    tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_seconds(); */
+    t_cam.look_at(tran_infront_char.translation.xyz(), Vec3::Y);
 }
