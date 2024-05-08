@@ -9,7 +9,7 @@ use bevy::{
         system::{Commands, Query, Res, ResMut},
         world::FromWorld,
     },
-    math::{primitives::Plane3d, EulerRot, Quat, Vec3},
+    math::{primitives::Plane3d, EulerRot, Quat, Vec2, Vec3},
     pbr::{
         light_consts, CascadeShadowConfigBuilder, DirectionalLight, DirectionalLightBundle,
         PbrBundle, StandardMaterial,
@@ -17,7 +17,8 @@ use bevy::{
     render::{
         camera::{PerspectiveProjection, Projection},
         color::Color,
-        mesh::{Mesh, Meshable},
+        mesh::{shape::Quad, Mesh, Meshable, VertexAttributeValues},
+        texture::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor},
     },
     scene::SceneBundle,
     transform::components::Transform,
@@ -55,17 +56,42 @@ pub fn setup(
         PlayerCamera,
     ));
 
-    let tex_sand = asset_server.load("textures/tex_exp.png");
+    // this is necessary, but also necessary is for the UV of the mesh to repeat
+    // https://www.reddit.com/r/bevy/comments/18qoctw/how_do_i_make_a_texture_tilerepeat_in_a_material/?rdt=35295
+    let sampler_desc = ImageSamplerDescriptor {
+        address_mode_u: ImageAddressMode::Repeat,
+        address_mode_v: ImageAddressMode::Repeat,
+        ..Default::default()
+    };
+
+    let settings = move |s: &mut ImageLoaderSettings| {
+        s.sampler = ImageSampler::Descriptor(sampler_desc.clone());
+    };
+
+    // let tex_sand = asset_server.load("textures/tex_exp.png");
+    let tex_checkers = asset_server.load_with_settings("textures/checkers.png", settings);
+
+    let mut ground_mesh: Mesh = Plane3d::default().mesh().size(40., 40.).build();
+
+    if let Some(VertexAttributeValues::Float32x2(uvs)) =
+        ground_mesh.attribute_mut(Mesh::ATTRIBUTE_UV_0)
+    {
+        for uv in uvs {
+            uv[0] *= 20.;
+            uv[1] *= 20.;
+        }
+    };
 
     // Plane
     commands.spawn(PbrBundle {
-        mesh: meshes.add(Plane3d::default().mesh().size(500000.0, 500000.0)),
+        // mesh: meshes.add(Plane3d::default().mesh().size(500000.0, 500000.0)),
+        mesh: meshes.add(ground_mesh),
         // material: materials.add(Color::hex("#887A63").unwrap().as_rgba()),
         // see https://bevyengine.org/news/bevy-0-12/#asset-meta-files
         // see https://github.com/bevyengine/bevy/issues/399#issuecomment-2042133456
         material: materials.add(StandardMaterial {
             // base_color: Color::hex("#887A63").unwrap(),
-            base_color_texture: Some(tex_sand.clone()),
+            base_color_texture: Some(tex_checkers.clone()),
             // alpha_mode: bevy::pbr::AlphaMode::Opaque,
             ..default()
         }),

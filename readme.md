@@ -11,5 +11,5 @@ cargo run --release
 or
 
 ```cli
-cargo run --features bevy/file_watcher
+cargo run --features bevy/file_watcher bevy/asset_processor
 ```
