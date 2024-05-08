@@ -27,6 +27,7 @@ use bevy::{
 
 use crate::{
     constants::MAX_SPEED,
+    meshes::{image_settings_with_repeat_image_sampler, mesh_update_uv},
     resources::{Animations, Game, PlayerCamera, PlayerCharacter},
 };
 
@@ -56,31 +57,13 @@ pub fn setup(
         PlayerCamera,
     ));
 
-    // this is necessary, but also necessary is for the UV of the mesh to repeat
-    // https://www.reddit.com/r/bevy/comments/18qoctw/how_do_i_make_a_texture_tilerepeat_in_a_material/?rdt=35295
-    let sampler_desc = ImageSamplerDescriptor {
-        address_mode_u: ImageAddressMode::Repeat,
-        address_mode_v: ImageAddressMode::Repeat,
-        ..Default::default()
-    };
-
-    let settings = move |s: &mut ImageLoaderSettings| {
-        s.sampler = ImageSampler::Descriptor(sampler_desc.clone());
-    };
-
-    // let tex_sand = asset_server.load("textures/tex_exp.png");
-    let tex_checkers = asset_server.load_with_settings("textures/checkers.png", settings);
+    let image_ground_settings = image_settings_with_repeat_image_sampler();
+    let tex_checkers =
+        asset_server.load_with_settings("textures/checkers.png", image_ground_settings);
 
     let mut ground_mesh: Mesh = Plane3d::default().mesh().size(40., 40.).build();
 
-    if let Some(VertexAttributeValues::Float32x2(uvs)) =
-        ground_mesh.attribute_mut(Mesh::ATTRIBUTE_UV_0)
-    {
-        for uv in uvs {
-            uv[0] *= 20.;
-            uv[1] *= 20.;
-        }
-    };
+    mesh_update_uv(&mut ground_mesh, 20., 20.);
 
     // Plane
     commands.spawn(PbrBundle {
