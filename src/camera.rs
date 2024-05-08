@@ -19,25 +19,11 @@ pub fn move_camera(
     let distance = t_cam.translation.distance(t_char.translation);
     let d = distance.max(game.camera.speed_z);
 
-    // BEGIN "exactly behind"
-    // let rotation = wheel_y_rotation(&t_char.rotation);
-    // let direction = Direction3d::new(rotation * -Vec3::X).unwrap();
-    // make camera translation match character's, except further back
-    // t_cam.translation = t_char.translation + direction * -d;
-    // elevate camera
-    // t_cam.translation.y = 3.;
-    // END "exactly behind"
-    //
     let rotation = wheel_y_rotation(&t_char.rotation);
     let char_direction = get_char_direction(rotation);
 
-    // let dist_behind_char = -15.;
-    // let mut tran_behind_char = t_cam.clone();
-    // tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char; /* * time.delta_seconds(); */
     let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction);
-    // let rotation_behind = wheel_y_rotation(&tran_behind_char.rotation);
-    // let direction_to_behind = Direction3d::new(rotation_behind * -Vec3::X).unwrap();
-    //
+
     // the further away the faster we want to move the camera
     let s_scale = distance / MAX_CAM_DISTANCE;
     // let s_speed_multi = game.player_wheel.speed_z * 100. * s_scale;
@@ -143,6 +129,16 @@ fn get_tran_behind_char(
 fn move_cam_to(t_cam: &mut Mut<Transform>, t_dest: &Transform) {
     t_cam.translation.x += (t_dest.translation.x - t_cam.translation.x) * 0.01;
     t_cam.translation.z += (t_dest.translation.z - t_cam.translation.z) * 0.01;
+}
+
+fn move_cam_exactly_behind(
+    t_cam: &mut Mut<Transform>,
+    t_char: &Transform,
+    char_direction: Direction3d,
+) {
+    // make camera translation match character's, except further back
+    t_cam.translation = t_char.translation + char_direction * -10.;
+    // t_cam.translation = t_char.translation + char_direction * -d;
 }
 
 fn set_cam_height(t_cam: &mut Mut<Transform>) {
