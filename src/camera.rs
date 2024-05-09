@@ -22,7 +22,7 @@ pub fn move_camera(
     let rotation = wheel_y_rotation(&t_char.rotation);
     let char_direction = get_char_direction(rotation);
 
-    let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction);
+    let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction, &game);
 
     // the further away the faster we want to move the camera
     let s_scale = distance / MAX_CAM_DISTANCE;
@@ -89,9 +89,17 @@ fn get_tran_behind_char(
     t_cam: &Transform,
     t_char: &Transform,
     char_direction: Direction3d,
+    game: &ResMut<Game>,
 ) -> Transform {
-    let dist_behind_char = -15.;
+    // let dist_behind_char = -10.;
+    let m_y = if game.player_wheel.speed_y >= 0. {
+        -1.
+    } else {
+        1.
+    };
+    let dist_behind_char = -game.player_wheel.speed_z + (game.player_wheel.speed_y * 500. * m_y);
     let mut tran_behind_char = t_cam.clone();
+    // tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char;
     tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char;
     tran_behind_char
 }
