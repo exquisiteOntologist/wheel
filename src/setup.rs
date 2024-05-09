@@ -3,7 +3,11 @@ use std::f32::consts::PI;
 use bevy::{
     animation::AnimationPlayer,
     asset::{AssetServer, Assets},
-    core_pipeline::{core_3d::Camera3dBundle, tonemapping::DebandDither},
+    core_pipeline::{
+        core_3d::Camera3dBundle,
+        experimental::taa::{TemporalAntiAliasPlugin, TemporalAntiAliasSettings},
+        tonemapping::DebandDither,
+    },
     ecs::{
         query::Added,
         system::{Commands, Query, Res, ResMut},
@@ -11,7 +15,8 @@ use bevy::{
     math::{primitives::Plane3d, EulerRot, Quat, Vec3},
     pbr::{
         light_consts, CascadeShadowConfigBuilder, DirectionalLight, DirectionalLightBundle,
-        FogFalloff, FogSettings, PbrBundle, StandardMaterial,
+        FogFalloff, FogSettings, PbrBundle, ScreenSpaceAmbientOcclusionPlugin,
+        ScreenSpaceAmbientOcclusionSettings, StandardMaterial,
     },
     render::{
         color::Color,
@@ -68,6 +73,8 @@ pub fn setup(
             // falloff: FogFalloff::from_visibility(70.0),
             ..default()
         },
+        TemporalAntiAliasSettings { ..default() },
+        ScreenSpaceAmbientOcclusionSettings { ..default() },
         PlayerCamera,
     ));
 
