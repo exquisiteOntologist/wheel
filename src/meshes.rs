@@ -1,6 +1,9 @@
 use bevy::render::{
     mesh::{Mesh, VertexAttributeValues},
-    texture::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor},
+    texture::{
+        ImageAddressMode, ImageFilterMode, ImageLoaderSettings, ImageSampler,
+        ImageSamplerDescriptor,
+    },
 };
 
 // this is necessary, but also necessary is for the UV of the mesh to repeat
@@ -9,6 +12,13 @@ pub fn image_settings_with_repeat_image_sampler() -> impl Fn(&mut ImageLoaderSet
     let sampler_repeat_image: ImageSamplerDescriptor = ImageSamplerDescriptor {
         address_mode_u: ImageAddressMode::Repeat,
         address_mode_v: ImageAddressMode::Repeat,
+        address_mode_w: ImageAddressMode::Repeat,
+        mag_filter: ImageFilterMode::Nearest,
+        min_filter: ImageFilterMode::Linear,
+        mipmap_filter: ImageFilterMode::Linear,
+        lod_min_clamp: 0.0,
+        lod_max_clamp: 32.0,
+        anisotropy_clamp: 1,
         ..Default::default()
     };
 

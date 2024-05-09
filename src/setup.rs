@@ -3,22 +3,19 @@ use std::f32::consts::PI;
 use bevy::{
     animation::AnimationPlayer,
     asset::{AssetServer, Assets},
-    core_pipeline::core_3d::Camera3dBundle,
+    core_pipeline::{core_3d::Camera3dBundle, tonemapping::DebandDither},
     ecs::{
         query::Added,
         system::{Commands, Query, Res, ResMut},
-        world::FromWorld,
     },
-    math::{primitives::Plane3d, EulerRot, Quat, Vec2, Vec3},
+    math::{primitives::Plane3d, EulerRot, Quat, Vec3},
     pbr::{
         light_consts, CascadeShadowConfigBuilder, DirectionalLight, DirectionalLightBundle,
-        PbrBundle, StandardMaterial,
+        FogFalloff, FogSettings, PbrBundle, StandardMaterial,
     },
     render::{
-        camera::{PerspectiveProjection, Projection},
         color::Color,
-        mesh::{shape::Quad, Mesh, Meshable, VertexAttributeValues},
-        texture::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor},
+        mesh::{Mesh, Meshable},
     },
     scene::SceneBundle,
     transform::components::Transform,
@@ -52,10 +49,32 @@ pub fn setup(
         Camera3dBundle {
             transform: Transform::from_xyz(10.0, 3.0, 0.0)
                 .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
+            dither: DebandDither::Enabled,
+            ..default()
+        },
+        FogSettings {
+            color: Color::rgba(0.13, 0.14, 0.17, 1.),
+            falloff: FogFalloff::Linear {
+                start: 20.0,
+                end: 65.0,
+            },
+            // falloff: FogFalloff::from_visibility_color(0.3, Color::rgba(1., 1., 1., 1.)),
+            // falloff: FogFalloff::Atmospheric {
+            //     extinction: Vec3::new(x, y, z),
+            //     inscattering: Vec3::new(x, y, z),
+            // },
+            // falloff: FogFalloff::Exponential { density: 0.03 },
+            // objects retain visibility (>= 5% contrast) for up to 15 units
+            // falloff: FogFalloff::from_visibility(70.0),
             ..default()
         },
         PlayerCamera,
     ));
+
+    // Fog
+    // commands.spawn(
+    //     (),
+    // );
 
     let image_ground_settings = image_settings_with_repeat_image_sampler();
     let tex_checkers =
@@ -80,6 +99,7 @@ pub fn setup(
             // base_color: Color::hex("#887A63").unwrap(),
             base_color_texture: Some(tex_checkers.clone()),
             // alpha_mode: bevy::pbr::AlphaMode::Opaque,
+            fog_enabled: true,
             ..default()
         }),
         ..default()
