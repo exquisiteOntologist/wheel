@@ -93,11 +93,12 @@ fn get_tran_behind_char(
 ) -> Transform {
     // let dist_behind_char = -10.;
     let m_y = if game.player_wheel.speed_y >= 0. {
-        -1.
-    } else {
         1.
+    } else {
+        -1.
     };
-    let dist_behind_char = -game.player_wheel.speed_z + (game.player_wheel.speed_y * 500. * m_y);
+    let dist_behind_char =
+        -game.player_wheel.speed_z - (game.player_wheel.speed_y * 500. * m_y).max(5.);
     let mut tran_behind_char = t_cam.clone();
     // tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char;
     tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char;
