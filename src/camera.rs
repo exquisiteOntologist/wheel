@@ -1,5 +1,5 @@
 use crate::{
-    constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED},
+    constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED, MAX_TURN_SPEED},
     resources::{Game, PlayerCamera, PlayerCharacter},
     wheel::wheel_y_rotation,
 };
@@ -24,13 +24,16 @@ pub fn move_camera(
 
     let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction, &game);
 
+    // 5+((5/5)-(2/5))5
+
     // the further away the faster we want to move the camera
     let s_scale = distance / MAX_CAM_DISTANCE;
+    // let t_scale = game.player_wheel.speed_y / MAX_TURN_SPEED;
     // let s_speed_multi = game.player_wheel.speed_z * 100. * s_scale;
     let s_speed_multi = game.player_wheel.speed_z * 10.;
 
     move_cam_to(&mut t_cam, &tran_behind_char);
-    set_cam_height(&mut t_cam);
+    set_cam_height(&mut t_cam, &distance);
 
     println!("cam speed {:?}", game.camera.speed_z);
     println!("cam distance {:?}", distance);
@@ -143,8 +146,9 @@ fn _get_turn_multiplier(t_cam: &Transform, t_dest: &Transform) -> f32 {
     }
 }
 
-fn set_cam_height(t_cam: &mut Mut<Transform>) {
-    t_cam.translation.y = 3.;
+fn set_cam_height(t_cam: &mut Mut<Transform>, distance: &f32) {
+    let distance_fraction = distance / MAX_CAM_DISTANCE;
+    t_cam.translation.y = 3. + (1. * distance_fraction);
 }
 
 fn get_char_direction(rotation: Quat) -> Direction3d {
