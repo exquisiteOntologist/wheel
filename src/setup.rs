@@ -84,8 +84,8 @@ pub fn setup(
     // );
 
     let image_ground_settings = image_settings_with_repeat_image_sampler();
-    let tex_checkers =
-        asset_server.load_with_settings("textures/checkers.png", image_ground_settings);
+    let texture_ground =
+        asset_server.load_with_settings("textures/tex_exp.png", image_ground_settings);
 
     let ground_size = (5000., 5000.);
     let mut ground_mesh: Mesh = Plane3d::default()
@@ -104,7 +104,7 @@ pub fn setup(
         // see https://github.com/bevyengine/bevy/issues/399#issuecomment-2042133456
         material: materials.add(StandardMaterial {
             // base_color: Color::hex("#887A63").unwrap(),
-            base_color_texture: Some(tex_checkers.clone()),
+            base_color_texture: Some(texture_ground.clone()),
             // alpha_mode: bevy::pbr::AlphaMode::Opaque,
             fog_enabled: true,
             ..default()
