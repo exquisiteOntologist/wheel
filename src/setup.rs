@@ -4,8 +4,7 @@ use bevy::{
     animation::AnimationPlayer,
     asset::{AssetServer, Assets},
     core_pipeline::{
-        core_3d::Camera3dBundle,
-        experimental::taa::{TemporalAntiAliasPlugin, TemporalAntiAliasSettings},
+        core_3d::Camera3dBundle, experimental::taa::TemporalAntiAliasSettings,
         tonemapping::DebandDither,
     },
     ecs::{
@@ -15,8 +14,7 @@ use bevy::{
     math::{primitives::Plane3d, EulerRot, Quat, Vec3},
     pbr::{
         light_consts, CascadeShadowConfigBuilder, DirectionalLight, DirectionalLightBundle,
-        FogFalloff, FogSettings, PbrBundle, ScreenSpaceAmbientOcclusionPlugin,
-        ScreenSpaceAmbientOcclusionSettings, StandardMaterial,
+        FogFalloff, FogSettings, PbrBundle, ScreenSpaceAmbientOcclusionSettings, StandardMaterial,
     },
     render::{
         color::Color,
@@ -31,6 +29,7 @@ use crate::{
     constants::MAX_SPEED,
     meshes::{image_settings_with_repeat_image_sampler, mesh_update_uv},
     resources::{Animations, Game, PlayerCamera, PlayerCharacter},
+    utils::colours::rgba,
 };
 
 pub fn setup(
@@ -58,10 +57,12 @@ pub fn setup(
             ..default()
         },
         FogSettings {
-            color: Color::rgba(0.13, 0.14, 0.17, 1.),
+            // color: Color::rgba(0.13, 0.14, 0.17, 1.),
+            // color: Color::rgba(52. / 255., 167. / 255., 211. / 255., 0.5),
+            color: rgba(52., 167., 211., 0.5),
             falloff: FogFalloff::Linear {
-                start: 20.0,
-                end: 65.0,
+                start: 40.0,
+                end: 80.0,
             },
             // falloff: FogFalloff::from_visibility_color(0.3, Color::rgba(1., 1., 1., 1.)),
             // falloff: FogFalloff::Atmospheric {

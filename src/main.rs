@@ -1,15 +1,12 @@
 //! Rolls a player-controlled wheel
 
-use bevy::{
-    core_pipeline::experimental::taa::{TemporalAntiAliasBundle, TemporalAntiAliasPlugin},
-    pbr::DirectionalLightShadowMap,
-    prelude::*,
-};
+use bevy::{pbr::DirectionalLightShadowMap, prelude::*};
 use wheel::{
     camera::move_camera,
     controls::keyboard_control,
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
+    utils::colours::rgb,
     wheel::{move_wheel, spin_wheel},
 };
 
@@ -20,6 +17,9 @@ fn main() {
             brightness: 2000.,
         })
         .insert_resource(DirectionalLightShadowMap { size: 8192 })
+        // .insert_resource(ClearColor(Color::rgb(52. / 255., 167. / 255., 211. / 255.)))
+        // .insert_resource(ClearColor(rgb(114., 176., 213.)))
+        .insert_resource(ClearColor(rgb(52., 167., 211.)))
         .insert_resource(Msaa::Sample4)
         .init_resource::<Game>()
         .add_plugins((DefaultPlugins.set(WindowPlugin {
