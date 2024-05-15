@@ -1,5 +1,6 @@
 use crate::{
     constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED, MAX_TURN_SPEED},
+    movement::orientation::look_at_on_y,
     resources::{Game, PlayerCamera, PlayerCharacter},
     wheel::wheel_y_rotation,
 };
@@ -161,9 +162,5 @@ fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direc
     let mut tran_infront_char = t_cam.clone().to_owned();
     let dist_infront_char = 5.;
     tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_seconds(); */
-    t_cam.look_at(tran_infront_char.translation.xyz(), Vec3::Y);
-}
-
-fn _look_at_char(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>) {
-    t_cam.look_at(t_char.translation.xyz(), Vec3::Y);
+    look_at_on_y(t_cam, &tran_infront_char);
 }

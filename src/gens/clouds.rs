@@ -15,7 +15,10 @@ use bevy::{
     transform::components::Transform,
 };
 
-use crate::resources::{PlayerCamera, PlayerCharacter};
+use crate::{
+    movement::orientation::look_at_on_y,
+    resources::{PlayerCamera, PlayerCharacter},
+};
 
 #[derive(Component)]
 pub struct Cloud;
@@ -63,6 +66,6 @@ pub fn update_cloud_orientations(
 ) {
     let (_, t_cam) = q_cam.get_single_mut().unwrap();
     for (_, mut t_cloud) in &mut q_clouds {
-        t_cloud.look_at(t_cam.translation.xyz(), Vec3::Y);
+        look_at_on_y(&mut t_cloud, &t_cam);
     }
 }
