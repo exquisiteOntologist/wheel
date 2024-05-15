@@ -61,8 +61,8 @@ pub fn setup(
             // color: Color::rgba(52. / 255., 167. / 255., 211. / 255., 0.5),
             color: rgba(52., 167., 211., 0.5),
             falloff: FogFalloff::Linear {
-                start: 40.0,
-                end: 80.0,
+                start: 100.0,
+                end: 160.0,
             },
             // falloff: FogFalloff::from_visibility_color(0.3, Color::rgba(1., 1., 1., 1.)),
             // falloff: FogFalloff::Atmospheric {
