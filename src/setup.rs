@@ -27,6 +27,7 @@ use bevy::{
 
 use crate::{
     constants::MAX_SPEED,
+    gens::clouds::create_cloud,
     meshes::{image_settings_with_repeat_image_sampler, mesh_update_uv},
     resources::{Animations, Game, PlayerCamera, PlayerCharacter},
     utils::colours::rgba,
@@ -132,6 +133,18 @@ pub fn setup(
         .into(),
         ..default()
     });
+
+    // Cloud
+    commands.spawn(create_cloud(
+        &asset_server,
+        &mut meshes,
+        &mut materials,
+        // should use a position coordinates struct for this
+        10.,
+        40.,
+        15.,
+        20.,
+    ));
 
     // Wheel
     commands.spawn((
