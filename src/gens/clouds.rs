@@ -15,7 +15,7 @@ use bevy::{
     transform::components::Transform,
 };
 
-use crate::resources::PlayerCharacter;
+use crate::resources::{PlayerCamera, PlayerCharacter};
 
 #[derive(Component)]
 pub struct Cloud;
@@ -58,11 +58,11 @@ pub fn create_cloud<'a>(
 }
 
 pub fn update_cloud_orientations(
-    mut q_char: Query<(&PlayerCharacter, &mut Transform)>,
-    mut q_clouds: Query<(&Cloud, &mut Transform), Without<PlayerCharacter>>,
+    mut q_cam: Query<(&PlayerCamera, &mut Transform)>,
+    mut q_clouds: Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
 ) {
-    let (_, t_char) = q_char.get_single_mut().unwrap();
+    let (_, t_cam) = q_cam.get_single_mut().unwrap();
     for (_, mut t_cloud) in &mut q_clouds {
-        t_cloud.look_at(t_char.translation.xyz(), Vec3::Y);
+        t_cloud.look_at(t_cam.translation.xyz(), Vec3::Y);
     }
 }
