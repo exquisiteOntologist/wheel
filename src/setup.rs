@@ -169,6 +169,20 @@ pub fn setup(
             &mut meshes,
             &mut materials,
             // should use a position coordinates struct for this
+            15.,
+            50.,
+            10.,
+            20.,
+        ),
+        Cloud,
+    ));
+
+    commands.spawn((
+        create_cloud(
+            &asset_server,
+            &mut meshes,
+            &mut materials,
+            // should use a position coordinates struct for this
             20.,
             43.,
             15.5,

@@ -18,8 +18,6 @@ fn main() {
             brightness: 2000.,
         })
         .insert_resource(DirectionalLightShadowMap { size: 8192 })
-        // .insert_resource(ClearColor(Color::rgb(52. / 255., 167. / 255., 211. / 255.)))
-        // .insert_resource(ClearColor(rgb(114., 176., 213.)))
         .insert_resource(ClearColor(rgb(52., 167., 211.)))
         .insert_resource(Msaa::Sample4)
         .init_resource::<Game>()
@@ -32,7 +30,6 @@ fn main() {
             }),
             ..default()
         }),))
-        // .add_plugins((TemporalAntiAliasPlugin))
         .add_systems(Startup, setup)
         .add_systems(
             Update,
