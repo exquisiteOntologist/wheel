@@ -4,7 +4,7 @@ use bevy::{pbr::DirectionalLightShadowMap, prelude::*};
 use wheel::{
     camera::move_camera,
     controls::keyboard_control,
-    gens::clouds::update_cloud_orientations,
+    gens::clouds::{setup_clouds, update_cloud_orientations},
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
     utils::colours::rgb,
@@ -30,7 +30,7 @@ fn main() {
             }),
             ..default()
         }),))
-        .add_systems(Startup, setup)
+        .add_systems(Startup, (setup, setup_clouds))
         .add_systems(
             Update,
             (

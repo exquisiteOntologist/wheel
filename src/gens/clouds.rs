@@ -6,9 +6,9 @@ use bevy::{
     ecs::{
         component::Component,
         query::Without,
-        system::{Query, Res, ResMut},
+        system::{Commands, Query, Res, ResMut},
     },
-    math::{primitives::Plane3d, EulerRot, Quat, Vec3, Vec3Swizzles},
+    math::{primitives::Plane3d, EulerRot, Quat},
     pbr::{AlphaMode, PbrBundle, StandardMaterial},
     prelude::default,
     render::mesh::{Mesh, Meshable},
@@ -17,13 +17,95 @@ use bevy::{
 
 use crate::{
     movement::orientation::look_at_on_y,
-    resources::{PlayerCamera, PlayerCharacter},
+    resources::{Game, PlayerCamera},
 };
 
 #[derive(Component)]
 pub struct Cloud;
 
-const CLOUD_TEXTURES: [&str; 2] = ["textures/cloud-a.png", "textures/cloud-b.png"];
+pub fn setup_clouds(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut _game: ResMut<Game>,
+) {
+    commands.spawn((
+        create_cloud(
+            &asset_server,
+            &mut meshes,
+            &mut materials,
+            // should use a position coordinates struct for this
+            10.,
+            40.,
+            15.,
+            20.,
+        ),
+        Cloud,
+    ));
+
+    commands.spawn((
+        create_cloud(
+            &asset_server,
+            &mut meshes,
+            &mut materials,
+            // should use a position coordinates struct for this
+            12.,
+            38.,
+            15.5,
+            20.,
+        ),
+        Cloud,
+    ));
+
+    commands.spawn((
+        create_cloud(
+            &asset_server,
+            &mut meshes,
+            &mut materials,
+            // should use a position coordinates struct for this
+            15.,
+            50.,
+            10.,
+            20.,
+        ),
+        Cloud,
+    ));
+
+    commands.spawn((
+        create_cloud(
+            &asset_server,
+            &mut meshes,
+            &mut materials,
+            // should use a position coordinates struct for this
+            -15.,
+            -50.,
+            20.,
+            20.,
+        ),
+        Cloud,
+    ));
+
+    commands.spawn((
+        create_cloud(
+            &asset_server,
+            &mut meshes,
+            &mut materials,
+            // should use a position coordinates struct for this
+            20.,
+            43.,
+            15.5,
+            20.,
+        ),
+        Cloud,
+    ));
+}
+
+const CLOUD_TEXTURES: [&str; 3] = [
+    "textures/cloud-a.png",
+    "textures/cloud-b.png",
+    "textures/cloud-c.png",
+];
 
 pub fn create_cloud<'a>(
     asset_server: &Res<AssetServer>,
