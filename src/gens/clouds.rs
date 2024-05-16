@@ -9,7 +9,7 @@ use bevy::{
         system::{Commands, Query, Res, ResMut},
     },
     math::{primitives::Plane3d, EulerRot, Quat},
-    pbr::{AlphaMode, PbrBundle, StandardMaterial},
+    pbr::{AlphaMode, NotShadowCaster, PbrBundle, StandardMaterial},
     prelude::default,
     render::mesh::{Mesh, Meshable},
     transform::components::Transform,
@@ -23,6 +23,7 @@ use crate::{
 #[derive(Component)]
 pub struct Cloud;
 
+// TODO: Move cloud setup and update to a cloud-specific plugin or system
 pub fn setup_clouds(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -41,6 +42,7 @@ pub fn setup_clouds(
             15.,
             20.,
         ),
+        NotShadowCaster,
         Cloud,
     ));
 
@@ -55,6 +57,7 @@ pub fn setup_clouds(
             15.5,
             20.,
         ),
+        NotShadowCaster,
         Cloud,
     ));
 
@@ -69,6 +72,7 @@ pub fn setup_clouds(
             10.,
             20.,
         ),
+        NotShadowCaster,
         Cloud,
     ));
 
@@ -83,6 +87,7 @@ pub fn setup_clouds(
             20.,
             20.,
         ),
+        NotShadowCaster,
         Cloud,
     ));
 
@@ -97,6 +102,7 @@ pub fn setup_clouds(
             15.5,
             20.,
         ),
+        NotShadowCaster,
         Cloud,
     ));
 }
