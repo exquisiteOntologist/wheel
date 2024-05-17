@@ -14,11 +14,7 @@ use crate::{
     resources::{Game, PlayerCharacter},
 };
 
-pub fn spin_wheel(
-    mut q: Query<&mut Transform, With<PlayerCharacter>>,
-    time: Res<Time>,
-    game: ResMut<Game>,
-) {
+pub fn spin_wheel(mut q: Query<&mut Transform, With<PlayerCharacter>>, game: ResMut<Game>) {
     for mut t in &mut q {
         // spinning the wheel
         t.rotate_local_z(game.player_wheel.speed_z);

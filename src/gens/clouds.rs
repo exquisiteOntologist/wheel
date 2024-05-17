@@ -150,7 +150,7 @@ pub fn create_cloud<'a>(
 }
 
 pub fn update_clouds(
-    mut q_cam: Query<(&PlayerCamera, &mut Transform)>,
+    q_cam: Query<(&PlayerCamera, &Transform)>,
     mut q_clouds: Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
 ) {
     update_cloud_positions(&mut q_clouds);
@@ -168,8 +168,8 @@ pub fn update_cloud_positions(
 }
 
 pub fn update_cloud_orientations(
-    q_cam: &Query<(&PlayerCamera, &mut Transform)>,
-    mut q_clouds: &mut Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
+    q_cam: &Query<(&PlayerCamera, &Transform)>,
+    q_clouds: &mut Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
 ) {
     let (_, t_cam) = q_cam.single();
     for (_, mut t_cloud) in q_clouds {
