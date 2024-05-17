@@ -7,7 +7,6 @@ use bevy::{
         component::Component,
         query::Without,
         system::{Commands, Query, Res, ResMut},
-        world::Mut,
     },
     math::{primitives::Plane3d, EulerRot, Quat},
     pbr::{AlphaMode, NotShadowCaster, PbrBundle, StandardMaterial},
@@ -16,10 +15,7 @@ use bevy::{
     transform::components::Transform,
 };
 
-use crate::{
-    movement::orientation::look_at_on_y,
-    resources::{Game, PlayerCamera},
-};
+use crate::{movement::orientation::look_at_on_y, resources::PlayerCamera};
 
 #[derive(Component)]
 pub struct Cloud;
@@ -30,7 +26,6 @@ pub fn setup_clouds(
     asset_server: Res<AssetServer>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
-    mut _game: ResMut<Game>,
 ) {
     commands.spawn((
         create_cloud(
@@ -121,7 +116,7 @@ pub fn create_cloud<'a>(
     x: f32,
     z: f32,
     y: f32,
-    rot_y: f32,
+    _rot_y: f32,
 ) -> PbrBundle {
     let mut rng = rand::thread_rng();
     // let x = rand::random::<f32>();
