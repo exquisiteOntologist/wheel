@@ -7,6 +7,7 @@ use bevy::{
         component::Component,
         query::Without,
         system::{Commands, Query, Res, ResMut},
+        world::Mut,
     },
     math::{primitives::Plane3d, EulerRot, Quat},
     pbr::{AlphaMode, NotShadowCaster, PbrBundle, StandardMaterial},
@@ -69,7 +70,7 @@ pub fn setup_clouds(
             // should use a position coordinates struct for this
             15.,
             50.,
-            10.,
+            13.,
             20.,
         ),
         NotShadowCaster,
@@ -148,12 +149,30 @@ pub fn create_cloud<'a>(
     }
 }
 
-pub fn update_cloud_orientations(
+pub fn update_clouds(
     mut q_cam: Query<(&PlayerCamera, &mut Transform)>,
     mut q_clouds: Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
 ) {
-    let (_, t_cam) = q_cam.get_single_mut().unwrap();
-    for (_, mut t_cloud) in &mut q_clouds {
+    update_cloud_positions(&mut q_clouds);
+    update_cloud_orientations(&q_cam, &mut q_clouds);
+}
+
+pub fn update_cloud_positions(
+    q_clouds: &mut Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
+) {
+    // Clouds are affected by wind and drift
+    for (_, mut t_cloud) in q_clouds {
+        t_cloud.translation.x -= 0.009;
+        t_cloud.translation.z -= 0.005;
+    }
+}
+
+pub fn update_cloud_orientations(
+    q_cam: &Query<(&PlayerCamera, &mut Transform)>,
+    mut q_clouds: &mut Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
+) {
+    let (_, t_cam) = q_cam.single();
+    for (_, mut t_cloud) in q_clouds {
         look_at_on_y(&mut t_cloud, &t_cam);
     }
 }

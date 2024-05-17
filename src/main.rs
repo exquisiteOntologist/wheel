@@ -4,7 +4,7 @@ use bevy::{pbr::DirectionalLightShadowMap, prelude::*};
 use wheel::{
     camera::move_camera,
     controls::keyboard_control,
-    gens::clouds::{setup_clouds, update_cloud_orientations},
+    gens::clouds::{setup_clouds, update_cloud_orientations, update_clouds},
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
     utils::colours::rgb,
@@ -39,7 +39,7 @@ fn main() {
                 move_wheel,
                 move_camera,
                 keyboard_control,
-                update_cloud_orientations,
+                update_clouds,
             ),
         )
         .run();
