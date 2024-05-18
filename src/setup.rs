@@ -24,6 +24,10 @@ use bevy::{
     transform::components::Transform,
     utils::default,
 };
+use iyes_perf_ui::{
+    diagnostics::{PerfUiEntryFPS, PerfUiEntryFPSWorst},
+    PerfUiRoot,
+};
 
 use crate::{
     constants::MAX_SPEED,
@@ -47,6 +51,17 @@ pub fn setup(
         // asset_server.load("models/animated/Fox.glb#Animation0"),
         // asset_server.load("models/Wheel.glb#x"),
     ]));
+
+    // Performance FPS
+    commands.spawn((
+        PerfUiRoot {
+            display_labels: false,
+            layout_horizontal: true,
+            ..default()
+        },
+        PerfUiEntryFPSWorst::default(),
+        PerfUiEntryFPS::default(),
+    ));
 
     // Camera
     commands.spawn((

@@ -1,10 +1,11 @@
 //! Rolls a player-controlled wheel
 
 use bevy::{pbr::DirectionalLightShadowMap, prelude::*};
+use iyes_perf_ui::PerfUiPlugin;
 use wheel::{
     camera::move_camera,
     controls::keyboard_control,
-    gens::clouds::{setup_clouds, update_cloud_orientations, update_clouds},
+    gens::clouds::{setup_clouds, update_clouds},
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
     utils::colours::rgb,
@@ -30,6 +31,8 @@ fn main() {
             }),
             ..default()
         }),))
+        .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
+        .add_plugins(PerfUiPlugin)
         .add_systems(Startup, (setup, setup_clouds))
         .add_systems(
             Update,
