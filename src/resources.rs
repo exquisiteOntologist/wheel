@@ -5,7 +5,6 @@ use bevy::{
 };
 
 #[derive(Resource)]
-// pub struct Animations(pub(crate) ());
 pub struct Animations(pub(crate) Vec<Handle<AnimationClip>>);
 
 #[derive(Component)]

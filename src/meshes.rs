@@ -7,6 +7,7 @@ use bevy::render::{
 };
 
 // this is necessary, but also necessary is for the UV of the mesh to repeat
+// the critical part of repeating the image is the address mode being set to repeat
 // https://www.reddit.com/r/bevy/comments/18qoctw/how_do_i_make_a_texture_tilerepeat_in_a_material/?rdt=35295
 pub fn image_settings_with_repeat_image_sampler() -> impl Fn(&mut ImageLoaderSettings) {
     let sampler_repeat_image: ImageSamplerDescriptor = ImageSamplerDescriptor {
