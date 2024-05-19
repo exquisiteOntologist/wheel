@@ -2,6 +2,7 @@ use rand::Rng;
 use std::f32::consts::PI;
 
 use bevy::{
+    app::{App, Plugin, Startup, Update},
     asset::{AssetServer, Assets},
     ecs::{
         component::Component,
@@ -169,5 +170,14 @@ pub fn update_cloud_orientations(
     let (_, t_cam) = q_cam.single();
     for (_, mut t_cloud) in q_clouds {
         look_at_on_y(&mut t_cloud, &t_cam);
+    }
+}
+
+pub struct CloudPlugin;
+
+impl Plugin for CloudPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Startup, setup_clouds);
+        app.add_systems(Update, update_clouds);
     }
 }

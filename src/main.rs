@@ -5,7 +5,7 @@ use iyes_perf_ui::PerfUiPlugin;
 use wheel::{
     camera::move_camera,
     controls::keyboard_control,
-    gens::clouds::{setup_clouds, update_clouds},
+    gens::clouds::CloudPlugin,
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
     utils::colours::rgb,
@@ -13,6 +13,8 @@ use wheel::{
 };
 
 fn main() {
+    std::env::set_var("RUST_BACKTRACE", "1");
+
     App::new()
         .insert_resource(AmbientLight {
             color: Color::WHITE,
@@ -33,7 +35,8 @@ fn main() {
         }),))
         .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
         .add_plugins(PerfUiPlugin)
-        .add_systems(Startup, (setup, setup_clouds))
+        .add_plugins(CloudPlugin)
+        .add_systems(Startup, setup)
         .add_systems(
             Update,
             (
@@ -42,7 +45,6 @@ fn main() {
                 move_wheel,
                 move_camera,
                 keyboard_control,
-                update_clouds,
             ),
         )
         .run();
