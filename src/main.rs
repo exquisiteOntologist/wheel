@@ -3,13 +3,13 @@
 use bevy::{pbr::DirectionalLightShadowMap, prelude::*};
 use iyes_perf_ui::PerfUiPlugin;
 use wheel::{
-    camera::move_camera,
+    camera::PCameraPlugin,
     controls::keyboard_control,
     gens::clouds::CloudPlugin,
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
     utils::colours::rgb,
-    wheel::{move_wheel, spin_wheel, WheelPlugin},
+    wheel::WheelPlugin,
 };
 
 fn main() {
@@ -35,11 +35,8 @@ fn main() {
         }),))
         .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
         .add_plugins(PerfUiPlugin)
-        .add_plugins((WheelPlugin, CloudPlugin))
+        .add_plugins((PCameraPlugin, WheelPlugin, CloudPlugin))
         .add_systems(Startup, setup)
-        .add_systems(
-            Update,
-            (setup_scene_once_loaded, move_camera, keyboard_control),
-        )
+        .add_systems(Update, (setup_scene_once_loaded, keyboard_control))
         .run();
 }

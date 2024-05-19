@@ -164,3 +164,11 @@ fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direc
     tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_seconds(); */
     look_at_on_y(t_cam, &tran_infront_char);
 }
+
+pub struct PCameraPlugin;
+
+impl Plugin for PCameraPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Update, move_camera);
+    }
+}
