@@ -82,3 +82,11 @@ pub fn move_wheel(
         game.player_wheel.speed_y = 0.;
     }
 }
+
+pub struct WheelPlugin;
+
+impl Plugin for WheelPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Update, (spin_wheel, move_wheel));
+    }
+}

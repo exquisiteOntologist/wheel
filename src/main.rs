@@ -9,7 +9,7 @@ use wheel::{
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
     utils::colours::rgb,
-    wheel::{move_wheel, spin_wheel},
+    wheel::{move_wheel, spin_wheel, WheelPlugin},
 };
 
 fn main() {
@@ -35,17 +35,11 @@ fn main() {
         }),))
         .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
         .add_plugins(PerfUiPlugin)
-        .add_plugins(CloudPlugin)
+        .add_plugins((WheelPlugin, CloudPlugin))
         .add_systems(Startup, setup)
         .add_systems(
             Update,
-            (
-                setup_scene_once_loaded,
-                spin_wheel,
-                move_wheel,
-                move_camera,
-                keyboard_control,
-            ),
+            (setup_scene_once_loaded, move_camera, keyboard_control),
         )
         .run();
 }
