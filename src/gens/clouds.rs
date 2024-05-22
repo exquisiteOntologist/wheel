@@ -28,13 +28,13 @@ pub fn setup_clouds(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, 10., 40., 13.),
+        create_cloud(&asset_server, &mut meshes, &mut materials, 5., 40., 13.),
         NotShadowCaster,
         Cloud,
     ));
 
     commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, 20., 38., 12.),
+        create_cloud(&asset_server, &mut meshes, &mut materials, 45., 38., 12.),
         NotShadowCaster,
         Cloud,
     ));
@@ -46,7 +46,7 @@ pub fn setup_clouds(
     ));
 
     commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, -15., -50., 12.),
+        create_cloud(&asset_server, &mut meshes, &mut materials, -30., -50., 12.),
         NotShadowCaster,
         Cloud,
     ));
@@ -58,7 +58,7 @@ pub fn setup_clouds(
     ));
 
     commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, 20., 43., 12.),
+        create_cloud(&asset_server, &mut meshes, &mut materials, 15., 43., 12.),
         NotShadowCaster,
         Cloud,
     ));
