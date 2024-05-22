@@ -171,10 +171,10 @@ pub fn setup(
 
 // Once the scene is loaded, start the animation
 pub fn setup_scene_once_loaded(
-    animations: Res<Animations>,
+    _animations: Res<Animations>,
     mut players: Query<&mut AnimationPlayer, Added<AnimationPlayer>>,
 ) {
-    for mut player in &mut players {
-        player.play(animations.0[0].clone_weak()).repeat();
+    for mut _player in &mut players {
+        // player.play(animations.0[0].clone_weak()).repeat();
     }
 }

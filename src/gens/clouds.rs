@@ -21,7 +21,6 @@ use crate::{movement::orientation::look_at_on_y, resources::PlayerCamera};
 #[derive(Component)]
 pub struct Cloud;
 
-// TODO: Move cloud setup and update to a cloud-specific plugin or system
 pub fn setup_clouds(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -29,85 +28,47 @@ pub fn setup_clouds(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     commands.spawn((
-        create_cloud(
-            &asset_server,
-            &mut meshes,
-            &mut materials,
-            // should use a position coordinates struct for this
-            10.,
-            40.,
-            15.,
-            20.,
-        ),
+        create_cloud(&asset_server, &mut meshes, &mut materials, 10., 40., 13.),
         NotShadowCaster,
         Cloud,
     ));
 
     commands.spawn((
-        create_cloud(
-            &asset_server,
-            &mut meshes,
-            &mut materials,
-            // should use a position coordinates struct for this
-            12.,
-            38.,
-            15.5,
-            20.,
-        ),
+        create_cloud(&asset_server, &mut meshes, &mut materials, 20., 38., 12.),
         NotShadowCaster,
         Cloud,
     ));
 
     commands.spawn((
-        create_cloud(
-            &asset_server,
-            &mut meshes,
-            &mut materials,
-            // should use a position coordinates struct for this
-            15.,
-            50.,
-            13.,
-            20.,
-        ),
+        create_cloud(&asset_server, &mut meshes, &mut materials, 30., 50., 15.),
         NotShadowCaster,
         Cloud,
     ));
 
     commands.spawn((
-        create_cloud(
-            &asset_server,
-            &mut meshes,
-            &mut materials,
-            // should use a position coordinates struct for this
-            -15.,
-            -50.,
-            20.,
-            20.,
-        ),
+        create_cloud(&asset_server, &mut meshes, &mut materials, -15., -50., 12.),
         NotShadowCaster,
         Cloud,
     ));
 
     commands.spawn((
-        create_cloud(
-            &asset_server,
-            &mut meshes,
-            &mut materials,
-            // should use a position coordinates struct for this
-            20.,
-            43.,
-            15.5,
-            20.,
-        ),
+        create_cloud(&asset_server, &mut meshes, &mut materials, -12., -35., 15.),
+        NotShadowCaster,
+        Cloud,
+    ));
+
+    commands.spawn((
+        create_cloud(&asset_server, &mut meshes, &mut materials, 20., 43., 12.),
         NotShadowCaster,
         Cloud,
     ));
 }
 
-const CLOUD_TEXTURES: [&str; 3] = [
+const CLOUD_TEXTURES: [&str; 4] = [
     "textures/cloud-a.png",
     "textures/cloud-b.png",
     "textures/cloud-c.png",
+    "textures/cloud-d.png",
 ];
 
 pub fn create_cloud<'a>(
@@ -117,20 +78,23 @@ pub fn create_cloud<'a>(
     x: f32,
     z: f32,
     y: f32,
-    _rot_y: f32,
 ) -> PbrBundle {
     let mut rng = rand::thread_rng();
     // let x = rand::random::<f32>();
-    let path_index = rng.gen_range(0..CLOUD_TEXTURES.len() - 1);
+    let path_index = rng.gen_range(0..CLOUD_TEXTURES.len() - 0);
     let texture_path = CLOUD_TEXTURES[path_index];
     let texture_cloud = asset_server.load(texture_path);
-    let mut cloud_mesh: Mesh = Plane3d::default().mesh().size(10., 10.).build();
+    let ratio = if path_index == 3 {
+        (17., 10.)
+    } else {
+        (10., 10.)
+    };
+    let mut cloud_mesh: Mesh = Plane3d::default().mesh().size(ratio.0, ratio.1).build();
 
-    let rotation = Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, -PI / 2.);
+    let rotation = Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, PI / 2.);
     cloud_mesh.rotate_by(rotation);
-    // Transform::from_rotation(Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, -PI / 3.5))
-
-    // TODO: Backface visibility of this plane
+    // cloud_mesh.rotate_by(Quat::from_rotation_x(0.5));
+    // cloud_mesh.rotated_by(Quat::from_rotation_y(0.));
 
     PbrBundle {
         mesh: meshes.add(cloud_mesh),
@@ -138,6 +102,9 @@ pub fn create_cloud<'a>(
             base_color_texture: Some(texture_cloud.clone()),
             alpha_mode: AlphaMode::Add,
             fog_enabled: false,
+            double_sided: true,
+            metallic: 0.3,
+            cull_mode: None,
             ..default()
         }),
         transform: Transform::from_xyz(x, y, z), //.looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),

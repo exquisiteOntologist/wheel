@@ -1,5 +1,5 @@
 use crate::{
-    constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED, MAX_TURN_SPEED},
+    constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED},
     movement::orientation::look_at_on_y,
     resources::{Game, PlayerCamera, PlayerCharacter},
     wheel::wheel_y_rotation,
@@ -71,7 +71,7 @@ fn adjust_camera_speed(t_cam: &Transform, t_char: &Transform, game: &mut ResMut<
     };
 
     if game.camera.speed_x != 0. {
-        let dir_m = (m_x);
+        let dir_m = m_x;
         game.camera.speed_x -= FORWARD_SPEED * (game.camera.speed_x / MAX_SPEED) * 0.5 * dir_m;
     }
 
@@ -80,7 +80,7 @@ fn adjust_camera_speed(t_cam: &Transform, t_char: &Transform, game: &mut ResMut<
     }
 
     if game.camera.speed_z != 0. {
-        let dir_m = (m_z);
+        let dir_m = m_z;
         game.camera.speed_z += FORWARD_SPEED * (game.camera.speed_z / MAX_SPEED) * 0.5 * dir_m;
     }
 
