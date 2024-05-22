@@ -91,7 +91,7 @@ pub fn create_cloud<'a>(
     };
     let mut cloud_mesh: Mesh = Plane3d::default().mesh().size(ratio.0, ratio.1).build();
 
-    let rotation = Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, PI / 2.);
+    let rotation = Quat::from_euler(EulerRot::ZYX, 0.0, PI / 1., PI / 2.);
     cloud_mesh.rotate_by(rotation);
     // cloud_mesh.rotate_by(Quat::from_rotation_x(0.5));
     // cloud_mesh.rotated_by(Quat::from_rotation_y(0.));
