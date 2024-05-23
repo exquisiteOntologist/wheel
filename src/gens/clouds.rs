@@ -171,7 +171,7 @@ pub fn distribute_clouds(
     q_clouds: &mut Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
 ) {
     let mut rng = rand::thread_rng();
-    let farthest_cloud = CLOUD_REGEN_DISTANCE / 2.;
+    let farthest_cloud = CLOUD_REGEN_DISTANCE - 10.;
     let (_, t_cam) = q_cam.get_single().unwrap();
     let mut i_c = 0.;
     for (_, mut t_cloud) in &mut q_clouds.iter_mut() {
@@ -194,7 +194,7 @@ pub fn distribute_clouds(
         let rotation = t_cloud.rotation;
         let dir = Direction3d::new(rotation * -Vec3::X).unwrap();
         let dist = (farthest_cloud / CLOUD_BUDGET as f32) * (i_c + 1.);
-        t_cloud.translation = dir * dist;
+        t_cloud.translation = t_cam.translation + dir * dist;
         t_cloud.rotate_around(t_cam.translation, rotation);
         t_cloud.translate_around(t_cam.translation, rotation);
         t_cloud.translation.y = elevation;
