@@ -9,7 +9,10 @@ use bevy::{
         query::Without,
         system::{Commands, Query, Res, ResMut},
     },
-    math::{primitives::Plane3d, EulerRot, Quat},
+    math::{
+        primitives::{Direction3d, Plane3d},
+        EulerRot, Quat, Vec3,
+    },
     pbr::{AlphaMode, NotShadowCaster, PbrBundle, StandardMaterial},
     prelude::default,
     render::mesh::{Mesh, Meshable},
@@ -17,6 +20,9 @@ use bevy::{
 };
 
 use crate::{movement::orientation::look_at_on_y, resources::PlayerCamera};
+
+const CLOUD_BUDGET: u32 = 30;
+const CLOUD_REGEN_DISTANCE: f32 = 300.;
 
 #[derive(Component)]
 pub struct Cloud;
@@ -27,41 +33,57 @@ pub fn setup_clouds(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, 5., 40., 13.),
-        NotShadowCaster,
-        Cloud,
-    ));
+    for _ in 0..CLOUD_BUDGET {
+        // we will update the translation at a later stage
+        commands.spawn((
+            create_cloud(
+                &asset_server,
+                &mut meshes,
+                &mut materials,
+                10000.,
+                10000.,
+                5.,
+            ),
+            NotShadowCaster,
+            Cloud,
+        ));
+    }
 
-    commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, 45., 38., 12.),
-        NotShadowCaster,
-        Cloud,
-    ));
+    // commands.spawn((
+    //     create_cloud(&asset_server, &mut meshes, &mut materials, 5., 40., 13.),
+    //     NotShadowCaster,
+    //     Cloud,
+    // ));
 
-    commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, 30., 50., 15.),
-        NotShadowCaster,
-        Cloud,
-    ));
+    // commands.spawn((
+    //     create_cloud(&asset_server, &mut meshes, &mut materials, 45., 38., 12.),
+    //     NotShadowCaster,
+    //     Cloud,
+    // ));
 
-    commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, -30., -50., 12.),
-        NotShadowCaster,
-        Cloud,
-    ));
+    // commands.spawn((
+    //     create_cloud(&asset_server, &mut meshes, &mut materials, 30., 50., 15.),
+    //     NotShadowCaster,
+    //     Cloud,
+    // ));
 
-    commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, -12., -35., 15.),
-        NotShadowCaster,
-        Cloud,
-    ));
+    // commands.spawn((
+    //     create_cloud(&asset_server, &mut meshes, &mut materials, -30., -50., 12.),
+    //     NotShadowCaster,
+    //     Cloud,
+    // ));
 
-    commands.spawn((
-        create_cloud(&asset_server, &mut meshes, &mut materials, 15., 43., 12.),
-        NotShadowCaster,
-        Cloud,
-    ));
+    // commands.spawn((
+    //     create_cloud(&asset_server, &mut meshes, &mut materials, -12., -35., 15.),
+    //     NotShadowCaster,
+    //     Cloud,
+    // ));
+
+    // commands.spawn((
+    //     create_cloud(&asset_server, &mut meshes, &mut materials, 15., 43., 12.),
+    //     NotShadowCaster,
+    //     Cloud,
+    // ));
 }
 
 const CLOUD_TEXTURES: [&str; 4] = [
@@ -91,10 +113,8 @@ pub fn create_cloud<'a>(
     };
     let mut cloud_mesh: Mesh = Plane3d::default().mesh().size(ratio.0, ratio.1).build();
 
-    let rotation = Quat::from_euler(EulerRot::ZYX, 0.0, PI / 1., PI / 2.);
+    let rotation = Quat::from_euler(EulerRot::ZYX, 0., PI / 1., PI / 2.);
     cloud_mesh.rotate_by(rotation);
-    // cloud_mesh.rotate_by(Quat::from_rotation_x(0.5));
-    // cloud_mesh.rotated_by(Quat::from_rotation_y(0.));
 
     PbrBundle {
         mesh: meshes.add(cloud_mesh),
@@ -116,6 +136,7 @@ pub fn update_clouds(
     q_cam: Query<(&PlayerCamera, &Transform)>,
     mut q_clouds: Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
 ) {
+    distribute_clouds(&q_cam, &mut q_clouds);
     update_cloud_positions(&mut q_clouds);
     update_cloud_orientations(&q_cam, &mut q_clouds);
 }
@@ -137,6 +158,51 @@ pub fn update_cloud_orientations(
     let (_, t_cam) = q_cam.single();
     for (_, mut t_cloud) in q_clouds {
         look_at_on_y(&mut t_cloud, &t_cam);
+    }
+}
+
+/// Distribute clouds relative to camera,
+/// redistributing the same clouds when the camera moves.
+/// [ TL, , ]
+/// [ , C, ]
+/// [ , , BR]
+pub fn distribute_clouds(
+    q_cam: &Query<(&PlayerCamera, &Transform)>,
+    q_clouds: &mut Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
+) {
+    let mut rng = rand::thread_rng();
+    let farthest_cloud = CLOUD_REGEN_DISTANCE / 2.;
+    let (_, t_cam) = q_cam.get_single().unwrap();
+    let mut i_c = 0.;
+    for (_, mut t_cloud) in &mut q_clouds.iter_mut() {
+        i_c += 1.;
+        let distance = t_cloud.translation.distance(t_cam.translation);
+        if distance < CLOUD_REGEN_DISTANCE {
+            // note that we could reverse order and break if they get increasingly distant
+            continue;
+        }
+
+        let elevation: f32 = 10. + rng.gen_range(0..15) as f32;
+        t_cloud.translation.x = 0.;
+        t_cloud.translation.z = 0.;
+        t_cloud.translation.y = 0.;
+        t_cloud.rotation.y = 0.;
+        t_cloud.rotation.x = 0.;
+        t_cloud.rotation.z = 0.;
+        let rot_range: f32 = rng.gen_range(-10..10) as f32 / 10.;
+        t_cloud.rotate_local_y(rot_range);
+        let rotation = t_cloud.rotation;
+        let dir = Direction3d::new(rotation * -Vec3::X).unwrap();
+        let dist = (farthest_cloud / CLOUD_BUDGET as f32) * (i_c + 1.);
+        t_cloud.translation = dir * dist;
+        t_cloud.rotate_around(t_cam.translation, rotation);
+        t_cloud.translate_around(t_cam.translation, rotation);
+        t_cloud.translation.y = elevation;
+
+        // println!(
+        //     "Cloud {:1} {:2} {:3} {:4} {:5}",
+        //     i_c, t_cloud.translation.x, dist, rotation.y, rot_range
+        // );
     }
 }
 
