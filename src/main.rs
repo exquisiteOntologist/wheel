@@ -4,13 +4,12 @@ use bevy::{pbr::DirectionalLightShadowMap, prelude::*};
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
 use wheel::{
-    camera::PCameraPlugin,
+    components::{camera::PCameraPlugin, wheel::WheelPlugin},
     controls::keyboard_control,
     gens::{clouds::CloudPlugin, terrain::TerrainPlugin},
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
     utils::colours::rgb,
-    wheel::WheelPlugin,
 };
 
 fn main() {

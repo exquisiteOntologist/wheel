@@ -1,4 +1,4 @@
-pub mod camera;
+pub mod components;
 pub mod constants;
 pub mod controls;
 pub mod gens;
@@ -7,4 +7,3 @@ pub mod movement;
 pub mod resources;
 pub mod setup;
 pub mod utils;
-pub mod wheel;
