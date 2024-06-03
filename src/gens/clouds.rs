@@ -182,7 +182,7 @@ pub fn distribute_clouds(
             continue;
         }
 
-        let elevation: f32 = 10. + rng.gen_range(0..15) as f32;
+        let elevation: f32 = 20. + rng.gen_range(0..15) as f32;
         t_cloud.translation.x = 0.;
         t_cloud.translation.z = 0.;
         t_cloud.translation.y = 0.;
