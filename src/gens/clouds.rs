@@ -86,11 +86,12 @@ pub fn setup_clouds(
     // ));
 }
 
-const CLOUD_TEXTURES: [&str; 4] = [
+const CLOUD_TEXTURES: [&str; 5] = [
     "textures/cloud-a.png",
     "textures/cloud-b.png",
     "textures/cloud-c.png",
     "textures/cloud-d.png",
+    "textures/cloud-e.png",
 ];
 
 pub fn create_cloud<'a>(
@@ -106,7 +107,7 @@ pub fn create_cloud<'a>(
     let path_index = rng.gen_range(0..CLOUD_TEXTURES.len() - 0);
     let texture_path = CLOUD_TEXTURES[path_index];
     let texture_cloud = asset_server.load(texture_path);
-    let ratio = if path_index == 3 {
+    let ratio = if path_index == 3 || path_index == 4 {
         (17., 10.)
     } else {
         (10., 10.)
