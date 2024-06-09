@@ -15,6 +15,7 @@ use bevy::{
     },
     pbr::{AlphaMode, NotShadowCaster, PbrBundle, StandardMaterial},
     prelude::default,
+    reflect::Reflect,
     render::mesh::{Mesh, Meshable},
     transform::components::Transform,
 };
@@ -107,8 +108,11 @@ pub fn create_cloud<'a>(
     let path_index = rng.gen_range(0..CLOUD_TEXTURES.len() - 0);
     let texture_path = CLOUD_TEXTURES[path_index];
     let texture_cloud = asset_server.load(texture_path);
-    let ratio = if path_index == 3 || path_index == 4 {
+
+    let ratio = if path_index == 3 {
         (17., 10.)
+    } else if path_index == 4 {
+        (25., 10.)
     } else {
         (10., 10.)
     };
@@ -124,7 +128,7 @@ pub fn create_cloud<'a>(
             alpha_mode: AlphaMode::Add,
             fog_enabled: false,
             double_sided: true,
-            metallic: 0.3,
+            metallic: 0.1,
             cull_mode: None,
             ..default()
         }),
