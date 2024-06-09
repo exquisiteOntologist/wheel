@@ -124,7 +124,7 @@ pub fn create_cloud<'a>(
     PbrBundle {
         mesh: meshes.add(cloud_mesh),
         material: materials.add(StandardMaterial {
-            base_color_texture: Some(texture_cloud.clone()),
+            base_color_texture: Some(texture_cloud),
             alpha_mode: AlphaMode::Add,
             fog_enabled: false,
             double_sided: true,
