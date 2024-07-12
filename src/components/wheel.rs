@@ -3,7 +3,7 @@ use bevy::{
         query::With,
         system::{Res, ResMut},
     },
-    math::{primitives::Direction3d, Vec3},
+    math::{Direction3d, Vec3},
     prelude::*,
     time::Time,
     transform::components::Transform,

@@ -9,14 +9,14 @@ use bevy::{
         query::Without,
         system::{Commands, Query, Res, ResMut},
     },
-    math::{
-        primitives::{Direction3d, Plane3d},
-        EulerRot, Quat, Vec3,
-    },
-    pbr::{AlphaMode, NotShadowCaster, PbrBundle, StandardMaterial},
+    math::{primitives::Plane3d, Direction3d, EulerRot, Quat, Vec3},
+    pbr::{NotShadowCaster, PbrBundle, StandardMaterial},
     prelude::default,
     reflect::Reflect,
-    render::mesh::{Mesh, Meshable},
+    render::{
+        alpha::AlphaMode,
+        mesh::{Mesh, Meshable},
+    },
     transform::components::Transform,
 };
 
@@ -116,7 +116,7 @@ pub fn create_cloud<'a>(
     } else {
         (10., 10.)
     };
-    let mut cloud_mesh: Mesh = Plane3d::default().mesh().size(ratio.0, ratio.1).build();
+    let mut cloud_mesh: Mesh = Mesh::from(Plane3d::default().mesh().size(ratio.0, ratio.1));
 
     let rotation = Quat::from_euler(EulerRot::ZYX, 0., PI / 1., PI / 2.);
     cloud_mesh.rotate_by(rotation);

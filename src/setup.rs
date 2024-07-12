@@ -3,6 +3,7 @@ use std::f32::consts::PI;
 use bevy::{
     animation::AnimationPlayer,
     asset::{AssetServer, Assets},
+    color::Color,
     ecs::{
         query::Added,
         system::{Commands, Query, Res, ResMut},
@@ -12,17 +13,14 @@ use bevy::{
         light_consts, CascadeShadowConfigBuilder, DirectionalLight, DirectionalLightBundle,
         PbrBundle, StandardMaterial,
     },
-    render::{
-        color::Color,
-        mesh::{Mesh, Meshable},
-    },
+    render::mesh::{Mesh, Meshable},
     scene::SceneBundle,
     transform::components::Transform,
     utils::default,
 };
 use iyes_perf_ui::{
-    diagnostics::{PerfUiEntryFPS, PerfUiEntryFPSWorst},
-    PerfUiRoot,
+    prelude::{PerfUiEntryFPS, PerfUiEntryFPSWorst},
+    ui::root::PerfUiRoot,
 };
 
 use crate::{
@@ -68,10 +66,8 @@ pub fn setup(
         asset_server.load_with_settings("textures/tex_exp.png", image_ground_settings);
 
     let ground_size = (5000., 5000.);
-    let mut ground_mesh: Mesh = Plane3d::default()
-        .mesh()
-        .size(ground_size.0, ground_size.1)
-        .build();
+    let mut ground_mesh: Mesh =
+        Mesh::from(Plane3d::default().mesh().size(ground_size.0, ground_size.1));
 
     mesh_update_uv(&mut ground_mesh, ground_size.0 / 2., ground_size.1 / 2.);
 
@@ -96,7 +92,7 @@ pub fn setup(
     commands.spawn(DirectionalLightBundle {
         transform: Transform::from_rotation(Quat::from_euler(EulerRot::ZYX, 0.0, 0.0, -PI / 3.5)),
         directional_light: DirectionalLight {
-            color: Color::rgb(1.0, 1.0, 1.0),
+            color: Color::srgb(1.0, 1.0, 1.0),
             illuminance: light_consts::lux::AMBIENT_DAYLIGHT,
             shadows_enabled: true,
             ..default()

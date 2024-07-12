@@ -7,17 +7,22 @@ use bevy::{
         query::{With, Without},
         system::{Commands, Query, Res, ResMut},
     },
-    math::Vec3,
-    pbr::{AlphaMode, PbrBundle, StandardMaterial},
-    prelude::default,
+    math::{Vec2, Vec3},
+    pbr::{PbrBundle, StandardMaterial},
+    prelude::{default, Plane3d},
     render::{
-        mesh::{Mesh, VertexAttributeValues},
+        alpha::AlphaMode,
+        mesh::{Mesh, Meshable, PlaneMeshBuilder, PrimitiveTopology, VertexAttributeValues},
         render_resource::Face,
         texture::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor},
     },
     transform::components::Transform,
 };
-use bevy_rapier3d::geometry::{Collider, ComputedColliderShape};
+use bevy_rapier3d::{
+    geometry::{Collider, ComputedColliderShape},
+    parry::shape,
+    rapier::geometry::ColliderBuilder,
+};
 
 use crate::{
     constants::{
@@ -77,10 +82,18 @@ pub fn generate_terrain_mesh(x: f32, z: f32, size: f32, subdivisions: u32) -> Me
     let height_map = perlin::terrain_perlin();
     let mut uvs: Vec<[f32; 2]> = Vec::with_capacity(num_vertices);
     let mut vertex_colors: Vec<[f32; 4]> = Vec::with_capacity(num_vertices);
-    let mut mesh: Mesh = bevy::prelude::shape::Plane { size, subdivisions }.into();
+
+    // Build the plane mesh (previously could directly generate from Mesh to Mesh)
+    let mut plane_builder: PlaneMeshBuilder = Plane3d::default().mesh();
+    let half_size: f32 = (size.round() as usize / 2) as f32;
+    plane_builder.plane.half_size = Vec2::new(half_size, half_size);
+    plane_builder.subdivisions = subdivisions;
+    plane_builder.size(size, size);
+    let mut mesh: Mesh = Mesh::from(plane_builder);
+
     // get positions
-    let pos_attr = mesh.attribute_mut(Mesh::ATTRIBUTE_POSITION).unwrap();
-    let VertexAttributeValues::Float32x3(pos_attr) = pos_attr else {
+    let pos_attr = mesh.attribute(Mesh::ATTRIBUTE_POSITION).unwrap().to_owned();
+    let VertexAttributeValues::Float32x3(mut pos_attr) = pos_attr else {
         panic!("Unexpected vertex format, expected Float32x3");
     };
     // modify y with height sampling

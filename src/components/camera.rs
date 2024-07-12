@@ -7,6 +7,7 @@ use crate::{
 };
 use bevy::{
     core_pipeline::{experimental::taa::TemporalAntiAliasSettings, tonemapping::DebandDither},
+    math::Direction3d,
     pbr::ScreenSpaceAmbientOcclusionSettings,
     prelude::*,
 };
@@ -175,7 +176,7 @@ fn setup_camera(mut commands: Commands) {
         Camera3dBundle {
             transform: Transform::from_xyz(10.0, 3.0, 0.0)
                 .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
-            dither: DebandDither::Enabled,
+            deband_dither: DebandDither::Enabled,
             ..default()
         },
         FogSettings {
