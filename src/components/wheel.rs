@@ -3,7 +3,7 @@ use bevy::{
         query::With,
         system::{Res, ResMut},
     },
-    math::{Direction3d, Vec3},
+    math::{Dir3, Vec3},
     prelude::*,
     time::Time,
     transform::components::Transform,
@@ -57,7 +57,7 @@ pub fn move_wheel(
 
     // since we are also spinning the wheel, for the math to work we only want Y, as the wheel pivots around Y
     let rotation = wheel_y_rotation(&t.rotation);
-    let direction = Direction3d::new(rotation * -Vec3::X).unwrap();
+    let direction = Dir3::new(rotation * -Vec3::X).unwrap();
     t.translation += direction * (speed * 100.) * time.delta_seconds();
 
     // Slow down speed

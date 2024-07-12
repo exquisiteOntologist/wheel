@@ -205,7 +205,7 @@ fn regenerate_terrain(
             .unwrap()
             .insert(Collider::from_bevy_mesh(&mesh, &collider_shape).unwrap());
     }
-    for (ent, mut trans, mh) in distant_terrain.iter_mut() {
+    for (_ent, mut trans, mh) in distant_terrain.iter_mut() {
         trans.translation = trans.translation + delta;
         trans.translation.y = 0.;
         let mesh = meshes.get_mut(mh).unwrap();
@@ -321,7 +321,7 @@ pub fn update_terrain(
 pub struct TerrainPlugin;
 
 impl Plugin for TerrainPlugin {
-    fn build(&self, app: &mut App) {
+    fn build(&self, _app: &mut App) {
         // app.add_systems(Startup, update_terrain);
         // app.add_systems(Update, update_terrain);
     }

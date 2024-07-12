@@ -1,8 +1,6 @@
-use crate::{
-    constants::{BASE_LEVEL, HILL_HEIGHTS, MOUNTAIN_HEIGHTS, TERRAIN_BUMPINESS, TERRAIN_SEED},
-    gens::terrain,
+use crate::constants::{
+    BASE_LEVEL, HILL_HEIGHTS, MOUNTAIN_HEIGHTS, TERRAIN_BUMPINESS, TERRAIN_SEED,
 };
-use bevy::prelude::*;
 use noise::{NoiseFn, Perlin};
 
 pub fn sample_terrain_height(terrain_perlin: &Perlin, x: f32, z: f32) -> f32 {

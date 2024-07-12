@@ -7,7 +7,7 @@ use crate::{
 };
 use bevy::{
     core_pipeline::{experimental::taa::TemporalAntiAliasSettings, tonemapping::DebandDither},
-    math::Direction3d,
+    math::Dir3,
     pbr::ScreenSpaceAmbientOcclusionSettings,
     prelude::*,
 };
@@ -98,7 +98,7 @@ fn adjust_camera_speed(t_cam: &Transform, t_char: &Transform, game: &mut ResMut<
 fn get_tran_behind_char(
     t_cam: &Transform,
     t_char: &Transform,
-    char_direction: Direction3d,
+    char_direction: Dir3,
     game: &ResMut<Game>,
 ) -> Transform {
     // let dist_behind_char = -10.;
@@ -120,11 +120,7 @@ fn move_cam_to(t_cam: &mut Mut<Transform>, t_dest: &Transform) {
     t_cam.translation.z += (t_dest.translation.z - t_cam.translation.z) * 0.01;
 }
 
-fn _move_cam_exactly_behind(
-    t_cam: &mut Mut<Transform>,
-    t_char: &Transform,
-    char_direction: Direction3d,
-) {
+fn _move_cam_exactly_behind(t_cam: &mut Mut<Transform>, t_char: &Transform, char_direction: Dir3) {
     // make camera translation match character's, except further back
     t_cam.translation = t_char.translation + char_direction * -10.;
     // t_cam.translation = t_char.translation + char_direction * -d;
@@ -132,7 +128,7 @@ fn _move_cam_exactly_behind(
 
 fn _turn_move(
     t_cam: &mut Mut<Transform>,
-    char_direction: Direction3d,
+    char_direction: Dir3,
     game: &mut ResMut<Game>,
     time: &Res<Time>,
 ) {
@@ -158,13 +154,13 @@ fn set_cam_height(t_cam: &mut Mut<Transform>, distance: &f32) {
     t_cam.translation.y = 3. + (1. * distance_fraction);
 }
 
-fn get_char_direction(rotation: Quat) -> Direction3d {
-    Direction3d::new(rotation * -Vec3::X).unwrap()
+fn get_char_direction(rotation: Quat) -> Dir3 {
+    Dir3::new(rotation * -Vec3::X).unwrap()
 }
 
 /// Make camera look infront of the character.
 /// The direction argument represents the direction the character is facing.
-fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direction: Direction3d) {
+fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direction: Dir3) {
     let mut tran_infront_char = t_cam.clone().to_owned();
     let dist_infront_char = 5.;
     tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_seconds(); */

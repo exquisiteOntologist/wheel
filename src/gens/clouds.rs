@@ -9,10 +9,9 @@ use bevy::{
         query::Without,
         system::{Commands, Query, Res, ResMut},
     },
-    math::{primitives::Plane3d, Direction3d, EulerRot, Quat, Vec3},
+    math::{primitives::Plane3d, Dir3, EulerRot, Quat, Vec3},
     pbr::{NotShadowCaster, PbrBundle, StandardMaterial},
     prelude::default,
-    reflect::Reflect,
     render::{
         alpha::AlphaMode,
         mesh::{Mesh, Meshable},
@@ -197,7 +196,7 @@ pub fn distribute_clouds(
         let rot_range: f32 = rng.gen_range(-10..10) as f32 / 10.;
         t_cloud.rotate_local_y(rot_range);
         let rotation = t_cloud.rotation;
-        let dir = Direction3d::new(rotation * -Vec3::X).unwrap();
+        let dir = Dir3::new(rotation * -Vec3::X).unwrap();
         let dist = (farthest_cloud / CLOUD_BUDGET as f32) * (i_c + 1.);
         t_cloud.translation = t_cam.translation + dir * dist;
         t_cloud.rotate_around(t_cam.translation, rotation);
