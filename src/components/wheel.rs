@@ -14,10 +14,16 @@ use crate::{
     resources::{Game, PlayerCharacter},
 };
 
-pub fn spin_wheel(mut q: Query<&mut Transform, With<PlayerCharacter>>, game: ResMut<Game>) {
+pub fn spin_wheel(
+    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+    time: Res<Time>,
+    game: ResMut<Game>,
+) {
+    println!("time {}", time.delta_seconds());
+
     for mut t in &mut q {
         // spinning the wheel
-        t.rotate_local_z(game.player_wheel.speed_z);
+        t.rotate_local_z(game.player_wheel.speed_z * 0.5);
 
         // turning
         if game.player_wheel.speed_y != 0.0 {
@@ -55,10 +61,12 @@ pub fn move_wheel(
     let mut t = q.single_mut();
     let speed = game.player_wheel.speed_z;
 
-    // since we are also spinning the wheel, for the math to work we only want Y, as the wheel pivots around Y
+    // since we are also spinning the wheel,
+    // for the math to work we only want Y,
+    // as the wheel pivots around Y
     let rotation = wheel_y_rotation(&t.rotation);
     let direction = Dir3::new(rotation * -Vec3::X).unwrap();
-    t.translation += direction * (speed * 100.) * time.delta_seconds();
+    t.translation += direction * speed; // * time.delta_seconds();
 
     // Slow down speed
     if game.player_wheel.speed_z > 0.0 {

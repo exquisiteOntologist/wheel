@@ -16,6 +16,7 @@ use bevy::{
         alpha::AlphaMode,
         mesh::{Mesh, Meshable},
     },
+    time::Time,
     transform::components::Transform,
 };
 
@@ -139,19 +140,21 @@ pub fn create_cloud<'a>(
 pub fn update_clouds(
     q_cam: Query<(&PlayerCamera, &Transform)>,
     mut q_clouds: Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
+    time: Res<Time>,
 ) {
     distribute_clouds(&q_cam, &mut q_clouds);
-    update_cloud_positions(&mut q_clouds);
+    update_cloud_positions(&mut q_clouds, &time);
     update_cloud_orientations(&q_cam, &mut q_clouds);
 }
 
 pub fn update_cloud_positions(
     q_clouds: &mut Query<(&Cloud, &mut Transform), Without<PlayerCamera>>,
+    time: &Res<Time>,
 ) {
     // Clouds are affected by wind and drift
     for (_, mut t_cloud) in q_clouds {
-        t_cloud.translation.x -= 0.009;
-        t_cloud.translation.z -= 0.005;
+        t_cloud.translation.x -= 0.9 * time.delta_seconds();
+        t_cloud.translation.z -= 0.5 * time.delta_seconds();
     }
 }
 
