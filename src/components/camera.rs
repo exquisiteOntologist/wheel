@@ -30,6 +30,9 @@ pub fn move_camera(
     let char_direction = get_char_direction(rotation);
 
     let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction, &game);
+    // let mut tran_behind_char = t_char.clone();
+    // tran_behind_char.translation.z -= 15.;
+    // tran_behind_char.translation.x -= 15.;
 
     // 5+((5/5)-(2/5))5
 
@@ -40,7 +43,7 @@ pub fn move_camera(
     // let s_speed_multi = game.player_wheel.speed_z * 10.;
 
     move_cam_to(&mut t_cam, &tran_behind_char);
-    set_cam_height(&mut t_cam, &distance);
+    set_cam_height(&mut t_cam, &tran_behind_char, &distance);
 
     // println!("cam speed {:?}", game.camera.speed_z);
     // println!("cam distance {:?}", distance);
@@ -110,7 +113,6 @@ fn get_tran_behind_char(
     let dist_behind_char =
         -game.player_wheel.speed_z - (game.player_wheel.speed_y * 500. * m_y).max(5.);
     let mut tran_behind_char = t_cam.clone();
-    // tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char;
     tran_behind_char.translation = t_char.translation + char_direction * dist_behind_char;
     tran_behind_char
 }
@@ -149,13 +151,17 @@ fn _get_turn_multiplier(t_cam: &Transform, t_dest: &Transform) -> f32 {
     }
 }
 
-fn set_cam_height(t_cam: &mut Mut<Transform>, distance: &f32) {
+fn set_cam_height(t_cam: &mut Mut<Transform>, t_dest: &Transform, distance: &f32) {
+    let base_y = ((t_dest.translation.y + 3.) - t_cam.translation.y) * 0.01;
     let distance_fraction = distance / MAX_CAM_DISTANCE;
-    t_cam.translation.y = 3. + (1. * distance_fraction);
+    t_cam.translation.y = base_y + (1. * distance_fraction);
 }
 
 fn get_char_direction(rotation: Quat) -> Dir3 {
-    Dir3::new(rotation * -Vec3::X).unwrap()
+    match Dir3::new(rotation * -Vec3::X) {
+        Ok(v) => v,
+        Err(_) => Dir3::NEG_Z,
+    }
 }
 
 /// Make camera look infront of the character.
@@ -170,7 +176,8 @@ fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direc
 fn setup_camera(mut commands: Commands) {
     commands.spawn((
         Camera3dBundle {
-            transform: Transform::from_xyz(10.0, 3.0, 0.0)
+            // intentionally starting a way behind player so it moves in
+            transform: Transform::from_xyz(-100.0, 3.0, 0.0)
                 .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
             deband_dither: DebandDither::Enabled,
             ..default()

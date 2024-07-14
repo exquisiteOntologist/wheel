@@ -122,11 +122,10 @@ pub fn setup(
         PlayerCharacter,
     ));
 
-    game.player_wheel.speed_z = MAX_SPEED;
-
     println!("Controls:");
     println!("  - arrow up / down: roll");
     println!("  - arrow left / right: turn direction");
+    println!("  - arrow left / right: tilt");
 }
 
 // Once the scene is loaded, start the animation
