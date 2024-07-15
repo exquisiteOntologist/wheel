@@ -112,7 +112,15 @@ fn tilt_wheel(
         // turn
         wheel.rpy.pitch += game.player_wheel.speed_y;
         // tilt
-        wheel.rpy.yaw = (wheel.rpy.yaw + (0.01 * turn_factor)).clamp(-0.1, 0.1);
+        wheel.rpy.yaw = if turn_factor != 0. {
+            (wheel.rpy.yaw + (0.01 * turn_factor)).clamp(-0.1, 0.1)
+        } else {
+            if wheel.rpy.yaw > -0.001 && wheel.rpy.yaw < 0.001 {
+                0.
+            } else {
+                wheel.rpy.yaw * 0.9
+            }
+        };
 
         let (roll, pitch, yaw) = roll_pitch_yaw_from_quat(r_t.rotation.conjugate());
         // ROLLING
@@ -128,14 +136,6 @@ fn tilt_wheel(
         r_t.rotation = r_t.rotation.normalize();
         r_t.rotate(updated_rot_quat);
         // TILT (NOTE CHANGING YAW TILT RESULTS IN PITCH NAN VALUES THAT BREAK)
-        println!("tilt range {}", yaw);
-        let max_tilt = 1.;
-        let tilt_range = yaw > -max_tilt || yaw < max_tilt;
-        let new_tilt = if tilt_range {
-            new_tilt
-        } else {
-            -max_tilt * 0.1
-        };
         let (roll, pitch, yaw) = roll_pitch_yaw_from_quat(r_t.rotation.conjugate());
         println!("TILT BEFORE {}", r_t.rotation);
         println!(
