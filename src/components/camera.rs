@@ -29,9 +29,10 @@ pub fn move_camera(
     let rotation = wheel_y_rotation(&t_char.rotation);
     let char_direction = get_char_direction(rotation);
 
-    let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction, &game);
-    // let mut tran_behind_char = t_char.clone();
-    // tran_behind_char.translation.z -= 15.;
+    // let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction, &game);
+    let mut tran_behind_char = t_char.clone();
+    tran_behind_char.translation.z = -0.;
+    tran_behind_char.translation.x = -10.;
     // tran_behind_char.translation.x -= 15.;
 
     // 5+((5/5)-(2/5))5
@@ -52,7 +53,7 @@ pub fn move_camera(
     //     t_cam.rotation.y, t_char.rotation.y
     // );
 
-    look_in_front(&mut t_cam, &t_char, char_direction);
+    // look_in_front(&mut t_cam, &t_char, char_direction);
 
     // println!(
     //     "cam rot (after) X [{:1}] Y [{:2}] Z [{:3}]",
@@ -152,7 +153,7 @@ fn _get_turn_multiplier(t_cam: &Transform, t_dest: &Transform) -> f32 {
 }
 
 fn set_cam_height(t_cam: &mut Mut<Transform>, t_dest: &Transform, distance: &f32) {
-    let base_y = ((t_dest.translation.y + 3.) - t_cam.translation.y) * 0.01;
+    let base_y = 3. + ((t_dest.translation.y - t_cam.translation.y) * 0.01);
     let distance_fraction = distance / MAX_CAM_DISTANCE;
     t_cam.translation.y = base_y + (1. * distance_fraction);
 }

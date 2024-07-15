@@ -112,7 +112,7 @@ pub fn setup(
     commands.spawn((
         SceneBundle {
             scene: asset_server.load("models/Wheel.glb#Scene0"),
-            transform: Transform::from_xyz(0.0, 1.2, 0.0),
+            transform: Transform::from_xyz(0.0, 1.5, 0.0),
             ..default()
         },
         // PbrBundle {
