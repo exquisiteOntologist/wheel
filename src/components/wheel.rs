@@ -256,12 +256,17 @@ pub fn move_wheel(
     // for the math to work we only want Y,
     // as the wheel pivots around Y
     let rotation = wheel_y_rotation(&t.rotation).normalize();
-    if let Ok(direction) = Dir3::new(rotation * -Vec3::X) {
+    // if let Ok(direction) = Dir3::new(rotation * -Vec3::X) {
+    if let Ok(direction) = Dir3::new(rotation * -Vec3::Z) {
         // t.translation += direction * speed;
-        let f = t.forward();
-        t.translation += f * speed;
-        t.translation.y = 2.1;
+        // let f = t.left();
+        // t.translation += f * speed;
+        // t.translation.y = 2.1;
         // t.translation.z += 0.01;
+        //
+        // ^ This wheel should not move,
+        // it instead should be parented,
+        // with the parent being them mover
     }
 
     // Slow down speed
