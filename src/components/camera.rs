@@ -27,12 +27,13 @@ pub fn move_camera(
     // let d = distance.max(game.camera.speed_z);
 
     let rotation = wheel_y_rotation(&t_char.rotation);
-    let char_direction = get_char_direction(rotation);
+    // let char_direction = get_char_direction(rotation);
+    let char_direction = t_char.forward();
 
-    // let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction, &game);
-    let mut tran_behind_char = t_char.clone();
-    tran_behind_char.translation.z = -0.;
-    tran_behind_char.translation.x = -10.;
+    let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction, &game);
+    // let mut tran_behind_char = t_char.clone();
+    // tran_behind_char.translation.z = -0.;
+    // tran_behind_char.translation.x = -10.;
     // tran_behind_char.translation.x -= 15.;
 
     // 5+((5/5)-(2/5))5
@@ -53,7 +54,7 @@ pub fn move_camera(
     //     t_cam.rotation.y, t_char.rotation.y
     // );
 
-    // look_in_front(&mut t_cam, &t_char, char_direction);
+    look_in_front(&mut t_cam, &t_char, char_direction);
 
     // println!(
     //     "cam rot (after) X [{:1}] Y [{:2}] Z [{:3}]",

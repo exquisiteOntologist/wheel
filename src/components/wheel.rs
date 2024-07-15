@@ -154,7 +154,7 @@ fn tilt_wheel(
         println!("TILT AFTER {}", r_t.rotation);
         println!("TILT AFTER roll pitch yaw {:1} {:2} {:3}", roll, pitch, yaw);
 
-        t.translation = r_t.translation.normalize();
+        // t.translation = r_t.translation.normalize();
         t.rotation = r_t.rotation.normalize();
 
         let zz = updated_rot_quat;
@@ -255,9 +255,13 @@ pub fn move_wheel(
     // since we are also spinning the wheel,
     // for the math to work we only want Y,
     // as the wheel pivots around Y
-    let rotation = wheel_y_rotation(&t.rotation);
+    let rotation = wheel_y_rotation(&t.rotation).normalize();
     if let Ok(direction) = Dir3::new(rotation * -Vec3::X) {
         // t.translation += direction * speed;
+        let f = t.forward();
+        t.translation += f * speed;
+        t.translation.y = 2.1;
+        // t.translation.z += 0.01;
     }
 
     // Slow down speed
