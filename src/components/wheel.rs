@@ -13,12 +13,12 @@ use bevy::{
 
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
-    resources::{Game, PlayerCharacter},
+    resources::{Game, PlayerWheel},
     utils::matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat, RPY},
 };
 
 fn tilt_wheel(
-    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+    mut q: Query<&mut Transform, With<PlayerWheel>>,
     time: Res<Time>,
     game: ResMut<Game>,
     mut wheel: ResMut<WheelState>,
@@ -108,7 +108,7 @@ fn tilt_wheel(
         // r_t.rotate(updated_rot_quat);
 
         // rolling
-        wheel.rpy.roll -= game.player_wheel.speed_z;
+        wheel.rpy.roll -= game.player_wheel.speed_z * 0.5;
         // turn
         wheel.rpy.pitch += game.player_wheel.speed_y;
         // tilt
@@ -132,7 +132,9 @@ fn tilt_wheel(
         r_t.rotation = r_t.rotation.normalize();
         r_t.rotate(updated_rot_quat);
         // TURNING DIRECTION
-        let updated_rot_quat = quaternion_from_rpy_quat(0., wheel.rpy.pitch, 0.);
+        // Note this is now done on the parent
+        // let updated_rot_quat = quaternion_from_rpy_quat(0., wheel.rpy.pitch, 0.);
+        let updated_rot_quat = quaternion_from_rpy_quat(0., 0., 0.);
         r_t.rotation = r_t.rotation.normalize();
         r_t.rotate(updated_rot_quat);
 
@@ -168,7 +170,7 @@ fn tilt_wheel(
 }
 
 pub fn spin_wheel(
-    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+    mut q: Query<&mut Transform, With<PlayerWheel>>,
     time: Res<Time>,
     game: ResMut<Game>,
 ) {
@@ -180,7 +182,7 @@ pub fn spin_wheel(
 }
 
 pub fn turn_wheel(
-    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+    mut q: Query<&mut Transform, With<PlayerWheel>>,
     time: Res<Time>,
     game: ResMut<Game>,
 ) {
@@ -245,7 +247,7 @@ pub fn wheel_x_rotation(rotation: &Quat) -> Quat {
 }
 
 pub fn move_wheel(
-    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+    mut q: Query<&mut Transform, With<PlayerWheel>>,
     time: Res<Time>,
     mut game: ResMut<Game>,
 ) {

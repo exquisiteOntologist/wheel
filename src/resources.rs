@@ -13,6 +13,9 @@ pub struct PlayerCamera;
 #[derive(Component)]
 pub struct PlayerCharacter;
 
+#[derive(Component)]
+pub struct PlayerWheel;
+
 #[derive(Default)]
 pub struct MotionState {
     pub speed_x: f32,

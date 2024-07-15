@@ -30,7 +30,7 @@ use crate::{
         HEIGHT_TEMPERATE_START, PLANE_SIZE, SIZE_NO_PLAYER, SUBDIVISIONS_LEVEL_1,
         SUBDIVISIONS_LEVEL_2, TEXTURE_SCALE, TILE_WIDTH,
     },
-    resources::PlayerCharacter,
+    resources::PlayerWheel,
     utils::perlin::{self, sample_terrain_height},
 };
 
@@ -235,7 +235,7 @@ pub fn update_terrain(
         (With<Terrain>, Without<MainTerrain>),
     >,
     // player: Query<&Transform, (With<player::Player>, Without<Terrain>)>,
-    q_char: Query<(&PlayerCharacter, &Transform), (With<PlayerCharacter>, Without<Terrain>)>,
+    q_char: Query<(&PlayerWheel, &Transform), (With<PlayerWheel>, Without<Terrain>)>,
 ) {
     let Ok((_, t_player)) = q_char.get_single() else {
         eprintln!("There was no player in the query");

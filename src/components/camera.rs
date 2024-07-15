@@ -28,7 +28,7 @@ pub fn move_camera(
 
     let rotation = wheel_y_rotation(&t_char.rotation);
     // let char_direction = get_char_direction(rotation);
-    let char_direction = t_char.forward();
+    let char_direction = t_char.right();
 
     let tran_behind_char = get_tran_behind_char(&t_cam, &t_char, char_direction, &game);
     // let mut tran_behind_char = t_char.clone();

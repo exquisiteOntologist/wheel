@@ -8,11 +8,13 @@ use bevy::{
         query::Added,
         system::{Commands, Query, Res, ResMut},
     },
+    hierarchy::BuildChildren,
     math::{primitives::Plane3d, EulerRot, Quat},
     pbr::{
         light_consts, CascadeShadowConfigBuilder, DirectionalLight, DirectionalLightBundle,
         PbrBundle, StandardMaterial,
     },
+    prelude::SpatialBundle,
     render::mesh::{Mesh, Meshable},
     scene::SceneBundle,
     transform::components::Transform,
@@ -26,7 +28,7 @@ use iyes_perf_ui::{
 use crate::{
     constants::MAX_SPEED,
     meshes::{image_settings_with_repeat_image_sampler, mesh_update_uv},
-    resources::{Animations, Game, PlayerCharacter},
+    resources::{Animations, Game, PlayerCharacter, PlayerWheel},
 };
 
 pub fn setup(
@@ -109,18 +111,24 @@ pub fn setup(
     });
 
     // Wheel
-    commands.spawn((
-        SceneBundle {
-            scene: asset_server.load("models/Wheel.glb#Scene0"),
-            transform: Transform::from_xyz(0.0, 1.5, 0.0),
-            ..default()
-        },
-        // PbrBundle {
-        //     mesh: asset_server.load("models/Wheel.glb#Mesh0"),
-        //     ..default()
-        // },
-        PlayerCharacter,
-    ));
+    let child_wheel = commands
+        .spawn((
+            SceneBundle {
+                scene: asset_server.load("models/Wheel.glb#Scene0"),
+                transform: Transform::from_xyz(0.0, 1.2, 0.0),
+                ..default()
+            },
+            // PbrBundle {
+            //     mesh: asset_server.load("models/Wheel.glb#Mesh0"),
+            //     ..default()
+            // },
+            PlayerWheel,
+        ))
+        .id();
+
+    let mut parent_character = commands.spawn((SpatialBundle { ..default() }, PlayerCharacter));
+
+    parent_character.add_child(child_wheel);
 
     println!("Controls:");
     println!("  - arrow up / down: roll");

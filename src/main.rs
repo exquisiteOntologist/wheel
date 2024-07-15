@@ -4,7 +4,7 @@ use bevy::{pbr::DirectionalLightShadowMap, prelude::*};
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
 use wheel::{
-    components::{camera::PCameraPlugin, wheel::WheelPlugin},
+    components::{camera::PCameraPlugin, character::CharacterPlugin, wheel::WheelPlugin},
     controls::keyboard_control,
     gens::{clouds::CloudPlugin, terrain::TerrainPlugin},
     resources::Game,
@@ -35,7 +35,8 @@ fn main() {
         }),))
         .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
         .add_plugins((PerfUiPlugin, RapierPhysicsPlugin::<NoUserData>::default()))
-        .add_plugins((PCameraPlugin, WheelPlugin, CloudPlugin, TerrainPlugin))
+        .add_plugins((CharacterPlugin, WheelPlugin))
+        .add_plugins((PCameraPlugin, CloudPlugin, TerrainPlugin))
         .add_systems(Startup, setup)
         .add_systems(Update, (setup_scene_once_loaded, keyboard_control))
         .run();
