@@ -212,41 +212,45 @@ fn tilt_wheel(
         println!("roll {}", roll);
         println!("pitch {}", pitch);
         println!("yaw {}", yaw);
-        // t.rotation.
 
         let updated_rot_quat = quaternion_from_rpy_quat(roll, pitch, yaw);
         t.rotate(updated_rot_quat);
         // let (roll, pitch, yaw) = roll_pitch_yaw_from_quat(t.rotation.conjugate());
         // let updated_rot_quat = quaternion_from_rpy_quat(roll, pitch + 0.3, yaw + 0.3);
         // t.rotate(updated_rot_quat);
-        //
+
+        // rolling
         wheel.rpy.roll -= game.player_wheel.speed_z;
         // turn
         wheel.rpy.pitch += game.player_wheel.speed_y;
+        // tilt
         wheel.rpy.yaw -= (game.player_wheel.speed_y / game.player_wheel.speed_z).clamp(-0.1, 0.1);
-        //
+
         let (roll, pitch, yaw) = roll_pitch_yaw_from_quat(t.rotation.conjugate());
         // ROLLING
         let updated_rot_quat = quaternion_from_rpy_quat(wheel.rpy.roll, 0., 0.);
+        t.rotation = t.rotation.normalize();
         t.rotate(updated_rot_quat);
         // TURNING DIRECTION
         let updated_rot_quat = quaternion_from_rpy_quat(0., wheel.rpy.pitch, 0.);
+        t.rotation = t.rotation.normalize();
         t.rotate(updated_rot_quat);
 
         let updated_rot_quat = quaternion_from_rpy_quat(roll, pitch, yaw);
+        t.rotation = t.rotation.normalize();
         t.rotate(updated_rot_quat);
         // TILT (NOTE CHANGING YAW TILT RESULTS IN PITCH NAN VALUES THAT BREAK)
         if yaw > -0.3 || yaw < 0.3 {
             // let updated_rot_quat = quaternion_from_rpy_quat(0., 0., wheel.rpy.yaw);
             let updated_rot_quat = quaternion_from_rpy_quat(0., 0., new_tilt);
+            t.rotation = t.rotation.normalize();
             t.rotate(updated_rot_quat);
         }
 
         let zz = updated_rot_quat;
         println!("quat {:1} {:2} {:3} {:4}", zz.x, zz.y, zz.z, zz.w);
         // t.apply(updated_rot_quat.as_reflect())
-        //
-        //
+
         // NOTE SOMETIMES IT MAY BE WORKING BUT BECAUSE
         // CAMERA IS USING THE WHEEL ROTATION
         // IT GETS WEIRD WHEN CHANGING THE X VALUE
