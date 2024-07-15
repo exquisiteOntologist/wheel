@@ -112,8 +112,12 @@ fn tilt_wheel(
         // turn
         wheel.rpy.pitch += game.player_wheel.speed_y;
         // tilt
+        let base_tilt_speed = 0.01;
+        let max_speed = 0.1; // not MAX_SPEED
+        let tilt_modifier = game.player_wheel.speed_z / max_speed;
+        let tilt_speed = base_tilt_speed * tilt_modifier;
         wheel.rpy.yaw = if turn_factor != 0. {
-            (wheel.rpy.yaw + (0.01 * turn_factor)).clamp(-0.1, 0.1)
+            (wheel.rpy.yaw + (tilt_speed * turn_factor)).clamp(-0.1, 0.1)
         } else {
             if wheel.rpy.yaw > -0.001 && wheel.rpy.yaw < 0.001 {
                 0.
