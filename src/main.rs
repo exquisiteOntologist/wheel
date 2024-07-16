@@ -6,7 +6,7 @@ use iyes_perf_ui::PerfUiPlugin;
 use wheel::{
     components::{camera::PCameraPlugin, character::CharacterPlugin, wheel::WheelPlugin},
     controls::keyboard_control,
-    gens::{clouds::CloudPlugin, terrain::TerrainPlugin},
+    gens::{clouds::CloudPlugin, particles::ParticlesPlugin, terrain::TerrainPlugin},
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
     utils::colours::rgb,
@@ -37,6 +37,7 @@ fn main() {
         .add_plugins((PerfUiPlugin, RapierPhysicsPlugin::<NoUserData>::default()))
         .add_plugins((CharacterPlugin, WheelPlugin))
         .add_plugins((PCameraPlugin, CloudPlugin, TerrainPlugin))
+        .add_plugins((ParticlesPlugin))
         .add_systems(Startup, setup)
         .add_systems(Update, (setup_scene_once_loaded, keyboard_control))
         .run();
