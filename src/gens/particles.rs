@@ -11,27 +11,11 @@ use bevy::{
 use bevy_hanabi::{
     Attribute, ColorOverLifetimeModifier, EffectAsset, ExprWriter, Gradient, HanabiPlugin,
     LinearDragModifier, OrientMode, OrientModifier, ParticleEffect, ParticleEffectBundle,
-    SetAttributeModifier, SetPositionCircleModifier, ShapeDimension, SizeOverLifetimeModifier,
-    Spawner, TangentAccelModifier,
+    SetAttributeModifier, SetPositionCircleModifier, SetVelocityTangentModifier, ShapeDimension,
+    SizeOverLifetimeModifier, Spawner, TangentAccelModifier,
 };
 
 fn setup(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
-    // commands.spawn((
-    //     Camera3dBundle {
-    //         transform: Transform::from_translation(Vec3::new(0., 0., 25.)),
-    //         camera: Camera {
-    //             hdr: true,
-    //             clear_color: Color::BLACK.into(),
-    //             ..default()
-    //         },
-    //         tonemapping: Tonemapping::None,
-    //         ..default()
-    //     },
-    // BloomSettings::default(),
-    // ));
-
-    // ^ TODO: Take the settings
-
     let mut color_gradient1 = Gradient::new();
     color_gradient1.add_key(0.0, Vec4::new(4.0, 4.0, 4.0, 1.0));
     color_gradient1.add_key(0.1, Vec4::new(4.0, 4.0, 0.0, 1.0));
@@ -47,8 +31,15 @@ fn setup(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
     let init_pos = SetPositionCircleModifier {
         center: writer.lit(Vec3::ZERO).expr(),
         axis: writer.lit(Vec3::Z).expr(),
-        radius: writer.lit(4.).expr(),
+        radius: writer.lit(1.3).expr(),
         dimension: ShapeDimension::Surface,
+    };
+
+    let init_vel = SetVelocityTangentModifier {
+        origin: writer.lit(Vec3::ZERO).expr(),
+        axis: writer.lit(Vec3::Y).expr(),
+        // speed: writer.lit(1.6).uniform(writer.lit(3.)).expr(),
+        speed: writer.lit(-0.5).uniform(writer.lit(3.)).expr(),
     };
 
     let age = writer.lit(0.).expr();
@@ -62,6 +53,9 @@ fn setup(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
     let drag = writer.lit(2.).expr();
     let update_drag = LinearDragModifier::new(drag);
 
+    // rotation
+    let rotation = writer.lit(-1.59).uniform(writer.lit(1.59)).expr();
+
     let mut module = writer.finish();
 
     let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Z, 30.);
@@ -72,6 +66,7 @@ fn setup(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
             .init(init_pos)
             .init(init_age)
             .init(init_lifetime)
+            .init(init_vel)
             .update(update_drag)
             .update(tangent_accel)
             .render(ColorOverLifetimeModifier {
@@ -81,14 +76,14 @@ fn setup(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
                 gradient: size_gradient1,
                 screen_space_size: false,
             })
-            .render(OrientModifier::new(OrientMode::AlongVelocity)),
+            .render(OrientModifier::new(OrientMode::AlongVelocity).with_rotation(rotation)),
     );
 
     commands.spawn((
         // Name::new("portal"),
         ParticleEffectBundle {
             effect: ParticleEffect::new(effect1),
-            transform: Transform::IDENTITY,
+            transform: Transform::from_xyz(0., 1.2, 0.),
             ..Default::default()
         },
     ));
