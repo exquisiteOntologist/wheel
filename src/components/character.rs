@@ -1,14 +1,15 @@
 use bevy::{
-    app::{App, Plugin, Update},
+    app::{App, Plugin, PostStartup, Update},
+    hierarchy::BuildChildren,
     math::{Dir3, Vec3},
-    prelude::{Query, Res, ResMut, With},
+    prelude::{Commands, EntityRef, Query, Res, ResMut, With},
     time::Time,
     transform::components::Transform,
 };
 
 use crate::{
-    resources::{Game, PlayerCharacter},
-    utils::matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
+    gens::particles::ParticlesPlugin,
+    resources::{Game, PlayerCharacter, WheelParticles},
 };
 
 use super::wheel::{wheel_y_rotation, WheelState};
@@ -64,10 +65,32 @@ pub fn move_character(
     }
 }
 
+/// Add particles to the character.
+/// Note that for the query to work we probably have to
+/// run this post-startup.
+fn add_particles(
+    mut commands: Commands,
+    mut q_character: Query<EntityRef, With<PlayerCharacter>>,
+    q_particles: Query<EntityRef, With<WheelParticles>>,
+) {
+    let mut particles = q_particles.iter();
+
+    // each entity gets its own particles emitter,
+    // as each entity spawns a particles instance
+    for entity in q_character.iter_mut() {
+        commands
+            .get_entity(entity.id())
+            .unwrap()
+            .add_child(particles.next().unwrap().id());
+    }
+}
+
 pub struct CharacterPlugin;
 
 impl Plugin for CharacterPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Update, (move_character));
+        app.add_plugins(ParticlesPlugin);
+        app.add_systems(PostStartup, add_particles);
     }
 }

@@ -13,8 +13,7 @@ use bevy::{
 
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
-    gens::particles::ParticlesPlugin,
-    resources::{Game, PlayerWheel, WheelParticles},
+    resources::{Game, PlayerWheel},
     utils::matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat, RPY},
 };
 
@@ -299,25 +298,6 @@ fn setup_wheel(mut commands: Commands, mut game: ResMut<Game>) {
     game.player_wheel.speed_z = FORWARD_SPEED * 10.;
 }
 
-fn add_particles(
-    mut commands: Commands,
-    // mut q: Query<&mut Transform, With<PlayerWheel>>,
-    mut q_wheel: Query<EntityRef, With<PlayerWheel>>,
-    q_particles: Query<EntityRef, With<WheelParticles>>,
-) {
-    // this will fail if not init or more than one wheel
-    let Ok(wheel_particles) = q_particles.get_single() else {
-        panic!("failed, there are no particles");
-    };
-
-    for entity in q_wheel.iter_mut() {
-        commands
-            .get_entity(entity.id())
-            .unwrap()
-            .add_child(wheel_particles.id());
-    }
-}
-
 #[derive(Resource, Default)]
 pub struct WheelState {
     /// Roll is tilting sideways,
@@ -331,9 +311,7 @@ pub struct WheelPlugin;
 impl Plugin for WheelPlugin {
     fn build(&self, app: &mut App) {
         app.init_resource::<WheelState>();
-        app.add_plugins(ParticlesPlugin);
         app.add_systems(Startup, setup_wheel);
-        app.add_systems(PostStartup, add_particles);
         app.add_systems(Update, (spin_wheel, turn_wheel, tilt_wheel, move_wheel));
     }
 }
