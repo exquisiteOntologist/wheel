@@ -6,7 +6,11 @@ use crate::{
     utils::colours::rgba,
 };
 use bevy::{
-    core_pipeline::{experimental::taa::TemporalAntiAliasSettings, tonemapping::DebandDither},
+    core_pipeline::{
+        bloom::BloomSettings,
+        experimental::taa::TemporalAntiAliasSettings,
+        tonemapping::{DebandDither, Tonemapping},
+    },
     math::Dir3,
     pbr::ScreenSpaceAmbientOcclusionSettings,
     prelude::*,
@@ -178,10 +182,16 @@ fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direc
 fn setup_camera(mut commands: Commands) {
     commands.spawn((
         Camera3dBundle {
+            camera: Camera {
+                hdr: true,
+                // clear_color: Color::BLACK.into(),
+                ..default()
+            },
             // intentionally starting a way behind player so it moves in
             transform: Transform::from_xyz(-100.0, 3.0, 0.0)
                 .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
             deband_dither: DebandDither::Enabled,
+            tonemapping: Tonemapping::None,
             ..default()
         },
         FogSettings {
@@ -202,6 +212,8 @@ fn setup_camera(mut commands: Commands) {
             // falloff: FogFalloff::from_visibility(70.0),
             ..default()
         },
+        // bloom is what adds the intense shine on ground (+ everywhere)
+        BloomSettings::default(),
         TemporalAntiAliasSettings { ..default() },
         ScreenSpaceAmbientOcclusionSettings { ..default() },
         PlayerCamera,

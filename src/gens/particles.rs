@@ -16,19 +16,21 @@ use bevy_hanabi::{
 };
 
 fn setup(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
-    commands.spawn((
-        Camera3dBundle {
-            transform: Transform::from_translation(Vec3::new(0., 0., 25.)),
-            camera: Camera {
-                hdr: true,
-                clear_color: Color::BLACK.into(),
-                ..default()
-            },
-            tonemapping: Tonemapping::None,
-            ..default()
-        },
-        BloomSettings::default(),
-    ));
+    // commands.spawn((
+    //     Camera3dBundle {
+    //         transform: Transform::from_translation(Vec3::new(0., 0., 25.)),
+    //         camera: Camera {
+    //             hdr: true,
+    //             clear_color: Color::BLACK.into(),
+    //             ..default()
+    //         },
+    //         tonemapping: Tonemapping::None,
+    //         ..default()
+    //     },
+    // BloomSettings::default(),
+    // ));
+
+    // ^ TODO: Take the settings
 
     let mut color_gradient1 = Gradient::new();
     color_gradient1.add_key(0.0, Vec4::new(4.0, 4.0, 4.0, 1.0));
