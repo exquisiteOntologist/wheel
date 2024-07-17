@@ -16,6 +16,9 @@ pub struct PlayerCharacter;
 #[derive(Component)]
 pub struct PlayerWheel;
 
+#[derive(Component)]
+pub struct WheelParticles;
+
 #[derive(Default)]
 pub struct MotionState {
     pub speed_x: f32,

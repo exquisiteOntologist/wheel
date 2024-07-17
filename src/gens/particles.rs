@@ -1,10 +1,12 @@
 use bevy::{
-    app::{App, Plugin, Startup},
+    app::{App, Plugin, PostStartup, Startup},
     asset::Assets,
     color::Color,
     core_pipeline::{bloom::BloomSettings, tonemapping::Tonemapping},
+    ecs::system::EntityCommands,
+    hierarchy::{BuildChildren, Parent},
     math::{Vec2, Vec3, Vec4},
-    prelude::{default, Camera3dBundle, Commands, ResMut},
+    prelude::{default, Camera3dBundle, Commands, Entity, Query, ResMut},
     render::camera::Camera,
     transform::components::Transform,
 };
@@ -15,7 +17,13 @@ use bevy_hanabi::{
     SizeOverLifetimeModifier, Spawner, TangentAccelModifier,
 };
 
-fn setup(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
+use crate::resources::WheelParticles;
+
+pub fn setup_particles(
+    mut commands: Commands,
+    mut effects: ResMut<Assets<EffectAsset>>,
+    mut parent: Query<&Parent>,
+) -> Entity {
     let mut color_gradient1 = Gradient::new();
     color_gradient1.add_key(0.0, Vec4::new(4.0, 4.0, 4.0, 1.0));
     color_gradient1.add_key(0.1, Vec4::new(4.0, 4.0, 0.0, 1.0));
@@ -79,14 +87,21 @@ fn setup(mut commands: Commands, mut effects: ResMut<Assets<EffectAsset>>) {
             .render(OrientModifier::new(OrientMode::AlongVelocity).with_rotation(rotation)),
     );
 
-    commands.spawn((
+    let particles = commands.spawn((
         // Name::new("portal"),
         ParticleEffectBundle {
             effect: ParticleEffect::new(effect1),
             transform: Transform::from_xyz(0., 1.2, 0.),
             ..Default::default()
         },
+        WheelParticles,
     ));
+
+    particles.id()
+}
+
+fn setup(commands: Commands, effects: ResMut<Assets<EffectAsset>>, parent: Query<&Parent>) {
+    setup_particles(commands, effects, parent);
 }
 
 pub struct ParticlesPlugin;
@@ -94,6 +109,7 @@ pub struct ParticlesPlugin;
 impl Plugin for ParticlesPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(HanabiPlugin);
+        // setup from parent instead
         app.add_systems(Startup, setup);
     }
 }

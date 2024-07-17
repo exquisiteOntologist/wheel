@@ -37,7 +37,7 @@ fn main() {
         .add_plugins((PerfUiPlugin, RapierPhysicsPlugin::<NoUserData>::default()))
         .add_plugins((CharacterPlugin, WheelPlugin))
         .add_plugins((PCameraPlugin, CloudPlugin, TerrainPlugin))
-        .add_plugins((ParticlesPlugin))
+        // .add_plugins((ParticlesPlugin))
         .add_systems(Startup, setup)
         .add_systems(Update, (setup_scene_once_loaded, keyboard_control))
         .run();
