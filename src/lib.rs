@@ -4,6 +4,7 @@ pub mod controls;
 pub mod gens;
 pub mod meshes;
 pub mod movement;
+pub mod operation;
 pub mod resources;
 pub mod setup;
 pub mod utils;

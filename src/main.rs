@@ -1,12 +1,16 @@
 //! Rolls a player-controlled wheel
 
-use bevy::{pbr::DirectionalLightShadowMap, prelude::*};
+use bevy::{
+    input::common_conditions::input_just_pressed, pbr::DirectionalLightShadowMap, prelude::*,
+    window::WindowFocused,
+};
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
 use wheel::{
     components::{camera::PCameraPlugin, character::CharacterPlugin, wheel::WheelPlugin},
     controls::keyboard_control,
     gens::{clouds::CloudPlugin, particles::ParticlesPlugin, terrain::TerrainPlugin},
+    operation::toggle_pause,
     resources::Game,
     setup::{setup, setup_scene_once_loaded},
     utils::colours::rgb,
@@ -33,6 +37,10 @@ fn main() {
             }),
             ..default()
         }),))
+        .add_systems(
+            Update,
+            (toggle_pause.run_if(input_just_pressed(KeyCode::Escape)),),
+        )
         .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
         .add_plugins((PerfUiPlugin, RapierPhysicsPlugin::<NoUserData>::default()))
         .add_plugins((CharacterPlugin, WheelPlugin))

@@ -17,6 +17,9 @@ pub struct PlayerCharacter;
 pub struct PlayerWheel;
 
 #[derive(Component)]
+pub struct PlayerParticles;
+
+#[derive(Component)]
 pub struct WheelParticles;
 
 #[derive(Default)]

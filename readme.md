@@ -4,6 +4,8 @@ Spin a wheel through a desert.
 
 ## Running Wheel
 
+You **must** run as release to apply the optimizations that give adequate performance.
+
 ```cli
 cargo run --release
 ```

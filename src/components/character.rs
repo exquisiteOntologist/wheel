@@ -1,15 +1,19 @@
+use std::default;
+
 use bevy::{
     app::{App, Plugin, PostStartup, Update},
     hierarchy::BuildChildren,
     math::{Dir3, Vec3},
-    prelude::{Commands, EntityRef, Query, Res, ResMut, With},
+    prelude::{Commands, EntityRef, Query, Res, ResMut, SpatialBundle, With, Without},
     time::Time,
     transform::components::Transform,
+    utils::default,
 };
 
 use crate::{
     gens::particles::ParticlesPlugin,
-    resources::{Game, PlayerCharacter, WheelParticles},
+    resources::{Game, PlayerCharacter, PlayerParticles, WheelParticles},
+    utils::{angles::degrees_to_radians, matrix::quaternion_from_rpy_quat},
 };
 
 use super::wheel::{wheel_y_rotation, WheelState};
@@ -51,7 +55,6 @@ pub fn move_character(
 
     let speed = game.player_wheel.speed_z;
     let rotation = wheel_y_rotation(&t.rotation).normalize();
-    // if let Ok(direction) = Dir3::new(rotation * -Vec3::X) {
     if let Ok(direction) = Dir3::new(rotation * -Vec3::Z) {
         // t.translation += direction * speed;
         let f = t.right();
@@ -63,6 +66,9 @@ pub fn move_character(
         // it instead should be parented,
         // with the parent being them mover
     }
+
+    println!("char rotation {}", t.rotation);
+    println!("char translation {}", t.translation);
 }
 
 /// Add particles to the character.
@@ -78,10 +84,47 @@ fn add_particles(
     // each entity gets its own particles emitter,
     // as each entity spawns a particles instance
     for entity in q_character.iter_mut() {
+        let particles_bundle = commands
+            .spawn((SpatialBundle { ..default() }, PlayerParticles))
+            .add_child(particles.next().unwrap().id())
+            .id();
+
         commands
             .get_entity(entity.id())
             .unwrap()
-            .add_child(particles.next().unwrap().id());
+            .add_child(particles_bundle);
+
+        // commands
+        //     .get_entity(entity.id())
+        //     .unwrap()
+        //     .add_child(particles.next().unwrap().id());
+    }
+}
+
+pub fn update_particles(
+    mut commands: Commands,
+    mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
+    mut q_particles: Query<(&mut Transform, &WheelParticles), Without<PlayerCharacter>>,
+) {
+    let mut particle_emitters = q_particles.iter_mut();
+
+    for character in q_character.iter_mut() {
+        let mut particles = particle_emitters.next().unwrap().0;
+        // particles.translation = character.0.translation;
+        println!("particles xyz {}", particles.translation);
+
+        // The center & origin of the effect modifiers probably need to change,
+        // instead of the transform of the particles
+
+        // let rot = if character.0.translation.x > 0. {
+        //     1.
+        // } else {
+        //     0.
+        // };
+
+        // let updated_rot_quat = quaternion_from_rpy_quat(degrees_to_radians(180. * rot), 0., 0.);
+        // particles.rotation = particles.rotation.normalize();
+        // particles.rotate(updated_rot_quat);
     }
 }
 
@@ -89,7 +132,7 @@ pub struct CharacterPlugin;
 
 impl Plugin for CharacterPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (move_character));
+        app.add_systems(Update, (move_character, update_particles));
         app.add_plugins(ParticlesPlugin);
         app.add_systems(PostStartup, add_particles);
     }
