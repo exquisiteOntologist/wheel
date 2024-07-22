@@ -16,15 +16,18 @@ use bevy_hanabi::{
     Attribute, ColorOverLifetimeModifier, EffectAsset, EffectProperties, ExprWriter, Gradient,
     HanabiPlugin, LinearDragModifier, OrientMode, OrientModifier, ParticleEffect,
     ParticleEffectBundle, SetAttributeModifier, SetPositionCircleModifier,
-    SetVelocityTangentModifier, ShapeDimension, SizeOverLifetimeModifier, Spawner,
-    TangentAccelModifier,
+    SetPositionSphereModifier, SetVelocityTangentModifier, ShapeDimension,
+    SizeOverLifetimeModifier, Spawner, TangentAccelModifier,
 };
 use bevy_rapier3d::na::Rotation3;
 
 use crate::{
     components::wheel::WheelState,
     resources::{Game, PlayerWheel, WheelParticles},
-    utils::matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
+    utils::{
+        angles::degrees_to_radians,
+        matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
+    },
 };
 
 pub fn move_particles(
@@ -41,9 +44,9 @@ pub fn move_particles(
     for mut particles in q_p.iter_mut() {
         // let wheel_rotation = wheels.next().unwrap().rotation;
 
-        particles.rotate_x(0.);
-        particles.rotate_y(0.);
-        particles.rotate_z(0.);
+        // particles.rotate_x(0.);
+        // particles.rotate_y(0.);
+        // particles.rotate_z(0.);
         //
         // let mut t = particles.clone();
 
@@ -85,6 +88,7 @@ pub fn move_particles(
 /// The divider value lets you adjust.
 /// The lower the divider the brighter and smoother the particles will be.
 /// Higher dividers may produce more accurate colours.
+/// May be similar to Attribute::COLOR
 fn clr(a: f32, b: f32, c: f32, d: f32, divider: f32) -> Vec4 {
     Vec4::new(a / divider, b / divider, c / divider, d)
 }
@@ -122,19 +126,42 @@ pub fn setup_particles(
 
     let writer = ExprWriter::new();
 
+    let pos_axis = writer.add_property("pos_axis", Vec3::Z.into());
+
     let init_pos = SetPositionCircleModifier {
         center: writer.lit(Vec3::ZERO).expr(),
-        axis: writer.lit(Vec3::Z).expr(),
+        axis: writer.prop(pos_axis).expr(),
         radius: writer.lit(1.3).expr(),
         dimension: ShapeDimension::Surface,
     };
 
+    // let init_pos = SetPositionSphereModifier {
+    //     center: writer.lit(Vec3::ZERO).expr(),
+    //     // axis: writer.lit(Vec3::Z).expr(),
+    //     radius: writer.lit(1.3).expr(),
+    //     dimension: ShapeDimension::Surface,
+    // };
+
     let init_vel = SetVelocityTangentModifier {
         origin: writer.lit(Vec3::ZERO).expr(),
-        axis: writer.lit(Vec3::Y).expr(),
+        axis: writer.lit(Vec3::Z).expr(),
         // speed: writer.lit(1.6).uniform(writer.lit(3.)).expr(),
         speed: writer.lit(-0.5).uniform(writer.lit(3.)).expr(),
     };
+
+    //
+    //
+    //
+    //
+    //
+    //
+
+    // NEED TO TRY CHANGING THE ACCESS
+    //
+    //
+    // After, similary this will need to be done for velocity etc.
+
+    //
 
     let age = writer.lit(0.).expr();
     let init_age = SetAttributeModifier::new(Attribute::AGE, age);
@@ -150,6 +177,10 @@ pub fn setup_particles(
     // rotation
     let rotation = writer.lit(-0.).uniform(writer.lit(1.59)).expr();
 
+    // opacity
+    let opacity = writer.lit(0.9).uniform(writer.lit(0.3)).expr();
+    let init_opacity = SetAttributeModifier::new(Attribute::ALPHA, opacity);
+
     let mut module = writer.finish();
 
     let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Y, 30.);
@@ -161,6 +192,7 @@ pub fn setup_particles(
             .init(init_age)
             .init(init_lifetime)
             .init(init_vel)
+            .init(init_opacity)
             .update(update_drag)
             .update(tangent_accel)
             .render(ColorOverLifetimeModifier {
@@ -177,7 +209,8 @@ pub fn setup_particles(
         // Name::new("portal"),
         ParticleEffectBundle {
             effect: ParticleEffect::new(effect1),
-            transform: Transform::from_xyz(0., 1.2, 0.).with_rotation(Quat::from_rotation_z(1.)),
+            transform: Transform::from_xyz(0., 1.2, 0.)
+                .with_rotation(Quat::from_rotation_y(degrees_to_radians(90.))),
             ..Default::default()
         },
         WheelParticles,

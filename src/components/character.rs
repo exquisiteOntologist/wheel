@@ -9,10 +9,11 @@ use bevy::{
     transform::components::Transform,
     utils::default,
 };
+use bevy_hanabi::EffectProperties;
 
 use crate::{
     gens::particles::ParticlesPlugin,
-    resources::{Game, PlayerCharacter, PlayerParticles, WheelParticles},
+    resources::{Game, PlayerCharacter, PlayerParticles, PlayerWheel, WheelParticles},
     utils::{angles::degrees_to_radians, matrix::quaternion_from_rpy_quat},
 };
 
@@ -101,10 +102,11 @@ fn add_particles(
     }
 }
 
-pub fn update_particles(
+pub fn update_particles_relative_to_char(
     mut commands: Commands,
-    mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
-    mut q_particles: Query<(&mut Transform, &WheelParticles), Without<PlayerCharacter>>,
+    // mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
+    mut q_character: Query<(&mut Transform, &PlayerWheel)>,
+    mut q_particles: Query<(&mut Transform, &PlayerParticles), Without<PlayerWheel>>,
 ) {
     let mut particle_emitters = q_particles.iter_mut();
 
@@ -112,6 +114,16 @@ pub fn update_particles(
         let mut particles = particle_emitters.next().unwrap().0;
         // particles.translation = character.0.translation;
         println!("particles xyz {}", particles.translation);
+        // particles.rotate_y(1.);
+        // particles.rotate_x(1.);
+        // particles.rotate_z(1.);
+        //
+
+        // particles.rotation = character.0.rotation;
+        particles.rotation.y = character.0.rotation.y;
+        // particles.translation = character.0.translation;
+
+        println!("particles rot {}", particles.rotation);
 
         // The center & origin of the effect modifiers probably need to change,
         // instead of the transform of the particles
@@ -128,11 +140,30 @@ pub fn update_particles(
     }
 }
 
+fn update_axis(
+    time: Res<Time>,
+    mut query: Query<&mut EffectProperties, With<WheelParticles>>,
+    mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
+) {
+    let mut properties = query.single_mut();
+
+    let (rotation, angle) = q_character.single_mut().0.rotation.to_axis_angle();
+    properties.set("pos_axis", rotation.into());
+    //
+}
+
 pub struct CharacterPlugin;
 
 impl Plugin for CharacterPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (move_character, update_particles));
+        app.add_systems(
+            Update,
+            (
+                move_character,
+                update_particles_relative_to_char,
+                update_axis,
+            ),
+        );
         app.add_plugins(ParticlesPlugin);
         app.add_systems(PostStartup, add_particles);
     }
