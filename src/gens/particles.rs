@@ -131,7 +131,7 @@ pub fn setup_particles(
 
     let init_vel = SetVelocityTangentModifier {
         origin: writer.lit(Vec3::ZERO).expr(),
-        axis: writer.lit(Vec3::Z).expr(),
+        axis: writer.lit(Vec3::Y).expr(),
         // speed: writer.lit(1.6).uniform(writer.lit(3.)).expr(),
         speed: writer.lit(-0.5).uniform(writer.lit(3.)).expr(),
     };
@@ -152,7 +152,7 @@ pub fn setup_particles(
 
     let mut module = writer.finish();
 
-    let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Z, 30.);
+    let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Y, 30.);
 
     let effect1 = effects.add(
         EffectAsset::new(vec![16384, 16384], Spawner::rate(5000.0.into()), module)
