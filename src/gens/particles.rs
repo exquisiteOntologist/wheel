@@ -10,14 +10,14 @@ use bevy::{
     reflect::Reflect,
     render::camera::Camera,
     time::Time,
-    transform::components::Transform,
+    transform::{bundles::TransformBundle, components::Transform},
 };
 use bevy_hanabi::{
     Attribute, ColorOverLifetimeModifier, EffectAsset, EffectProperties, ExprWriter, Gradient,
     HanabiPlugin, LinearDragModifier, OrientMode, OrientModifier, ParticleEffect,
     ParticleEffectBundle, SetAttributeModifier, SetPositionCircleModifier,
-    SetPositionSphereModifier, SetVelocityTangentModifier, ShapeDimension,
-    SizeOverLifetimeModifier, Spawner, TangentAccelModifier,
+    SetPositionCone3dModifier, SetPositionSphereModifier, SetVelocityTangentModifier,
+    ShapeDimension, SizeOverLifetimeModifier, Spawner, TangentAccelModifier,
 };
 use bevy_rapier3d::na::Rotation3;
 
@@ -66,7 +66,7 @@ pub fn move_particles(
 
         // particles.rotation = t.rotation.normalize();
 
-        println!("particles rot {}", particles.rotation);
+        // println!("particles rot {}", particles.rotation);
     }
 }
 
@@ -102,12 +102,13 @@ pub fn setup_particles(
     color_gradient1.add_key(
         0.0,
         // Vec4::new(255.0 / 100., 255.0 / 100., 227.0 / 100., 0.9),
-        clr(255., 255., 227., 0.9, 100.),
+        clr(238., 218., 187., 0.9, 100.),
+        // clr(0., 0., 0., 0.9, 100.),
     );
     color_gradient1.add_key(
         0.1,
         // Vec4::new(255.0 / 100., 255.0 / 100., 227.0 / 100., 0.5),
-        clr(255., 255., 227., 0.5, 100.),
+        clr(246., 229., 202., 0.5, 100.),
     );
     color_gradient1.add_key(
         0.9,
@@ -121,19 +122,21 @@ pub fn setup_particles(
     );
 
     let mut size_gradient1 = Gradient::new();
-    size_gradient1.add_key(0.3, Vec2::new(0.2, 0.02));
+    size_gradient1.add_key(0.3, Vec2::new(0.1, 0.02));
     size_gradient1.add_key(1.0, Vec2::splat(0.0));
 
     let writer = ExprWriter::new();
 
-    let pos_axis = writer.add_property("pos_axis", Vec3::Z.into());
+    let pos_center = writer.add_property("pos_center", Vec3::ZERO.into());
+    let pos_axis = writer.add_property("pos_axis", Vec3::X.into());
 
-    let init_pos = SetPositionCircleModifier {
-        center: writer.lit(Vec3::ZERO).expr(),
-        axis: writer.prop(pos_axis).expr(),
-        radius: writer.lit(1.3).expr(),
-        dimension: ShapeDimension::Surface,
-    };
+    // NOTE this is a 2D circle so it tends to try to face a specific direction
+    // let init_pos = SetPositionCircleModifier {
+    //     center: writer.prop(pos_center).expr(),
+    //     axis: writer.prop(pos_axis).expr(),
+    //     radius: writer.lit(1.3).expr(),
+    //     dimension: ShapeDimension::Surface,
+    // };
 
     // let init_pos = SetPositionSphereModifier {
     //     center: writer.lit(Vec3::ZERO).expr(),
@@ -142,6 +145,25 @@ pub fn setup_particles(
     //     dimension: ShapeDimension::Surface,
     // };
 
+    // cone at back of wheel
+    let init_pos = SetPositionCone3dModifier {
+        dimension: ShapeDimension::Surface,
+        height: writer.lit(2.).expr(),
+        base_radius: writer.lit(1.3).expr(),
+        top_radius: writer.lit(0.2).expr(),
+    };
+
+    // // a cone acting as a circle. emits inside wheel.
+    // let init_pos = SetPositionCone3dModifier {
+    //     dimension: ShapeDimension::Surface,
+    //     height: writer.lit(0.1).expr(),
+    //     base_radius: writer.lit(1.25).expr(),
+    //     top_radius: writer.lit(1.3).expr(),
+    // };
+
+    // Note that if the velocity doesn't follow the character,
+    // it can be more like wind, with the particles seemingly
+    // going in the direction of a wind.
     let init_vel = SetVelocityTangentModifier {
         origin: writer.lit(Vec3::ZERO).expr(),
         axis: writer.lit(Vec3::Z).expr(),
@@ -178,7 +200,7 @@ pub fn setup_particles(
     let rotation = writer.lit(-0.).uniform(writer.lit(1.59)).expr();
 
     // opacity
-    let opacity = writer.lit(0.9).uniform(writer.lit(0.3)).expr();
+    let opacity = writer.lit(0.2).uniform(writer.lit(0.9)).expr();
     let init_opacity = SetAttributeModifier::new(Attribute::ALPHA, opacity);
 
     let mut module = writer.finish();
@@ -209,10 +231,14 @@ pub fn setup_particles(
         // Name::new("portal"),
         ParticleEffectBundle {
             effect: ParticleEffect::new(effect1),
-            transform: Transform::from_xyz(0., 1.2, 0.)
-                .with_rotation(Quat::from_rotation_y(degrees_to_radians(90.))),
+            transform: Transform::from_xyz(-2., 1.1, 0.)
+                // transform: Transform::from_xyz(0., 1.1, 0.)
+                // .with_rotation(Quat::from_rotation_x(degrees_to_radians(-90.))),
+                .with_rotation(Quat::from_rotation_z(degrees_to_radians(-120.))),
+            // .with_rotation(Quat::from_rotation_z(degrees_to_radians(-0.))),
             ..Default::default()
         },
+        // TransformBundle::default(),
         WheelParticles,
     ));
 

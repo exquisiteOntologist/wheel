@@ -1,9 +1,11 @@
 //! Rolls a player-controlled wheel
 
+use bevy::prelude::*;
 use bevy::{
     input::common_conditions::input_just_pressed, pbr::DirectionalLightShadowMap, prelude::*,
     window::WindowFocused,
 };
+use bevy_debug_grid::*;
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
 use wheel::{
@@ -28,6 +30,7 @@ fn main() {
         .insert_resource(ClearColor(rgb(52., 167., 211.)))
         .insert_resource(Msaa::Sample4)
         .init_resource::<Game>()
+        // .add_plugins((DebugGridPlugin::without_floor_grid()))
         .add_plugins((DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
                 title: "Wheel".into(),

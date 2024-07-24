@@ -24,7 +24,7 @@ fn wheel_rotation(
     mut wheel: ResMut<WheelState>,
 ) {
     for mut t in &mut q {
-        println!("wheel pos {}", t.translation.xyx());
+        // println!("wheel pos {}", t.translation.xyx());
 
         let turn_factor = if game.player_wheel.speed_y > 0.01 {
             -1.
@@ -105,7 +105,8 @@ pub fn _turn_wheel(
     }
 }
 
-/// because the wheel spins and turns, get just y for the turn
+/// because the wheel spins and turns, get the rotation,
+/// with only the Y value (useful for turning)
 pub fn wheel_y_rotation(rotation: &Quat) -> Quat {
     let mut rotation_y = rotation.normalize();
     rotation_y.z = 0.;
@@ -113,12 +114,12 @@ pub fn wheel_y_rotation(rotation: &Quat) -> Quat {
     rotation_y
 }
 
-/// because the wheel spins and turns, get just x for the turn
+/// because the wheel spins and turns, get the rotation,
+/// with only the X value (useful for turning)
 pub fn wheel_x_rotation(rotation: &Quat) -> Quat {
     let mut rotation_x = rotation.normalize();
     rotation_x.z = 0.;
     rotation_x.y = 0.;
-    // rotation_x.x = 0.;
     rotation_x
 }
 

@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 bevy = "0.14.0"
+bevy_debug_grid = "0.6.0"
 bevy_hanabi = "0.12.0"
 bevy_rapier3d = "0.27.0"
 cgmath = "0.18.0"

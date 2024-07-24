@@ -191,6 +191,7 @@ fn setup_camera(mut commands: Commands) {
             transform: Transform::from_xyz(-100.0, 3.0, 0.0)
                 .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
             deband_dither: DebandDither::Enabled,
+            // tonemapping: Tonemapping::TonyMcMapface,
             tonemapping: Tonemapping::None,
             ..default()
         },
