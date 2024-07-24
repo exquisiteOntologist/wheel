@@ -3,20 +3,22 @@ use std::default;
 use bevy::{
     app::{App, Plugin, PostStartup, Update},
     hierarchy::BuildChildren,
-    math::{Dir3, Vec3},
+    math::{Dir3, Quat, Vec3},
     prelude::{Commands, EntityRef, Query, Res, ResMut, SpatialBundle, With, Without},
+    reflect::Reflect,
     time::Time,
     transform::components::Transform,
     utils::default,
 };
 use bevy_hanabi::EffectProperties;
+use bevy_rapier3d::na::Rotation;
 
 use crate::{
     components::wheel::wheel_x_rotation,
     gens::particles::ParticlesPlugin,
-    resources::{Game, PlayerCharacter, PlayerParticles, PlayerWheel, WheelParticles},
+    resources::{DebugRoller, Game, PlayerCharacter, PlayerParticles, PlayerWheel, WheelParticles},
     utils::{
-        angles::degrees_to_radians,
+        angles::{degrees_to_radians, quat_w_to_axis_adjust},
         matrix::{quaternion_from_rpy, quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
     },
 };
@@ -30,6 +32,7 @@ pub fn move_character(
     mut game: ResMut<Game>,
     // to find the direction
     mut wheel: ResMut<WheelState>,
+    mut d_r: ResMut<DebugRoller>,
 ) {
     let mut t = q.single_mut();
 
@@ -54,7 +57,29 @@ pub fn move_character(
     };
 
     // because this rotation is relative and not absolute
-    t.rotate_local_y(turn_speed * turn_factor);
+    let new_turn = turn_speed * turn_factor;
+
+    // let updated_rot_quat = quaternion_from_rpy_quat(0., 0., 0.);
+    // t.rotation = t.rotation.normalize();
+    // t.rotate(updated_rot_quat);
+    // let updated_rot_quat = quaternion_from_rpy_quat(0., wheel.rpy.pitch, 0.);
+    // t.rotation = t.rotation.normalize();
+    // t.rotate(updated_rot_quat);
+    //
+    // For reference, this works except results in negative Y values that cause issues
+    // t.rotate_local_y(new_turn);
+    // if t.rotation.y == 0. {
+    //     t.rotation.y = 1.;
+    // }
+    let curr_w = t.rotation.w;
+    let new_w = ((((curr_w + new_turn) + 1.) % 2.) - 1.).clamp(-1., 1.);
+    println!("new w {}", new_w);
+    let y = quat_w_to_axis_adjust(new_w);
+    let rot = Quat::from_xyzw(0., y, 0., new_w);
+    t.rotation = rot.normalize();
+    // t.rotate_local_axis(t., new_turn);
+    // t.rotation.w += new_turn;
+    // t.rotate_local(Quat::from_xyzw(0., 1., 0., new_turn));
 
     // println!("parent rotation {}", t.rotation);
 
@@ -132,7 +157,7 @@ pub fn update_particles_relative_to_char(
         // particles.translation.z = 15.;
         // particles.translation = character.0.translation;
 
-        println!("particles rot {}", particles.rotation);
+        // println!("particles rot {}", particles.rotation);
 
         // The center & origin of the effect modifiers probably need to change,
         // instead of the transform of the particles
@@ -153,18 +178,64 @@ fn update_axis(
     time: Res<Time>,
     mut query: Query<(&mut EffectProperties, &mut Transform), With<WheelParticles>>,
     mut q_character: Query<(&mut Transform, &PlayerCharacter), Without<WheelParticles>>,
+    mut d_r: ResMut<DebugRoller>,
 ) {
     let (mut properties, mut transform) = query.single_mut();
 
     let mut c_t = q_character.single().0.clone();
 
+    // This value does not have to change as much as the character's rotation,
+    // it can remain relatively static for most of a turn
+    let rot_quat = Quat::from_xyzw(d_r.x, d_r.y, d_r.z, d_r.w);
+    let rot = rot_quat.xyz();
+
+    let rot_axis = Quat::from_xyzw(0., 1., 0., 0.);
+
+    let rot_quat = rot_axis.mul_quat(Quat::from_xyzw(0., 0., 0., d_r.w));
+    let rot = rot_quat.xyz();
+
+    // c_t = c_t.with_rotation(rot);
+    // let mut rot = c_t.rotation.inverse().xyz();
+
+    // rot.x = d_r.x;
+    // rot.z = d_r.z;
+
+    properties.set("pos_axis", rot.into());
+    properties.set("pos_center", rot.into());
+
+    println!("char tran {}", c_t.translation);
+    println!("char rot {}", c_t.rotation);
+    println!("char rot inv {}", c_t.rotation.inverse());
+    println!("axis rot quat {}", rot_quat);
+    println!("axis rot xyz {}", rot);
+    println!("===");
+
+    // Experiment with Theta Sin
+    let out = quat_w_to_axis_adjust(d_r.w);
+    println!("experiment out {}", out);
+
     return;
 
     // println!("char quat {}", c_t.rotation);
-    // let rot = c_t.rotation.inverse().xyz();
+    // let mut rot = c_t.rotation.inverse().xyz();
+    // rot.x = 0.;
+    // // rot.y = 0.;
+    // rot.z = 0.;
+    // if rot.y < 0. {
+    //     rot.x = degrees_to_radians(180.);
+    //     rot.z = degrees_to_radians(180.);
+    // } else {
+    //     rot.x = degrees_to_radians(180.);
+    //     // rot.z = degrees_to_radians(180.);
+    // }
+    // c_t.rotation.w;
+    // // c_t.rotate_arou
+    // // let mut rot = c_t.rotation.normalize().xyz();
+    // println!("w {}", c_t.rotation.w);
     // properties.set("pos_axis", rot.into());
     // properties.set("pos_center", rot.into());
     // println!("rot {}", rot);
+    // println!("quat {}", c_t.rotation.inverse());
     // return;
 
     // let rotation = c_t.rotation.normalize().xyz();

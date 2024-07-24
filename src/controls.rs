@@ -1,6 +1,6 @@
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
-    resources::Game,
+    resources::{DebugRoller, Game},
 };
 use bevy::prelude::*;
 
@@ -40,5 +40,34 @@ pub fn keyboard_control(
                 game.player_wheel.speed_y += turn;
             }
         }
+    }
+}
+
+pub fn keyboard_control_debugging(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    time: Res<Time>,
+    mut debug_roller: ResMut<DebugRoller>,
+) {
+    const INC: f32 = 0.1;
+
+    let inc = if keyboard_input.any_pressed([KeyCode::PageDown]) {
+        // page down down
+        -INC
+    } else {
+        // page up or nothing up
+        INC
+    };
+
+    if keyboard_input.any_pressed([KeyCode::Digit1]) {
+        debug_roller.x = (debug_roller.x + inc).clamp(-1., 1.);
+    }
+    if keyboard_input.any_pressed([KeyCode::Digit2]) {
+        debug_roller.y = (debug_roller.y + inc).clamp(-1., 1.);
+    }
+    if keyboard_input.any_pressed([KeyCode::Digit3]) {
+        debug_roller.z = (debug_roller.z + inc).clamp(-1., 1.);
+    }
+    if keyboard_input.any_pressed([KeyCode::Digit4]) {
+        debug_roller.w = (debug_roller.w + inc).clamp(-1., 1.);
     }
 }

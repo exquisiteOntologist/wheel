@@ -122,7 +122,7 @@ pub fn setup_particles(
     );
 
     let mut size_gradient1 = Gradient::new();
-    size_gradient1.add_key(0.3, Vec2::new(0.1, 0.02));
+    size_gradient1.add_key(0.3, Vec2::new(0.08, 0.01));
     size_gradient1.add_key(1.0, Vec2::splat(0.0));
 
     let writer = ExprWriter::new();
@@ -166,7 +166,8 @@ pub fn setup_particles(
     // going in the direction of a wind.
     let init_vel = SetVelocityTangentModifier {
         origin: writer.lit(Vec3::ZERO).expr(),
-        axis: writer.lit(Vec3::Z).expr(),
+        // axis: writer.lit(Vec3::Z).expr(),
+        axis: writer.prop(pos_axis).expr(),
         // speed: writer.lit(1.6).uniform(writer.lit(3.)).expr(),
         speed: writer.lit(-0.5).uniform(writer.lit(3.)).expr(),
     };
@@ -203,9 +204,16 @@ pub fn setup_particles(
     let opacity = writer.lit(0.2).uniform(writer.lit(0.9)).expr();
     let init_opacity = SetAttributeModifier::new(Attribute::ALPHA, opacity);
 
-    let mut module = writer.finish();
+    // acceleration - the axis affects the direction the particles go
+    // let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Y, 30.);
+    let tangent_accel = TangentAccelModifier::new(
+        writer.lit(Vec3::ZERO).expr(),
+        // writer.lit(Vec3::Y).expr(),
+        writer.prop(pos_axis).expr(),
+        writer.lit(10.).uniform(writer.lit(30.)).expr(),
+    );
 
-    let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Y, 30.);
+    let mut module = writer.finish();
 
     let effect1 = effects.add(
         EffectAsset::new(vec![16384, 16384], Spawner::rate(5000.0.into()), module)
@@ -216,6 +224,7 @@ pub fn setup_particles(
             .init(init_vel)
             .init(init_opacity)
             .update(update_drag)
+            // the acceleration makes the particles flow in a direction other than behind
             .update(tangent_accel)
             .render(ColorOverLifetimeModifier {
                 gradient: color_gradient1,
@@ -224,7 +233,8 @@ pub fn setup_particles(
                 gradient: size_gradient1,
                 screen_space_size: false,
             })
-            .render(OrientModifier::new(OrientMode::AlongVelocity).with_rotation(rotation)),
+            // .render(OrientModifier::new(OrientMode::AlongVelocity).with_rotation(rotation)),
+            .render(OrientModifier::new(OrientMode::AlongVelocity)),
     );
 
     let particles = commands.spawn((

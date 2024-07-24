@@ -8,6 +8,8 @@ use bevy::{
 use bevy_debug_grid::*;
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
+use wheel::controls::keyboard_control_debugging;
+use wheel::resources::DebugRoller;
 use wheel::{
     components::{camera::PCameraPlugin, character::CharacterPlugin, wheel::WheelPlugin},
     controls::keyboard_control,
@@ -30,6 +32,7 @@ fn main() {
         .insert_resource(ClearColor(rgb(52., 167., 211.)))
         .insert_resource(Msaa::Sample4)
         .init_resource::<Game>()
+        .init_resource::<DebugRoller>()
         // .add_plugins((DebugGridPlugin::without_floor_grid()))
         .add_plugins((DefaultPlugins.set(WindowPlugin {
             primary_window: Some(Window {
@@ -50,6 +53,13 @@ fn main() {
         .add_plugins((PCameraPlugin, CloudPlugin, TerrainPlugin))
         // .add_plugins((ParticlesPlugin))
         .add_systems(Startup, setup)
-        .add_systems(Update, (setup_scene_once_loaded, keyboard_control))
+        .add_systems(
+            Update,
+            (
+                setup_scene_once_loaded,
+                keyboard_control,
+                keyboard_control_debugging,
+            ),
+        )
         .run();
 }

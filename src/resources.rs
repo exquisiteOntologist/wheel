@@ -34,3 +34,11 @@ pub struct Game {
     pub camera: MotionState,
     pub player_wheel: MotionState,
 }
+
+#[derive(Resource, Default)]
+pub struct DebugRoller {
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub w: f32,
+}
