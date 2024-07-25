@@ -128,6 +128,7 @@ fn update_particles_relative_to_char(
         e_s.set_active(x > 1.);
         let rate: f32 = (1. - x) / MAX_SAND_RATE;
         e_s.spawner().with_count(rate.into());
+        p_ep.set("opacity", (x / 2.).into());
     }
 }
 
