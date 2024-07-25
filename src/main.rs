@@ -10,6 +10,7 @@ use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
 use wheel::controls::keyboard_control_debugging;
 use wheel::resources::DebugRoller;
+use wheel::utils::perlin::PerlinPlugin;
 use wheel::{
     components::{camera::PCameraPlugin, character::CharacterPlugin, wheel::WheelPlugin},
     controls::keyboard_control,
@@ -50,7 +51,8 @@ fn main() {
         .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
         .add_plugins((PerfUiPlugin, RapierPhysicsPlugin::<NoUserData>::default()))
         .add_plugins((CharacterPlugin, WheelPlugin))
-        .add_plugins((PCameraPlugin, CloudPlugin, TerrainPlugin))
+        .add_plugins((PCameraPlugin, CloudPlugin))
+        .add_plugins((PerlinPlugin, TerrainPlugin))
         // .add_plugins((ParticlesPlugin))
         .add_systems(Startup, setup)
         .add_systems(

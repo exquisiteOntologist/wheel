@@ -1,7 +1,24 @@
 use crate::constants::{
-    BASE_LEVEL, HILL_HEIGHTS, MOUNTAIN_HEIGHTS, TERRAIN_BUMPINESS, TERRAIN_SEED,
+    BASE_LEVEL, HILL_HEIGHTS, MOUNTAIN_HEIGHTS, TERRAIN_BUMPINESS, TERRAIN_SEED, WIND_SEED,
+};
+use bevy::{
+    app::{App, Plugin, Startup},
+    prelude::{Commands, Resource},
 };
 use noise::{NoiseFn, Perlin};
+
+#[derive(Resource)]
+pub struct PerlinNoiseEntity {
+    pub wind: Perlin,
+}
+
+impl PerlinNoiseEntity {
+    pub fn new() -> Self {
+        PerlinNoiseEntity {
+            wind: Perlin::new(WIND_SEED),
+        }
+    }
+}
 
 pub fn sample_terrain_height(terrain_perlin: &Perlin, x: f32, z: f32) -> f32 {
     BASE_LEVEL
@@ -36,9 +53,9 @@ fn sample_mountain(terrain_perlin: &Perlin, x: f32, z: f32) -> f32 {
     terrain_perlin.get([x as f64 / 4096., z as f64 / 4096.]) as f32
 }
 
-// pub fn setup_perlin(mut commands: Commands) {
-//     commands.insert_resource(PerlinNoiseEntity::new());
-// }
+pub fn setup_perlin(mut commands: Commands) {
+    commands.insert_resource(PerlinNoiseEntity::new());
+}
 
 // pub fn grass_perlin() -> Perlin {
 //     Perlin::new(GRASS_HEIGHT_SEED)
@@ -46,4 +63,12 @@ fn sample_mountain(terrain_perlin: &Perlin, x: f32, z: f32) -> f32 {
 
 pub fn terrain_perlin() -> Perlin {
     Perlin::new(TERRAIN_SEED)
+}
+
+pub struct PerlinPlugin;
+
+impl Plugin for PerlinPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Startup, setup_perlin);
+    }
 }

@@ -40,30 +40,9 @@ pub fn move_camera(
     // tran_behind_char.translation.x = -10.;
     // tran_behind_char.translation.x -= 15.;
 
-    // 5+((5/5)-(2/5))5
-
-    // the further away the faster we want to move the camera
-    // let s_scale = distance / MAX_CAM_DISTANCE;
-    // let t_scale = game.player_wheel.speed_y / MAX_TURN_SPEED;
-    // let s_speed_multi = game.player_wheel.speed_z * 100. * s_scale;
-    // let s_speed_multi = game.player_wheel.speed_z * 10.;
-
     move_cam_to(&mut t_cam, &tran_behind_char);
     set_cam_height(&mut t_cam, &tran_behind_char, &distance);
-
-    // println!("cam speed {:?}", game.camera.speed_z);
-    // println!("cam distance {:?}", distance);
-    // println!(
-    //     "rot y cam [{:1}] char [{:2}]",
-    //     t_cam.rotation.y, t_char.rotation.y
-    // );
-
     look_in_front(&mut t_cam, &t_char, char_direction);
-
-    // println!(
-    //     "cam rot (after) X [{:1}] Y [{:2}] Z [{:3}]",
-    //     t_cam.rotation.x, t_cam.rotation.y, t_cam.rotation.z
-    // );
 }
 
 fn adjust_camera_speed(t_cam: &Transform, t_char: &Transform, game: &mut ResMut<Game>) {
@@ -158,9 +137,13 @@ fn _get_turn_multiplier(t_cam: &Transform, t_dest: &Transform) -> f32 {
 }
 
 fn set_cam_height(t_cam: &mut Mut<Transform>, t_dest: &Transform, distance: &f32) {
-    let base_y = 3. + ((t_dest.translation.y - t_cam.translation.y) * 0.01);
+    let base_y = t_dest.translation.y + 3. + ((t_dest.translation.y - t_cam.translation.y) * 0.01);
     let distance_fraction = distance / MAX_CAM_DISTANCE;
     t_cam.translation.y = base_y + (1. * distance_fraction);
+    // println!(
+    //     "cam height {:1} {:2} {:3} {:4}",
+    //     t_dest.translation.y, base_y, distance_fraction, t_cam.translation.y
+    // );
 }
 
 fn get_char_direction(rotation: Quat) -> Dir3 {

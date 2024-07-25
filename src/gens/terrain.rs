@@ -30,7 +30,7 @@ use crate::{
         HEIGHT_TEMPERATE_START, PLANE_SIZE, SIZE_NO_PLAYER, SUBDIVISIONS_LEVEL_1,
         SUBDIVISIONS_LEVEL_2, TEXTURE_SCALE, TILE_WIDTH,
     },
-    resources::PlayerWheel,
+    resources::{PlayerCharacter, PlayerWheel},
     utils::perlin::{self, sample_terrain_height},
 };
 
@@ -82,18 +82,13 @@ pub fn generate_terrain_mesh(x: f32, z: f32, size: f32, subdivisions: u32) -> Me
     let height_map = perlin::terrain_perlin();
     let mut uvs: Vec<[f32; 2]> = Vec::with_capacity(num_vertices);
     let mut vertex_colors: Vec<[f32; 4]> = Vec::with_capacity(num_vertices);
-
-    // Build the plane mesh (previously could directly generate from Mesh to Mesh)
-    let mut plane_builder: PlaneMeshBuilder = Plane3d::default().mesh();
-    let half_size: f32 = (size.round() as usize / 2) as f32;
-    plane_builder.plane.half_size = Vec2::new(half_size, half_size);
-    plane_builder.subdivisions = subdivisions;
-    plane_builder.size(size, size);
-    let mut mesh: Mesh = Mesh::from(plane_builder);
-
+    let mesh_builder =
+        PlaneMeshBuilder::from_size(Vec2 { x: size, y: size }).subdivisions(subdivisions);
+    // let mut mesh: Mesh = Prelude::Mesh { size, subdivisions }.into();
+    let mut mesh: Mesh = mesh_builder.into();
     // get positions
-    let pos_attr = mesh.attribute(Mesh::ATTRIBUTE_POSITION).unwrap().to_owned();
-    let VertexAttributeValues::Float32x3(mut pos_attr) = pos_attr else {
+    let pos_attr = mesh.attribute_mut(Mesh::ATTRIBUTE_POSITION).unwrap();
+    let VertexAttributeValues::Float32x3(pos_attr) = pos_attr else {
         panic!("Unexpected vertex format, expected Float32x3");
     };
     // modify y with height sampling
@@ -110,7 +105,7 @@ pub fn generate_terrain_mesh(x: f32, z: f32, size: f32, subdivisions: u32) -> Me
     mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
     mesh.insert_attribute(Mesh::ATTRIBUTE_COLOR, vertex_colors);
 
-    _ = mesh.generate_tangents();
+    let _ = mesh.generate_tangents();
 
     mesh
 }
@@ -127,7 +122,6 @@ fn spawn_terrain_chunk(
     subdivisions: u32,
 ) -> Entity {
     let mesh = generate_terrain_mesh(x, z, size, subdivisions);
-    println!("generated terrain mesh");
 
     let sampler_desc = ImageSamplerDescriptor {
         address_mode_u: ImageAddressMode::Repeat,
@@ -205,7 +199,7 @@ fn regenerate_terrain(
             .unwrap()
             .insert(Collider::from_bevy_mesh(&mesh, &collider_shape).unwrap());
     }
-    for (_ent, mut trans, mh) in distant_terrain.iter_mut() {
+    for (ent, mut trans, mh) in distant_terrain.iter_mut() {
         trans.translation = trans.translation + delta;
         trans.translation.y = 0.;
         let mesh = meshes.get_mut(mh).unwrap();
@@ -235,18 +229,12 @@ pub fn update_terrain(
         (With<Terrain>, Without<MainTerrain>),
     >,
     // player: Query<&Transform, (With<player::Player>, Without<Terrain>)>,
-    q_char: Query<(&PlayerWheel, &Transform), (With<PlayerWheel>, Without<Terrain>)>,
+    q_char: Query<&Transform, (With<PlayerCharacter>, Without<Terrain>)>,
 ) {
-    let Ok((_, t_player)) = q_char.get_single() else {
-        eprintln!("There was no player in the query");
-        return;
-    };
-    // let player_trans = t_player.translation;
     if main_terrain.is_empty() {
-        println!("Main terrain empty");
         // scene start
         // spawn chunk at player
-        // let player_trans = q_char.get_single().unwrap().translation;
+        let player_trans = q_char.get_single().unwrap().translation;
         spawn_terrain_chunk(
             &mut commands,
             &mut meshes,
@@ -258,7 +246,6 @@ pub fn update_terrain(
             PLANE_SIZE,
             SUBDIVISIONS_LEVEL_1,
         );
-        println!("Spawning other chunks");
         // spawn chunks without player in them
         for (dx, dz) in [
             (1, 0),
@@ -270,7 +257,6 @@ pub fn update_terrain(
             (-1, 1),
             (-1, -1),
         ] {
-            println!("Spawning trunk {:1} {:2}", dx, dz);
             let calc_dx = dx as f32 * (PLANE_SIZE / 2. + SIZE_NO_PLAYER / 2.);
             let calc_dz = dz as f32 * (PLANE_SIZE / 2. + SIZE_NO_PLAYER / 2.);
             spawn_terrain_chunk(
@@ -278,8 +264,8 @@ pub fn update_terrain(
                 &mut meshes,
                 &mut materials,
                 &asset_server,
-                t_player.translation.x + calc_dx,
-                t_player.translation.z + calc_dz,
+                player_trans.x + calc_dx,
+                player_trans.z + calc_dz,
                 false,
                 SIZE_NO_PLAYER,
                 SUBDIVISIONS_LEVEL_2,
@@ -287,18 +273,18 @@ pub fn update_terrain(
         }
         // spawn_water_plane(&mut commands, &mut meshes, &mut materials, &asset_server);
     } else {
-        println!("Main terrain NOT empty");
         // main update logic
         if let Ok(terrain) = main_terrain.get_single_mut() {
             let (terrain_ent, terrain_trans, terrain_mesh) = terrain;
-            // let player_trans = player.get_single().unwrap();
+            let player_trans = q_char.get_single().unwrap();
             let mut delta: Option<Vec3> = None;
 
             // determine player triggering terrain refresh
-            if (t_player.translation.x - terrain_trans.translation.x).abs() > PLANE_SIZE / 4.
-                || (t_player.translation.z - terrain_trans.translation.z).abs() > PLANE_SIZE / 4.
+            if (player_trans.translation.x - terrain_trans.translation.x).abs() > PLANE_SIZE / 4.
+                || (player_trans.translation.z - terrain_trans.translation.z).abs()
+                    > PLANE_SIZE / 4.
             {
-                delta = Some(t_player.translation - terrain_trans.translation);
+                delta = Some(player_trans.translation - terrain_trans.translation);
             }
 
             // if they have, regenerate the terrain
@@ -321,8 +307,8 @@ pub fn update_terrain(
 pub struct TerrainPlugin;
 
 impl Plugin for TerrainPlugin {
-    fn build(&self, _app: &mut App) {
+    fn build(&self, app: &mut App) {
         // app.add_systems(Startup, update_terrain);
-        // app.add_systems(Update, update_terrain);
+        app.add_systems(Update, update_terrain);
     }
 }

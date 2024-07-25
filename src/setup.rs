@@ -58,11 +58,6 @@ pub fn setup(
         PerfUiEntryFPS::default(),
     ));
 
-    // Fog
-    // commands.spawn(
-    //     (),
-    // );
-
     let image_ground_settings = image_settings_with_repeat_image_sampler();
     let texture_ground =
         asset_server.load_with_settings("textures/tex_exp.png", image_ground_settings);
@@ -115,6 +110,7 @@ pub fn setup(
         .spawn((
             SceneBundle {
                 scene: asset_server.load("models/Wheel.glb#Scene0"),
+                // also see parent character Y position
                 transform: Transform::from_xyz(0.0, 1.2, 0.0),
                 ..default()
             },
@@ -126,7 +122,13 @@ pub fn setup(
         ))
         .id();
 
-    let mut parent_character = commands.spawn((SpatialBundle { ..default() }, PlayerCharacter));
+    let mut parent_character = commands.spawn((
+        SpatialBundle {
+            transform: Transform::from_xyz(0.0, 256., 0.0),
+            ..default()
+        },
+        PlayerCharacter,
+    ));
 
     parent_character.add_child(child_wheel);
 
