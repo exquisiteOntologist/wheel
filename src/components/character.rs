@@ -1,32 +1,33 @@
-use std::default;
-
 use bevy::{
     app::{App, Plugin, PostStartup, Update},
     hierarchy::BuildChildren,
     math::{Dir3, Quat, Vec3},
-    prelude::{Commands, EntityRef, Query, Res, ResMut, SpatialBundle, With, Without},
-    reflect::Reflect,
+    prelude::{Commands, EntityRef, Mut, Query, Res, ResMut, SpatialBundle, With, Without},
     time::Time,
     transform::components::Transform,
     utils::default,
 };
 use bevy_hanabi::EffectProperties;
-use bevy_rapier3d::na::Rotation;
 
 use crate::{
-    components::wheel::wheel_x_rotation,
     gens::particles::ParticlesPlugin,
     resources::{DebugRoller, Game, PlayerCharacter, PlayerParticles, PlayerWheel, WheelParticles},
     utils::{
-        angles::{degrees_to_radians, quat_w_to_axis_adjust},
-        matrix::{quaternion_from_rpy, quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
+        angles::{degrees_to_radians, quat_w_to_axis_adjust, quat_w_to_axis_adjust_v},
+        matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
     },
 };
 
 use super::wheel::{wheel_y_rotation, WheelState};
 
-pub fn move_character(
-    // this may have to be global transform
+fn turn_character(mut q: Query<&mut Transform, With<PlayerCharacter>>, game: ResMut<Game>) {
+    let mut t = q.single_mut();
+
+    // For reference, this works except results in negative Y values that cause issues
+    t.rotate_local_y(game.player_wheel.speed_y);
+}
+
+fn turn_character_old(
     mut q: Query<&mut Transform, With<PlayerCharacter>>,
     time: Res<Time>,
     mut game: ResMut<Game>,
@@ -36,69 +37,38 @@ pub fn move_character(
 ) {
     let mut t = q.single_mut();
 
-    // TURNING DIRECTION
-    // let (roll, pitch, yaw) = roll_pitch_yaw_from_quat(t.rotation.conjugate());
-    // let updated_rot_quat = quaternion_from_rpy_quat(0., pitch, 0.);
-    // t.rotation = t.rotation.normalize();
-    // t.rotate(updated_rot_quat);
-    // let updated_rot_quat = quaternion_from_rpy_quat(0., -wheel.rpy.pitch, 0.);
-    // t.rotation = t.rotation.normalize();
-    // t.rotate(updated_rot_quat);
+    // let turn_speed = 0.01;
+    // let turn_factor = if game.player_wheel.speed_y == 0. {
+    //     0.
+    // } else if game.player_wheel.speed_y > 0. {
+    //     1.
+    // } else {
+    //     -1.
+    // };
 
-    // t.rotate_local_y(wheel.rpy.pitch * 0.01);
+    // // because this rotation is relative and not absolute
+    // let new_turn = turn_speed * turn_factor;
 
-    let turn_speed = 0.01;
-    let turn_factor = if game.player_wheel.speed_y == 0. {
-        0.
-    } else if game.player_wheel.speed_y > 0. {
-        1.
-    } else {
-        -1.
-    };
-
-    // because this rotation is relative and not absolute
-    let new_turn = turn_speed * turn_factor;
-
-    // let updated_rot_quat = quaternion_from_rpy_quat(0., 0., 0.);
-    // t.rotation = t.rotation.normalize();
-    // t.rotate(updated_rot_quat);
-    // let updated_rot_quat = quaternion_from_rpy_quat(0., wheel.rpy.pitch, 0.);
-    // t.rotation = t.rotation.normalize();
-    // t.rotate(updated_rot_quat);
-    //
     // For reference, this works except results in negative Y values that cause issues
-    // t.rotate_local_y(new_turn);
-    // if t.rotation.y == 0. {
-    //     t.rotation.y = 1.;
-    // }
-    let curr_w = t.rotation.w;
-    let new_w = ((((curr_w + new_turn) + 1.) % 2.) - 1.).clamp(-1., 1.);
-    println!("new w {}", new_w);
-    let y = quat_w_to_axis_adjust(new_w);
-    let rot = Quat::from_xyzw(0., y, 0., new_w);
-    t.rotation = rot.normalize();
-    // t.rotate_local_axis(t., new_turn);
-    // t.rotation.w += new_turn;
-    // t.rotate_local(Quat::from_xyzw(0., 1., 0., new_turn));
+    t.rotate_local_y(game.player_wheel.speed_y);
+
+    // this function suffers from a jump
+    // char_rotation_positive_y(&mut t, new_turn);
+    // char_rotation_positive_y_experiment(&mut t, new_turn);
 
     // println!("parent rotation {}", t.rotation);
+}
+
+fn move_character(
+    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+    time: Res<Time>,
+    mut game: ResMut<Game>,
+) {
+    let mut t = q.single_mut();
 
     let speed = game.player_wheel.speed_z;
-    let rotation = wheel_y_rotation(&t.rotation).normalize();
-    if let Ok(direction) = Dir3::new(rotation * -Vec3::Z) {
-        // t.translation += direction * speed;
-        let f = t.right();
-        t.translation += f * speed;
-        // t.translation.y = 2.1;
-        // t.translation.z += 0.01;
-        //
-        // ^ This wheel should not move,
-        // it instead should be parented,
-        // with the parent being them mover
-    }
-
-    // println!("char rotation {}", t.rotation);
-    // println!("char translation {}", t.translation);
+    let f = t.right();
+    t.translation += f * speed;
 }
 
 /// Add particles to the character.
@@ -131,7 +101,7 @@ fn attach_particles(
     }
 }
 
-pub fn update_particles_relative_to_char(
+fn update_particles_relative_to_char(
     mut commands: Commands,
     // mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
     mut q_character: Query<(&mut Transform, &PlayerWheel)>,
@@ -171,6 +141,38 @@ pub fn update_particles_relative_to_char(
         // let updated_rot_quat = quaternion_from_rpy_quat(degrees_to_radians(180. * rot), 0., 0.);
         // particles.rotation = particles.rotation.normalize();
         // particles.rotate(updated_rot_quat);
+    }
+}
+
+/// Rotate by adjusting the quaternion angle on the y vector.
+/// This rotation suffers from an amplification effect near a certain point.
+/// The amplification effect makes the turn rush past about 90deg.
+fn char_rotation_positive_y(t: &mut Mut<Transform>, new_turn: f32) {
+    let curr_w = t.rotation.w;
+    let mut new_w = ((((curr_w + new_turn) + 1.) % 2.) - 1.).clamp(-1., 1.);
+
+    println!("new w {}", new_w);
+
+    let y = quat_w_to_axis_adjust(new_w);
+
+    let rot = Quat::from_xyzw(0., y, 0., new_w);
+    t.rotation = rot.normalize();
+}
+
+fn char_rotation_positive_y_experiment(t: &mut Mut<Transform>, new_turn: f32) {
+    let curr_w = t.rotation.w;
+    let new_w = ((((curr_w + new_turn) + 1.) % 2.) - 1.).clamp(-1., 1.);
+    let percent = (new_w + 1.) / 2.;
+    let y_turn = (percent - t.rotation.y) % 1.;
+
+    t.rotate_y(y_turn);
+}
+
+fn char_move_in_y_direction(t: &mut Mut<Transform>, mut game: ResMut<Game>) {
+    let speed = game.player_wheel.speed_z;
+    let rotation = wheel_y_rotation(&t.rotation).normalize();
+    if let Ok(direction) = Dir3::new(rotation * -Vec3::Z) {
+        t.translation += direction * speed;
     }
 }
 
@@ -305,6 +307,7 @@ impl Plugin for CharacterPlugin {
             Update,
             (
                 move_character,
+                turn_character,
                 update_particles_relative_to_char,
                 update_axis,
             ),
