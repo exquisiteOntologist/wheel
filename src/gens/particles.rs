@@ -93,6 +93,8 @@ fn clr(a: f32, b: f32, c: f32, d: f32, divider: f32) -> Vec4 {
     Vec4::new(a / divider, b / divider, c / divider, d)
 }
 
+pub const MAX_SAND_RATE: f32 = 5000.;
+
 pub fn setup_particles(
     mut commands: Commands,
     mut effects: ResMut<Assets<EffectAsset>>,
@@ -204,10 +206,17 @@ pub fn setup_particles(
     let opacity = writer.lit(0.2).uniform(writer.lit(0.9)).expr();
     let init_opacity = SetAttributeModifier::new(Attribute::ALPHA, opacity);
 
-    let mut module = writer.finish();
+    // spawner
+    let spawner = Spawner::rate(MAX_SAND_RATE.into()).with_starts_active(false);
 
     // acceleration - the axis affects the direction the particles go
-    let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Y, 30.);
+    // let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Y, 30.);
+    let tangent_accel = TangentAccelModifier::new(
+        writer.lit(Vec3::ZERO).expr(),
+        writer.lit(Vec3::Y).expr(),
+        writer.lit(10.).uniform(writer.lit(30.)).expr(),
+    );
+    //
     // let tangent_accel = TangentAccelModifier::new(
     //     writer.lit(Vec3::ZERO).expr(),
     //     // writer.lit(Vec3::Y).expr(),
@@ -215,8 +224,10 @@ pub fn setup_particles(
     //     writer.lit(10.).uniform(writer.lit(30.)).expr(),
     // );
 
+    let mut module = writer.finish();
+
     let effect1 = effects.add(
-        EffectAsset::new(vec![16384, 16384], Spawner::rate(5000.0.into()), module)
+        EffectAsset::new(vec![16384, 16384], spawner, module)
             .with_name("particles_portal")
             .init(init_pos)
             .init(init_age)
@@ -264,7 +275,6 @@ pub struct ParticlesPlugin;
 impl Plugin for ParticlesPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(HanabiPlugin);
-        // setup from parent instead
         app.add_systems(Startup, setup);
         app.add_systems(Update, (move_particles /*update_particles*/,));
     }

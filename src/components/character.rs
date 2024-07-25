@@ -7,10 +7,11 @@ use bevy::{
     transform::components::Transform,
     utils::default,
 };
-use bevy_hanabi::EffectProperties;
+use bevy_hanabi::{EffectProperties, EffectSpawner};
 
 use crate::{
-    gens::particles::ParticlesPlugin,
+    constants::MAX_SPEED,
+    gens::particles::{ParticlesPlugin, MAX_SAND_RATE},
     resources::{DebugRoller, Game, PlayerCharacter, PlayerParticles, PlayerWheel, WheelParticles},
     utils::{
         angles::{degrees_to_radians, quat_w_to_axis_adjust, quat_w_to_axis_adjust_v},
@@ -102,45 +103,31 @@ fn attach_particles(
 }
 
 fn update_particles_relative_to_char(
+    time: Res<Time>,
     mut commands: Commands,
     // mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
     mut q_character: Query<(&mut Transform, &PlayerWheel)>,
     // mut q_particles: Query<(&mut Transform, &PlayerParticles), Without<PlayerWheel>>,
-    mut q_particles: Query<(&mut Transform, &WheelParticles), Without<PlayerWheel>>,
+    mut q_particles: Query<
+        (&mut Transform, &mut EffectProperties, &WheelParticles),
+        Without<PlayerWheel>,
+    >,
+    mut q_spawner: Query<&mut EffectSpawner>,
+    mut game: ResMut<Game>,
 ) {
     let mut particle_emitters = q_particles.iter_mut();
+    let mut effect_spawners = q_spawner.iter_mut();
 
     for character in q_character.iter_mut() {
-        let mut particles = particle_emitters.next().unwrap().0;
-        // particles.translation = character.0.translation;
-        // println!("particles xyz {}", particles.translation);
-        // particles.rotate_y(1.);
-        // particles.rotate_x(1.);
-        // particles.rotate_z(1.);
-        //
-
-        // particles.rotation = character.0.rotation;
-        // particles.rotation.y = character.0.rotation.y;
-        // particles.rotate_y(0.1);
-        // particles.rotation = particles.rotation.normalize();
-        // particles.translation.x = 15.;
-        // particles.translation.z = 15.;
-        // particles.translation = character.0.translation;
-
-        // println!("particles rot {}", particles.rotation);
-
-        // The center & origin of the effect modifiers probably need to change,
-        // instead of the transform of the particles
-
-        // let rot = if character.0.translation.x > 0. {
-        //     1.
-        // } else {
-        //     0.
-        // };
-
-        // let updated_rot_quat = quaternion_from_rpy_quat(degrees_to_radians(180. * rot), 0., 0.);
-        // particles.rotation = particles.rotation.normalize();
-        // particles.rotate(updated_rot_quat);
+        let (mut p_t, mut p_ep, _) = particle_emitters.next().unwrap();
+        let Some(mut e_s) = effect_spawners.next() else {
+            println!("No spawners");
+            return;
+        };
+        let x = game.player_wheel.speed_z / (MAX_SPEED * time.delta_seconds());
+        e_s.set_active(x > 1.);
+        let rate: f32 = (1. - x) / MAX_SAND_RATE;
+        e_s.spawner().with_count(rate.into());
     }
 }
 
