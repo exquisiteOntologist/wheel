@@ -166,8 +166,8 @@ pub fn setup_particles(
     // going in the direction of a wind.
     let init_vel = SetVelocityTangentModifier {
         origin: writer.lit(Vec3::ZERO).expr(),
-        // axis: writer.lit(Vec3::Z).expr(),
-        axis: writer.prop(pos_axis).expr(),
+        axis: writer.lit(Vec3::Z).expr(),
+        // axis: writer.prop(pos_axis).expr(),
         // speed: writer.lit(1.6).uniform(writer.lit(3.)).expr(),
         speed: writer.lit(-0.5).uniform(writer.lit(3.)).expr(),
     };
@@ -204,16 +204,16 @@ pub fn setup_particles(
     let opacity = writer.lit(0.2).uniform(writer.lit(0.9)).expr();
     let init_opacity = SetAttributeModifier::new(Attribute::ALPHA, opacity);
 
-    // acceleration - the axis affects the direction the particles go
-    // let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Y, 30.);
-    let tangent_accel = TangentAccelModifier::new(
-        writer.lit(Vec3::ZERO).expr(),
-        // writer.lit(Vec3::Y).expr(),
-        writer.prop(pos_axis).expr(),
-        writer.lit(10.).uniform(writer.lit(30.)).expr(),
-    );
-
     let mut module = writer.finish();
+
+    // acceleration - the axis affects the direction the particles go
+    let tangent_accel = TangentAccelModifier::constant(&mut module, Vec3::ZERO, Vec3::Y, 30.);
+    // let tangent_accel = TangentAccelModifier::new(
+    //     writer.lit(Vec3::ZERO).expr(),
+    //     // writer.lit(Vec3::Y).expr(),
+    //     writer.prop(pos_axis).expr(),
+    //     writer.lit(10.).uniform(writer.lit(30.)).expr(),
+    // );
 
     let effect1 = effects.add(
         EffectAsset::new(vec![16384, 16384], Spawner::rate(5000.0.into()), module)

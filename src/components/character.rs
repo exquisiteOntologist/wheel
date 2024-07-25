@@ -309,7 +309,7 @@ impl Plugin for CharacterPlugin {
                 move_character,
                 turn_character,
                 update_particles_relative_to_char,
-                update_axis,
+                // update_axis,
             ),
         );
         app.add_plugins(ParticlesPlugin);
