@@ -123,7 +123,8 @@ fn update_particles_relative_to_char(
     for character in q_character.iter_mut() {
         let (mut p_t, mut p_ep, _) = particle_emitters.next().unwrap();
         let Some(mut e_s) = effect_spawners.next() else {
-            println!("No spawners");
+            // println!("No spawners");
+            // On startup the spawners may not yet exist.
             return;
         };
         let x = game.player_wheel.speed_z / (MAX_SPEED * time.delta_seconds());

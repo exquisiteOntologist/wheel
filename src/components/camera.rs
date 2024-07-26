@@ -162,6 +162,8 @@ fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direc
     look_at_on_y(t_cam, &tran_infront_char);
 }
 
+const VIEW_DISTANCE: f32 = 300000.;
+
 fn setup_camera(mut commands: Commands) {
     commands.spawn((
         Camera3dBundle {
@@ -174,8 +176,12 @@ fn setup_camera(mut commands: Commands) {
             transform: Transform::from_xyz(-100.0, 3.0, 0.0)
                 .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
             deband_dither: DebandDither::Enabled,
-            // tonemapping: Tonemapping::TonyMcMapface,
-            tonemapping: Tonemapping::None,
+            tonemapping: Tonemapping::TonyMcMapface,
+            // tonemapping: Tonemapping::None,
+            // projection: bevy::prelude::Projection::Perspective(PerspectiveProjection {
+            //     far: VIEW_DISTANCE,
+            //     ..default()
+            // }),
             ..default()
         },
         FogSettings {
@@ -183,8 +189,10 @@ fn setup_camera(mut commands: Commands) {
             // color: Color::rgba(52. / 255., 167. / 255., 211. / 255., 0.5),
             color: rgba(52., 167., 211., 0.5),
             falloff: FogFalloff::Linear {
-                start: 100.0,
-                end: 160.0,
+                // start: 100.0,
+                // end: 160.0,
+                start: 200.0,
+                end: 260.0,
             },
             // falloff: FogFalloff::from_visibility_color(0.3, Color::rgba(1., 1., 1., 1.)),
             // falloff: FogFalloff::Atmospheric {

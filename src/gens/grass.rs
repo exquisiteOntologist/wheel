@@ -640,7 +640,10 @@ impl Plugin for GrassPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(MaterialPlugin::<
             ExtendedMaterial<StandardMaterial, GrassMaterialExtension>,
-        >::default());
+        > {
+            prepass_enabled: false,
+            ..default()
+        });
         app.add_systems(Update, (update_grass, handle_tasks));
     }
 }

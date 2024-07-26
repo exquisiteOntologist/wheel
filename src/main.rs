@@ -54,7 +54,6 @@ fn main() {
         .add_plugins((CharacterPlugin, WheelPlugin))
         .add_plugins((PCameraPlugin, CloudPlugin))
         .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin))
-        // .add_plugins((ParticlesPlugin))
         .add_systems(Startup, setup)
         .add_systems(
             Update,
