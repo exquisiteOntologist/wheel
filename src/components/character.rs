@@ -8,6 +8,7 @@ use bevy::{
     utils::default,
 };
 use bevy_hanabi::{EffectProperties, EffectSpawner};
+use bevy_rapier3d::prelude::KinematicCharacterController;
 
 use crate::{
     constants::MAX_SPEED,
@@ -287,6 +288,29 @@ fn update_axis(
     //
 }
 
+pub fn apply_gravity(
+    time: Res<Time>,
+    mut q: Query<&mut KinematicCharacterController, With<PlayerCharacter>>,
+) {
+    let mut controller = q.single_mut();
+
+    let GRAVITY_ACC = 9.8;
+    let GRAVITY_DIR = Vec3 {
+        x: 0.,
+        y: -1.,
+        z: 0.,
+    };
+
+    let base_movement = GRAVITY_ACC * GRAVITY_DIR * time.delta_seconds();
+    let mut movement = Vec3::ZERO;
+
+    // apply changes to movement here
+    // although since we're doing that elsewhere we only really need base_movement
+
+    // Using not standard transform, but KinematicCharacterController
+    controller.translation = Some(base_movement + movement)
+}
+
 pub struct CharacterPlugin;
 
 impl Plugin for CharacterPlugin {
@@ -294,6 +318,7 @@ impl Plugin for CharacterPlugin {
         app.add_systems(
             Update,
             (
+                apply_gravity,
                 move_character,
                 turn_character,
                 update_particles_relative_to_char,

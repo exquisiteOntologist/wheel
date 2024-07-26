@@ -4,6 +4,7 @@ use bevy::{
     animation::AnimationPlayer,
     asset::{AssetServer, Assets},
     color::Color,
+    core::Name,
     ecs::{
         query::Added,
         system::{Commands, Query, Res, ResMut},
@@ -20,6 +21,7 @@ use bevy::{
     transform::components::Transform,
     utils::default,
 };
+use bevy_rapier3d::prelude::{Collider, KinematicCharacterController, RigidBody};
 use iyes_perf_ui::{
     prelude::{PerfUiEntryFPS, PerfUiEntryFPSWorst},
     ui::root::PerfUiRoot,
@@ -129,6 +131,12 @@ pub fn setup(
         },
         PlayerCharacter,
     ));
+
+    parent_character
+        .insert(RigidBody::KinematicPositionBased)
+        .insert(Collider::cuboid(2.0, 2.0, 2.0))
+        .insert(KinematicCharacterController::default())
+        .insert(Name::new("Player"));
 
     parent_character.add_child(child_wheel);
 
