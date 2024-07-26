@@ -113,7 +113,7 @@ pub fn setup(
             SceneBundle {
                 scene: asset_server.load("models/Wheel.glb#Scene0"),
                 // also see parent character Y position
-                transform: Transform::from_xyz(0.0, 1.2, 0.0),
+                transform: Transform::from_xyz(0.0, 0., 0.0),
                 ..default()
             },
             // PbrBundle {
@@ -134,7 +134,7 @@ pub fn setup(
 
     parent_character
         .insert(RigidBody::KinematicPositionBased)
-        .insert(Collider::cuboid(2.0, 2.0, 2.0))
+        .insert(Collider::cuboid(1.0, 1.0, 1.0))
         .insert(KinematicCharacterController::default())
         .insert(Name::new("Player"));
 
