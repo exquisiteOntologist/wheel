@@ -1,5 +1,6 @@
 use crate::constants::{
-    BASE_LEVEL, HILL_HEIGHTS, MOUNTAIN_HEIGHTS, TERRAIN_BUMPINESS, TERRAIN_SEED, WIND_SEED,
+    BASE_LEVEL, GRASS_HEIGHT_SEED, HILL_HEIGHTS, MOUNTAIN_HEIGHTS, TERRAIN_BUMPINESS, TERRAIN_SEED,
+    WIND_SEED,
 };
 use bevy::{
     app::{App, Plugin, Startup},
@@ -57,9 +58,9 @@ pub fn setup_perlin(mut commands: Commands) {
     commands.insert_resource(PerlinNoiseEntity::new());
 }
 
-// pub fn grass_perlin() -> Perlin {
-//     Perlin::new(GRASS_HEIGHT_SEED)
-// }
+pub fn grass_perlin() -> Perlin {
+    Perlin::new(GRASS_HEIGHT_SEED)
+}
 
 pub fn terrain_perlin() -> Perlin {
     Perlin::new(TERRAIN_SEED)

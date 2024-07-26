@@ -28,7 +28,7 @@ use iyes_perf_ui::{
 };
 
 use crate::{
-    constants::MAX_SPEED,
+    constants::{MAX_SPEED, SPAWN_TRANSFORM},
     meshes::{image_settings_with_repeat_image_sampler, mesh_update_uv},
     resources::{Animations, Game, PlayerCharacter, PlayerWheel},
 };
@@ -126,7 +126,7 @@ pub fn setup(
 
     let mut parent_character = commands.spawn((
         SpatialBundle {
-            transform: Transform::from_xyz(0.0, 256., 0.0),
+            transform: SPAWN_TRANSFORM,
             ..default()
         },
         PlayerCharacter,

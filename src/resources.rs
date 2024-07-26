@@ -22,6 +22,10 @@ pub struct PlayerParticles;
 #[derive(Component)]
 pub struct WheelParticles;
 
+// struct for marking terrain that contains the player
+#[derive(Component)]
+pub struct ContainsPlayer(pub bool);
+
 #[derive(Default)]
 pub struct MotionState {
     pub speed_x: f32,

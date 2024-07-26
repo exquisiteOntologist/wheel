@@ -9,6 +9,7 @@ use bevy_debug_grid::*;
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
 use wheel::controls::keyboard_control_debugging;
+use wheel::gens::grass::GrassPlugin;
 use wheel::resources::DebugRoller;
 use wheel::utils::perlin::PerlinPlugin;
 use wheel::{
@@ -52,7 +53,7 @@ fn main() {
         .add_plugins((PerfUiPlugin, RapierPhysicsPlugin::<NoUserData>::default()))
         .add_plugins((CharacterPlugin, WheelPlugin))
         .add_plugins((PCameraPlugin, CloudPlugin))
-        .add_plugins((PerlinPlugin, TerrainPlugin))
+        .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin))
         // .add_plugins((ParticlesPlugin))
         .add_systems(Startup, setup)
         .add_systems(
