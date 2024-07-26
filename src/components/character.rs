@@ -61,16 +61,17 @@ fn turn_character_old(
     // println!("parent rotation {}", t.rotation);
 }
 
-fn move_character(
-    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+fn move_character_old(
+    mut q: Query<(&mut Transform, &mut KinematicCharacterController), With<PlayerCharacter>>,
     time: Res<Time>,
     mut game: ResMut<Game>,
 ) {
-    let mut t = q.single_mut();
+    let (mut t, mut c) = q.single_mut();
 
     let speed = game.player_wheel.speed_z;
     let f = t.right();
-    t.translation += f * speed;
+    // t.translation += f * speed;
+    c.translation = Some(Vec3::ZERO + f * speed);
 }
 
 /// Add particles to the character.
@@ -288,27 +289,39 @@ fn update_axis(
     //
 }
 
-pub fn apply_gravity(
-    time: Res<Time>,
-    mut q: Query<&mut KinematicCharacterController, With<PlayerCharacter>>,
-) {
-    let mut controller = q.single_mut();
+const GRAVITY_ACC: f32 = 9.8;
+const GRAVITY_DIR: Vec3 = Vec3::NEG_Y;
+// Vec3 {
+//     x: 0.,
+//     y: -1.,
+//     z: 0.,
+// };
 
-    let GRAVITY_ACC = 9.8;
-    let GRAVITY_DIR = Vec3 {
-        x: 0.,
-        y: -1.,
-        z: 0.,
-    };
-
+fn gravity_movement_t(time: Res<Time>) -> Vec3 {
     let base_movement = GRAVITY_ACC * GRAVITY_DIR * time.delta_seconds();
-    let mut movement = Vec3::ZERO;
+    base_movement
+}
 
-    // apply changes to movement here
-    // although since we're doing that elsewhere we only really need base_movement
+fn move_in_direction_t(t: &Transform, game: ResMut<Game>) -> Vec3 {
+    let f = t.right();
+    let speed = game.player_wheel.speed_z;
+    let movement = Vec3::ZERO + f * speed;
+    // we presume the speed has the time.delta_second() applied already
+    movement
+}
+
+pub fn move_character(
+    time: Res<Time>,
+    mut q: Query<(&Transform, &mut KinematicCharacterController), With<PlayerCharacter>>,
+    game: ResMut<Game>,
+) {
+    let (t, mut c) = q.single_mut();
+
+    let gravity_movement = gravity_movement_t(time);
+    let movement = move_in_direction_t(t, game);
 
     // Using not standard transform, but KinematicCharacterController
-    controller.translation = Some(base_movement + movement)
+    c.translation = Some(gravity_movement + movement)
 }
 
 pub struct CharacterPlugin;
@@ -318,7 +331,6 @@ impl Plugin for CharacterPlugin {
         app.add_systems(
             Update,
             (
-                apply_gravity,
                 move_character,
                 turn_character,
                 update_particles_relative_to_char,
