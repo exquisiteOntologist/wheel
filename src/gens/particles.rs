@@ -252,7 +252,7 @@ pub fn setup_particles(
         // Name::new("portal"),
         ParticleEffectBundle {
             effect: ParticleEffect::new(effect1),
-            transform: Transform::from_xyz(-2., 1.1, 0.)
+            transform: Transform::from_xyz(-2.7, 0., 0.)
                 // transform: Transform::from_xyz(0., 1.1, 0.)
                 // .with_rotation(Quat::from_rotation_x(degrees_to_radians(-90.))),
                 .with_rotation(Quat::from_rotation_z(degrees_to_radians(-120.))),
