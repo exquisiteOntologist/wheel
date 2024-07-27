@@ -26,7 +26,8 @@ pub const HEIGHT_SAND: f32 = 200.;
 pub const HEIGHT_TEMPERATE_START: f32 = 210.;
 pub const HEIGHT_TEMPERATE_END: f32 = 800.;
 pub const COLOR_TEMPERATE: [f32; 4] = [0.079, 0.079, 0., 1.];
-pub const COLOR_SAND: [f32; 4] = [80. / 255., 72. / 255., 49. / 255., 255. / 255.];
+// pub const COLOR_SAND: [f32; 4] = [80. / 255., 72. / 255., 49. / 255., 255. / 255.];
+pub const COLOR_SAND: [f32; 4] = [255. / 255., 255. / 255., 255. / 255., 255. / 255.];
 pub const COLOR_PEAKS: [f32; 4] = [255. / 255., 255. / 255., 255. / 255., 255. / 255.];
 
 pub const WIND_SEED: u32 = 0;
