@@ -1,8 +1,11 @@
-use bevy::render::{
-    mesh::{Mesh, VertexAttributeValues},
-    texture::{
-        ImageAddressMode, ImageFilterMode, ImageLoaderSettings, ImageSampler,
-        ImageSamplerDescriptor,
+use bevy::{
+    prelude::default,
+    render::{
+        mesh::{Mesh, VertexAttributeValues},
+        texture::{
+            ImageAddressMode, ImageFilterMode, ImageLoaderSettings, ImageSampler,
+            ImageSamplerDescriptor,
+        },
     },
 };
 
@@ -20,7 +23,7 @@ pub fn image_settings_with_repeat_image_sampler() -> impl Fn(&mut ImageLoaderSet
         lod_min_clamp: 0.0,
         lod_max_clamp: 32.0,
         anisotropy_clamp: 1,
-        ..Default::default()
+        ..default()
     };
 
     let settings = move |s: &mut ImageLoaderSettings| {

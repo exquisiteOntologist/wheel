@@ -9,7 +9,7 @@ use bevy::{
     },
     math::{Vec2, Vec3},
     pbr::{PbrBundle, StandardMaterial},
-    prelude::{default, Plane3d},
+    prelude::{default, Image, Plane3d},
     render::{
         alpha::AlphaMode,
         mesh::{Mesh, Meshable, PlaneMeshBuilder, PrimitiveTopology, VertexAttributeValues},
@@ -30,6 +30,7 @@ use crate::{
         HEIGHT_TEMPERATE_START, PLANE_SIZE, SIZE_NO_PLAYER, SUBDIVISIONS_LEVEL_1,
         SUBDIVISIONS_LEVEL_2, TEXTURE_SCALE, TILE_WIDTH,
     },
+    meshes::image_settings_with_repeat_image_sampler,
     resources::{PlayerCharacter, PlayerWheel},
     utils::perlin::{self, sample_terrain_height},
 };
@@ -61,6 +62,12 @@ fn get_terrain_color(y: f32) -> [f32; 4] {
             COLOR_PEAKS,
         )
     }
+}
+
+fn get_terrain_texture(asset_server: &Res<AssetServer>, t_color: &[f32; 4]) -> Handle<Image> {
+    let asset_settings = image_settings_with_repeat_image_sampler();
+    let t_texture = asset_server.load_with_settings("textures/tex_exp.png", asset_settings);
+    t_texture
 }
 
 fn terrain_color_gradient(ratio: f32, rgba1: [f32; 4], rgba2: [f32; 4]) -> [f32; 4] {
@@ -102,6 +109,12 @@ pub fn generate_terrain_mesh(x: f32, z: f32, size: f32, subdivisions: u32) -> Me
         vertex_colors.push(get_terrain_color(pos[1]));
     }
 
+    println!("===");
+    for c in &vertex_colors {
+        println!("colour {:1} {:2} {:3} {:4}", c[0], c[1], c[2], c[3]);
+    }
+    println!("===");
+
     mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
     mesh.insert_attribute(Mesh::ATTRIBUTE_COLOR, vertex_colors);
 
@@ -123,15 +136,16 @@ fn spawn_terrain_chunk(
 ) -> Entity {
     let mesh = generate_terrain_mesh(x, z, size, subdivisions);
 
-    let sampler_desc = ImageSamplerDescriptor {
-        address_mode_u: ImageAddressMode::Repeat,
-        address_mode_v: ImageAddressMode::Repeat,
-        ..default()
-    };
-    let settings = move |s: &mut ImageLoaderSettings| {
-        s.sampler = ImageSampler::Descriptor(sampler_desc.clone());
-    };
+    let texture_ground = get_terrain_texture(&asset_server, &COLOR_SAND);
 
+    // let sampler_desc = ImageSamplerDescriptor {
+    //     address_mode_u: ImageAddressMode::Repeat,
+    //     address_mode_v: ImageAddressMode::Repeat,
+    //     ..default()
+    // };
+    // let settings = move |s: &mut ImageLoaderSettings| {
+    //     s.sampler = ImageSampler::Descriptor(sampler_desc.clone());
+    // };
     // let texture_handle = asset_server.load_with_settings("terrain/rocky_soil.png", settings.clone());
     // let normal_handle = asset_server.load_with_settings("terrain/rocky_soil_normal.png", settings);
     let terrain_material = StandardMaterial {
@@ -144,6 +158,7 @@ fn spawn_terrain_chunk(
         reflectance: 0.4,
         cull_mode: Some(Face::Back),
         flip_normal_map_y: true,
+        base_color_texture: Some(texture_ground.clone()),
         ..default()
     };
 
