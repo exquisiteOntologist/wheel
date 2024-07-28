@@ -25,9 +25,9 @@ use super::{
     movement::{move_character, turn_character},
 };
 
-pub struct CharacterPlugin;
+pub struct PlayerCharacterPlugin;
 
-impl Plugin for CharacterPlugin {
+impl Plugin for PlayerCharacterPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,

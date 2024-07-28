@@ -52,11 +52,11 @@ pub fn setup_clouds(
 }
 
 const CLOUD_TEXTURES: [&str; 5] = [
-    "textures/cloud-a.png",
-    "textures/cloud-b.png",
-    "textures/cloud-c.png",
-    "textures/cloud-d.png",
-    "textures/cloud-e.png",
+    "textures/clouds/cloud-a.png",
+    "textures/clouds/cloud-b.png",
+    "textures/clouds/cloud-c.png",
+    "textures/clouds/cloud-d.png",
+    "textures/clouds/cloud-e.png",
 ];
 
 pub fn create_cloud<'a>(

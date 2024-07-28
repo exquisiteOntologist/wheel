@@ -54,7 +54,7 @@ pub fn setup(
 
     let image_ground_settings = image_settings_with_repeat_image_sampler();
     let texture_ground =
-        asset_server.load_with_settings("textures/tex_exp.png", image_ground_settings);
+        asset_server.load_with_settings("textures/ground/sand.png", image_ground_settings);
 
     let ground_size = (5000., 5000.);
     let mut ground_mesh: Mesh =

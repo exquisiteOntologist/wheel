@@ -66,7 +66,7 @@ fn get_terrain_color(y: f32) -> [f32; 4] {
 
 fn get_terrain_texture(asset_server: &Res<AssetServer>, t_color: &[f32; 4]) -> Handle<Image> {
     let asset_settings = image_settings_with_repeat_image_sampler();
-    let t_texture = asset_server.load_with_settings("textures/tex_exp.png", asset_settings);
+    let t_texture = asset_server.load_with_settings("textures/ground/sand.png", asset_settings);
     t_texture
 }
 
