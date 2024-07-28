@@ -1,7 +1,9 @@
 use bevy::prelude::Transform;
 
 pub const PLAYER_HEIGHT: f32 = 1.0;
-pub const SPAWN_TRANSFORM: Transform = Transform::from_xyz(0.0, 200. + PLAYER_HEIGHT + 5., 0.0);
+// starts on sand with given generation seed (HEIGHT_SAND)
+pub const SPAWN_Y: f32 = 200.;
+pub const SPAWN_TRANSFORM: Transform = Transform::from_xyz(0.0, SPAWN_Y + PLAYER_HEIGHT + 5., 0.0);
 pub const TURN_SPEED: f32 = 0.2;
 pub const MAX_TURN_SPEED: f32 = 1.;
 pub const FORWARD_SPEED: f32 = 0.03;

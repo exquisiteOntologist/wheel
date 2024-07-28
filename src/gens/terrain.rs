@@ -109,11 +109,11 @@ pub fn generate_terrain_mesh(x: f32, z: f32, size: f32, subdivisions: u32) -> Me
         vertex_colors.push(get_terrain_color(pos[1]));
     }
 
-    println!("===");
-    for c in &vertex_colors {
-        println!("colour {:1} {:2} {:3} {:4}", c[0], c[1], c[2], c[3]);
-    }
-    println!("===");
+    // println!("===");
+    // for c in &vertex_colors {
+    //     println!("colour {:1} {:2} {:3} {:4}", c[0], c[1], c[2], c[3]);
+    // }
+    // println!("===");
 
     mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);
     mesh.insert_attribute(Mesh::ATTRIBUTE_COLOR, vertex_colors);
@@ -154,11 +154,12 @@ fn spawn_terrain_chunk(
         // normal_map_texture: Some(normal_handle.clone()),
         alpha_mode: AlphaMode::Opaque,
         double_sided: true,
-        perceptual_roughness: 1.0,
+        perceptual_roughness: 0.8,
         reflectance: 0.4,
         cull_mode: Some(Face::Back),
         flip_normal_map_y: true,
         base_color_texture: Some(texture_ground.clone()),
+        fog_enabled: true,
         ..default()
     };
 

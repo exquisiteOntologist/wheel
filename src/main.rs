@@ -15,10 +15,10 @@ use wheel::utils::perlin::PerlinPlugin;
 use wheel::{
     components::{camera::PCameraPlugin, character::CharacterPlugin, wheel::WheelPlugin},
     controls::keyboard_control,
-    gens::{clouds::CloudPlugin, particles::ParticlesPlugin, terrain::TerrainPlugin},
+    gens::{clouds::CloudPlugin, terrain::TerrainPlugin},
     operation::toggle_pause,
     resources::Game,
-    setup::{setup, setup_scene_once_loaded},
+    setup::setup,
     utils::colours::rgb,
 };
 
@@ -55,13 +55,6 @@ fn main() {
         .add_plugins((PCameraPlugin, CloudPlugin))
         .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin))
         .add_systems(Startup, setup)
-        .add_systems(
-            Update,
-            (
-                setup_scene_once_loaded,
-                keyboard_control,
-                keyboard_control_debugging,
-            ),
-        )
+        .add_systems(Update, (keyboard_control, keyboard_control_debugging))
         .run();
 }

@@ -290,7 +290,7 @@ fn update_axis(
     //
 }
 
-const GRAVITY_ACC: f32 = 9.8;
+const GRAVITY_ACC: f32 = 4.8;
 const GRAVITY_DIR: Vec3 = Vec3::NEG_Y;
 // Vec3 {
 //     x: 0.,

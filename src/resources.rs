@@ -1,11 +1,4 @@
-use bevy::{
-    animation::AnimationClip,
-    asset::Handle,
-    ecs::{component::Component, system::Resource},
-};
-
-#[derive(Resource)]
-pub struct Animations(pub(crate) Vec<Handle<AnimationClip>>);
+use bevy::ecs::{component::Component, system::Resource};
 
 #[derive(Component)]
 pub struct PlayerCamera;

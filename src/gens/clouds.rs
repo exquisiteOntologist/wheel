@@ -20,7 +20,7 @@ use bevy::{
     transform::components::Transform,
 };
 
-use crate::{movement::orientation::look_at_on_y, resources::PlayerCamera};
+use crate::{constants::SPAWN_Y, movement::orientation::look_at_on_y, resources::PlayerCamera};
 
 const CLOUD_BUDGET: u32 = 30;
 const CLOUD_REGEN_DISTANCE: f32 = 300.;
@@ -49,42 +49,6 @@ pub fn setup_clouds(
             Cloud,
         ));
     }
-
-    // commands.spawn((
-    //     create_cloud(&asset_server, &mut meshes, &mut materials, 5., 40., 13.),
-    //     NotShadowCaster,
-    //     Cloud,
-    // ));
-
-    // commands.spawn((
-    //     create_cloud(&asset_server, &mut meshes, &mut materials, 45., 38., 12.),
-    //     NotShadowCaster,
-    //     Cloud,
-    // ));
-
-    // commands.spawn((
-    //     create_cloud(&asset_server, &mut meshes, &mut materials, 30., 50., 15.),
-    //     NotShadowCaster,
-    //     Cloud,
-    // ));
-
-    // commands.spawn((
-    //     create_cloud(&asset_server, &mut meshes, &mut materials, -30., -50., 12.),
-    //     NotShadowCaster,
-    //     Cloud,
-    // ));
-
-    // commands.spawn((
-    //     create_cloud(&asset_server, &mut meshes, &mut materials, -12., -35., 15.),
-    //     NotShadowCaster,
-    //     Cloud,
-    // ));
-
-    // commands.spawn((
-    //     create_cloud(&asset_server, &mut meshes, &mut materials, 15., 43., 12.),
-    //     NotShadowCaster,
-    //     Cloud,
-    // ));
 }
 
 const CLOUD_TEXTURES: [&str; 5] = [
@@ -189,7 +153,9 @@ pub fn distribute_clouds(
             continue;
         }
 
-        let elevation: f32 = 20. + rng.gen_range(0..15) as f32;
+        // note that we are going to have to do this during terrain generation to get it right,
+        // or have the clouds adjust themselves when they first spawn
+        let elevation: f32 = SPAWN_Y + 40. + rng.gen_range(0..15) as f32;
         t_cloud.translation.x = 0.;
         t_cloud.translation.z = 0.;
         t_cloud.translation.y = 0.;

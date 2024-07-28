@@ -30,7 +30,7 @@ use iyes_perf_ui::{
 use crate::{
     constants::{MAX_SPEED, SPAWN_TRANSFORM},
     meshes::{image_settings_with_repeat_image_sampler, mesh_update_uv},
-    resources::{Animations, Game, PlayerCharacter, PlayerWheel},
+    resources::{Game, PlayerCharacter, PlayerWheel},
 };
 
 pub fn setup(
@@ -40,15 +40,6 @@ pub fn setup(
     mut materials: ResMut<Assets<StandardMaterial>>,
     mut game: ResMut<Game>,
 ) {
-    // Insert a resource with the current scene information
-    // taken from the Bevy fox example (but not used, yet)
-    commands.insert_resource(Animations(vec![
-        // asset_server.load("models/animated/Fox.glb#Animation2"),
-        // asset_server.load("models/animated/Fox.glb#Animation1"),
-        // asset_server.load("models/animated/Fox.glb#Animation0"),
-        // asset_server.load("models/Wheel.glb#x"),
-    ]));
-
     // Performance FPS
     commands.spawn((
         PerfUiRoot {
@@ -144,14 +135,4 @@ pub fn setup(
     println!("  - arrow up / down: roll");
     println!("  - arrow left / right: turn direction");
     println!("  - arrow left / right: tilt");
-}
-
-// Once the scene is loaded, start the animation
-pub fn setup_scene_once_loaded(
-    _animations: Res<Animations>,
-    mut players: Query<&mut AnimationPlayer, Added<AnimationPlayer>>,
-) {
-    for mut _player in &mut players {
-        // player.play(animations.0[0].clone_weak()).repeat();
-    }
 }

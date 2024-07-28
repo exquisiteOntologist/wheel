@@ -1,5 +1,4 @@
 use crate::{
-    components::wheel::wheel_y_rotation,
     constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED},
     movement::orientation::look_at_on_y,
     resources::{Game, PlayerCamera, PlayerCharacter},
@@ -30,7 +29,7 @@ pub fn move_camera(
     let distance = t_cam.translation.distance(t_char.translation);
     // let d = distance.max(game.camera.speed_z);
 
-    let rotation = wheel_y_rotation(&t_char.rotation);
+    // let rotation = wheel_y_rotation(&t_char.rotation);
     // let char_direction = get_char_direction(rotation);
     let char_direction = t_char.right();
 
