@@ -28,9 +28,10 @@ use iyes_perf_ui::{
 };
 
 use crate::{
+    components::characters::player::resources::PlayerCharacter,
     constants::{MAX_SPEED, SPAWN_TRANSFORM},
     meshes::{image_settings_with_repeat_image_sampler, mesh_update_uv},
-    resources::{Game, PlayerCharacter, PlayerWheel},
+    resources::{Game, PlayerWheel},
 };
 
 pub fn setup(

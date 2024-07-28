@@ -1,7 +1,7 @@
 use crate::{
     constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED},
     movement::orientation::look_at_on_y,
-    resources::{Game, PlayerCamera, PlayerCharacter},
+    resources::{Game, PlayerCamera},
     utils::colours::rgba,
 };
 use bevy::{
@@ -14,6 +14,8 @@ use bevy::{
     pbr::ScreenSpaceAmbientOcclusionSettings,
     prelude::*,
 };
+
+use super::characters::player::resources::PlayerCharacter;
 
 pub fn move_camera(
     time: Res<Time>,

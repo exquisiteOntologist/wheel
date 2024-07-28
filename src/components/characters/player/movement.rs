@@ -11,18 +11,19 @@ use bevy_hanabi::{EffectProperties, EffectSpawner};
 use bevy_rapier3d::prelude::KinematicCharacterController;
 
 use crate::{
+    components::wheel::{wheel_y_rotation, WheelState},
     constants::MAX_SPEED,
     gens::particles::{ParticlesPlugin, MAX_SAND_RATE},
-    resources::{DebugRoller, Game, PlayerCharacter, PlayerParticles, PlayerWheel, WheelParticles},
+    resources::{DebugRoller, Game, WheelParticles},
     utils::{
         angles::{degrees_to_radians, quat_w_to_axis_adjust, quat_w_to_axis_adjust_v},
         matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
     },
 };
 
-use super::wheel::{wheel_y_rotation, WheelState};
+use super::resources::PlayerCharacter;
 
-fn turn_character(mut q: Query<&mut Transform, With<PlayerCharacter>>, game: ResMut<Game>) {
+pub fn turn_character(mut q: Query<&mut Transform, With<PlayerCharacter>>, game: ResMut<Game>) {
     let mut t = q.single_mut();
 
     // For reference, this works except results in negative Y values that cause issues
@@ -74,73 +75,12 @@ fn move_character_old(
     c.translation = Some(Vec3::ZERO + f * speed);
 }
 
-/// Add particles to the character.
-/// Note that for the query to work we probably have to
-/// run this post-startup.
-fn attach_particles(
-    mut commands: Commands,
-    mut q_character: Query<EntityRef, With<PlayerCharacter>>,
-    q_particles: Query<EntityRef, With<WheelParticles>>,
-) {
-    let mut particles = q_particles.iter();
-
-    // each entity gets its own particles emitter,
-    // as each entity spawns a particles instance
-    for entity in q_character.iter_mut() {
-        let particles_bundle = commands
-            .spawn((SpatialBundle { ..default() }, PlayerParticles))
-            .add_child(particles.next().unwrap().id())
-            .id();
-
-        commands
-            .get_entity(entity.id())
-            .unwrap()
-            .add_child(particles_bundle);
-
-        // commands
-        //     .get_entity(entity.id())
-        //     .unwrap()
-        //     .add_child(particles.next().unwrap().id());
-    }
-}
-
-fn update_particles_relative_to_char(
-    time: Res<Time>,
-    mut commands: Commands,
-    // mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
-    mut q_character: Query<(&mut Transform, &PlayerWheel)>,
-    // mut q_particles: Query<(&mut Transform, &PlayerParticles), Without<PlayerWheel>>,
-    mut q_particles: Query<
-        (&mut Transform, &mut EffectProperties, &WheelParticles),
-        Without<PlayerWheel>,
-    >,
-    mut q_spawner: Query<&mut EffectSpawner>,
-    mut game: ResMut<Game>,
-) {
-    let mut particle_emitters = q_particles.iter_mut();
-    let mut effect_spawners = q_spawner.iter_mut();
-
-    for character in q_character.iter_mut() {
-        let (mut p_t, mut p_ep, _) = particle_emitters.next().unwrap();
-        let Some(mut e_s) = effect_spawners.next() else {
-            // println!("No spawners");
-            // On startup the spawners may not yet exist.
-            return;
-        };
-        let x = game.player_wheel.speed_z / (MAX_SPEED * time.delta_seconds());
-        e_s.set_active(x > 1.);
-        let rate: f32 = (1. - x) / MAX_SAND_RATE;
-        e_s.spawner().with_count(rate.into());
-        p_ep.set("opacity", (x / 2.).into());
-    }
-}
-
 /// Rotate by adjusting the quaternion angle on the y vector.
 /// This rotation suffers from an amplification effect near a certain point.
 /// The amplification effect makes the turn rush past about 90deg.
 fn char_rotation_positive_y(t: &mut Mut<Transform>, new_turn: f32) {
     let curr_w = t.rotation.w;
-    let mut new_w = ((((curr_w + new_turn) + 1.) % 2.) - 1.).clamp(-1., 1.);
+    let new_w = ((((curr_w + new_turn) + 1.) % 2.) - 1.).clamp(-1., 1.);
 
     println!("new w {}", new_w);
 
@@ -323,22 +263,4 @@ pub fn move_character(
 
     // Using not standard transform, but KinematicCharacterController
     c.translation = Some(gravity_movement + movement)
-}
-
-pub struct CharacterPlugin;
-
-impl Plugin for CharacterPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            (
-                move_character,
-                turn_character,
-                update_particles_relative_to_char,
-                // update_axis,
-            ),
-        );
-        app.add_plugins(ParticlesPlugin);
-        app.add_systems(PostStartup, attach_particles);
-    }
 }

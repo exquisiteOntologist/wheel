@@ -34,8 +34,9 @@ use noise::{NoiseFn, Perlin};
 use rand::distributions::Standard;
 use rand::{thread_rng, Rng};
 
+use crate::components::characters::player::resources::PlayerCharacter;
 use crate::constants::{HEIGHT_TEMPERATE_END, HEIGHT_TEMPERATE_START};
-use crate::resources::{ContainsPlayer, PlayerCharacter};
+use crate::resources::ContainsPlayer;
 use crate::utils::perlin::{self, sample_terrain_height, PerlinNoiseEntity};
 
 use super::terrain;

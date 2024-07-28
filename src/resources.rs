@@ -4,13 +4,7 @@ use bevy::ecs::{component::Component, system::Resource};
 pub struct PlayerCamera;
 
 #[derive(Component)]
-pub struct PlayerCharacter;
-
-#[derive(Component)]
 pub struct PlayerWheel;
-
-#[derive(Component)]
-pub struct PlayerParticles;
 
 #[derive(Component)]
 pub struct WheelParticles;

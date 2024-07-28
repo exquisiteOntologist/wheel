@@ -8,12 +8,13 @@ use bevy::{
 use bevy_debug_grid::*;
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
+use wheel::components::characters::player::plugin::CharacterPlugin;
 use wheel::controls::keyboard_control_debugging;
 use wheel::gens::grass::GrassPlugin;
 use wheel::resources::DebugRoller;
 use wheel::utils::perlin::PerlinPlugin;
 use wheel::{
-    components::{camera::PCameraPlugin, character::CharacterPlugin, wheel::WheelPlugin},
+    components::{camera::PCameraPlugin, wheel::WheelPlugin},
     controls::keyboard_control,
     gens::{clouds::CloudPlugin, terrain::TerrainPlugin},
     operation::toggle_pause,

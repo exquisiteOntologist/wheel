@@ -25,13 +25,13 @@ use bevy_rapier3d::{
 };
 
 use crate::{
+    components::characters::player::resources::PlayerCharacter,
     constants::{
         COLOR_PEAKS, COLOR_SAND, COLOR_TEMPERATE, HEIGHT_PEAKS, HEIGHT_SAND, HEIGHT_TEMPERATE_END,
         HEIGHT_TEMPERATE_START, PLANE_SIZE, SIZE_NO_PLAYER, SUBDIVISIONS_LEVEL_1,
         SUBDIVISIONS_LEVEL_2, TEXTURE_SCALE, TILE_WIDTH,
     },
     meshes::image_settings_with_repeat_image_sampler,
-    resources::{PlayerCharacter, PlayerWheel},
     utils::perlin::{self, sample_terrain_height},
 };
 
