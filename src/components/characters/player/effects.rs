@@ -14,7 +14,7 @@ use crate::{
     resources::{DebugRoller, Game, PlayerWheel, WheelParticles},
     utils::{
         angles::{degrees_to_radians, quat_w_to_axis_adjust},
-        matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
+        roll_pitch_yaw::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
     },
 };
 
