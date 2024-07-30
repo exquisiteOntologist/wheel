@@ -14,7 +14,7 @@ use bevy::{
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
     resources::{Game, PlayerWheel},
-    utils::matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat, RPY},
+    utils::roll_pitch_yaw::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat, RPY},
 };
 
 fn wheel_rotation(

@@ -18,6 +18,7 @@ pub struct MotionState {
     pub speed_x: f32,
     pub speed_y: f32,
     pub speed_z: f32,
+    pub w: f32,
 }
 
 #[derive(Resource, Default)]

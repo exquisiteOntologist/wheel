@@ -7,7 +7,10 @@ use bevy::{
 
 use bevy_rapier3d::prelude::KinematicCharacterController;
 
-use crate::{resources::Game, utils::angles::quat_w_to_axis_adjust};
+use crate::{
+    resources::Game,
+    utils::angles::{quat_w_to_axis_adjust, rotate_y_by_w},
+};
 
 use super::resources::PlayerCharacter;
 
@@ -16,6 +19,52 @@ pub fn turn_character(mut q: Query<&mut Transform, With<PlayerCharacter>>, game:
 
     // For reference, this works except results in negative Y values that cause issues
     t.rotate_local_y(game.player_wheel.speed_y);
+}
+
+/// Do a turn only on the positive Y axis.
+/// Unfortunately it only will do 180deg.
+pub fn turn_character_positive(
+    mut q: Query<&mut Transform, With<PlayerCharacter>>,
+    game: ResMut<Game>,
+    time: Res<Time>,
+) {
+    let mut t = q.single_mut();
+
+    // // println!("+++");
+    // let rot_in = t.rotation.clone();
+    // // abs used here so the value is positive
+    // let mut w = t.rotation.normalize().w.abs();
+    // let w_in = w;
+    let turn = game.player_wheel.speed_y; // * 0.1;
+                                          //                                       // w = ((w + turn) % 1.).clamp(0., 1.);
+    let w = ((turn) % 1.).clamp(0., 1.);
+
+    // if w == 0. {
+    //     return;
+    // }
+
+    // let rot_new = rotate_y_by_w(w);
+    // t.rotate(rot_new);
+    // t.rotation = t.rotation.normalize();
+    // // t.rotation = rot_new;
+    // // t.rotation.w = w;
+    // // t.rotation.y = rot_new.y;
+
+    // x
+    let tr = t.rotation;
+    println!("yy {:1} {:2}", tr.y, tr.y.abs());
+    let rot = Quat::from_xyzw(tr.x.abs(), tr.y.abs(), tr.z.abs(), tr.w.abs());
+    // let w = (((0.001) % 1.) as f32).clamp(0., 1.);
+    let new_rot = rotate_y_by_w(w);
+    t.rotation = new_rot * rot;
+    // x
+
+    if t.rotation.y < 0. {
+        println!("turn in w {:1} rot {:2}", w, rot);
+        // println!("turn in w {:1} rot {:2}", w_in, rot_in.normalize());
+    }
+
+    println!("turn out w {:1} rot {:2}", w, t.rotation);
 }
 
 /// Rotate by adjusting the quaternion angle on the y vector.

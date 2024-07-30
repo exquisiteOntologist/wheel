@@ -26,7 +26,7 @@ use crate::{
     resources::{Game, PlayerWheel, WheelParticles},
     utils::{
         angles::degrees_to_radians,
-        matrix::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
+        roll_pitch_yaw::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
     },
 };
 
