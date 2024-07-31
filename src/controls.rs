@@ -1,6 +1,7 @@
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
     resources::{DebugRoller, Game},
+    ui::letterbox::LetterboxState,
 };
 use bevy::prelude::*;
 
@@ -47,6 +48,7 @@ pub fn keyboard_control_debugging(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
     mut debug_roller: ResMut<DebugRoller>,
+    mut letterbox_state: ResMut<LetterboxState>,
 ) {
     const INC: f32 = 0.1;
 
@@ -69,5 +71,8 @@ pub fn keyboard_control_debugging(
     }
     if keyboard_input.any_pressed([KeyCode::Digit4]) {
         debug_roller.w = (debug_roller.w + inc).clamp(-1., 1.);
+    }
+    if keyboard_input.any_just_pressed([KeyCode::Space]) {
+        letterbox_state.active = !letterbox_state.active;
     }
 }

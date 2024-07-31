@@ -105,7 +105,7 @@ pub fn setup(
             SceneBundle {
                 scene: asset_server.load("models/Wheel.glb#Scene0"),
                 // also see parent character Y position
-                transform: Transform::from_xyz(0.0, 0., 0.0),
+                transform: Transform::from_xyz(0., 0., 0.),
                 ..default()
             },
             // PbrBundle {
