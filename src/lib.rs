@@ -7,4 +7,5 @@ pub mod movement;
 pub mod operation;
 pub mod resources;
 pub mod setup;
+pub mod ui;
 pub mod utils;

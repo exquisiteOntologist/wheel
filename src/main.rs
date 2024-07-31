@@ -12,6 +12,7 @@ use wheel::components::characters::player::plugin::PlayerCharacterPlugin;
 use wheel::controls::keyboard_control_debugging;
 use wheel::gens::grass::GrassPlugin;
 use wheel::resources::DebugRoller;
+use wheel::ui::plugin::UserInterfacePlugin;
 use wheel::utils::perlin::PerlinPlugin;
 use wheel::{
     components::{camera::PCameraPlugin, wheel::WheelPlugin},
@@ -55,6 +56,7 @@ fn main() {
         .add_plugins((PlayerCharacterPlugin, WheelPlugin))
         .add_plugins((PCameraPlugin, CloudPlugin))
         .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin))
+        .add_plugins((UserInterfacePlugin))
         .add_systems(Startup, setup)
         .add_systems(Update, (keyboard_control, keyboard_control_debugging))
         .run();
