@@ -38,7 +38,7 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let quote_right_bundle = (
         NodeBundle {
             style: Style {
-                margin: UiRect::new(Val::Px(10.), Val::Px(0.), Val::Px(0.), Val::Px(16.)),
+                margin: UiRect::new(Val::Px(12.), Val::Px(0.), Val::Px(0.), Val::Px(16.)),
                 ..quote_style
             },
             ..default()
