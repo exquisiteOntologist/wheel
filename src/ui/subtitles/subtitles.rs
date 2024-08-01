@@ -7,7 +7,8 @@ use bevy::{
     text::{JustifyText, Text, TextStyle},
     time::Time,
     ui::{
-        AlignContent, AlignItems, BorderRadius, Display, JustifyContent, Node, Style, UiRect, Val,
+        AlignContent, AlignItems, BorderRadius, Display, JustifyContent, Node, Style, UiImage,
+        UiRect, Val,
     },
 };
 
@@ -17,6 +18,37 @@ use super::{
 };
 
 pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let quote_style = Style {
+        width: Val::Px(22. / 2.),
+        height: Val::Px(19. / 2.),
+        ..default()
+    };
+
+    let quote_left_bundle = (
+        NodeBundle {
+            style: Style {
+                margin: UiRect::new(Val::Px(0.), Val::Px(10.), Val::Px(0.), Val::Px(16.)),
+                ..quote_style.clone()
+            },
+            ..default()
+        },
+        UiImage::new(asset_server.load("glyphs/quote_left@2x.png")),
+    );
+
+    let quote_right_bundle = (
+        NodeBundle {
+            style: Style {
+                margin: UiRect::new(Val::Px(10.), Val::Px(0.), Val::Px(0.), Val::Px(16.)),
+                ..quote_style
+            },
+            ..default()
+        },
+        UiImage::new(asset_server.load("glyphs/quote_right@2x.png")),
+    );
+
+    let quote_left = commands.spawn(quote_left_bundle).id();
+    let quote_right = commands.spawn(quote_right_bundle).id();
+
     let sub_text_bundle = (
         TextBundle {
             text: Text::from_section(
@@ -59,7 +91,9 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     let subtitle = commands
         .spawn((subtitle_bundle, Subtitle))
+        .add_child(quote_left)
         .add_child(sub_text)
+        .add_child(quote_right)
         .id();
 
     let subtitles_bundle = NodeBundle {
