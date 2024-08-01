@@ -1,7 +1,7 @@
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
     resources::{DebugRoller, Game},
-    ui::letterbox::LetterboxState,
+    ui::letterbox::resources::LetterboxState,
 };
 use bevy::prelude::*;
 

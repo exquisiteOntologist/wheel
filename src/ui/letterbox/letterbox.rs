@@ -1,34 +1,16 @@
 use bevy::{
     color::Color,
-    prelude::{
-        default, BuildChildren, Commands, Component, Entity, NodeBundle, Parent, Query, Res,
-        ResMut, Resource,
-    },
-    reflect::Reflect,
+    prelude::{default, BuildChildren, Commands, Entity, NodeBundle, Parent, Query, Res, ResMut},
     time::Time,
     ui::{BackgroundColor, JustifyContent, Node, PositionType, Style, Val},
 };
 
-#[derive(Component)]
-pub struct LetterboxTop;
+use super::{
+    constants::LETTERBOX_HEIGHT,
+    resources::{Letterbox, LetterboxBottom, LetterboxSide, LetterboxState, LetterboxTop},
+};
 
-#[derive(Component)]
-pub struct LetterboxBottom;
-
-#[derive(Component)]
-pub struct LetterboxSide;
-
-#[derive(Component)]
-pub struct Letterbox;
-
-#[derive(Resource, Default)]
-pub struct LetterboxState {
-    pub active: bool,
-}
-
-pub const LETTERBOX_HEIGHT: f32 = 100.0;
-
-pub fn letterbox_setup(commands: &mut Commands) -> Entity {
+pub fn letterbox_setup(mut commands: Commands) {
     let letterbox_style = Style {
         width: Val::Percent(100.0),
         height: Val::Px(LETTERBOX_HEIGHT),
@@ -76,8 +58,6 @@ pub fn letterbox_setup(commands: &mut Commands) -> Entity {
 
     letterbox.add_child(box_top);
     letterbox.add_child(box_bottom);
-
-    letterbox.id()
 }
 
 pub fn update_letterbox(

@@ -1,14 +1,16 @@
 use bevy::{
     asset::AssetServer,
-    prelude::{default, BuildChildren, Commands, NodeBundle, Res},
+    prelude::{default, BuildChildren, Commands, EntityRef, NodeBundle, Query, Res, With},
     ui::{JustifyContent, Style, Val},
 };
 
-use super::letterbox::letterbox_setup;
+use super::letterbox::resources::Letterbox;
 
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let letterbox = letterbox_setup(&mut commands);
-
+pub fn poststartup_nest_elements(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    q_letterbox: Query<EntityRef, With<Letterbox>>,
+) {
     // root node
     commands
         .spawn(NodeBundle {
@@ -24,5 +26,5 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             // these probably don't need to be parented
             // parent.spawn(letterbox);
         })
-        .add_child(letterbox);
+        .add_child(q_letterbox.single().id());
 }

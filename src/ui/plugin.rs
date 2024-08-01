@@ -1,16 +1,12 @@
-use bevy::app::{App, Plugin, Startup, Update};
+use bevy::app::{App, Plugin, PostStartup};
 
-use super::{
-    letterbox::{update_letterbox, LetterboxState},
-    setup::setup,
-};
+use super::{letterbox::plugin::LetterboxPlugin, setup::poststartup_nest_elements};
 
 pub struct UserInterfacePlugin;
 
 impl Plugin for UserInterfacePlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<LetterboxState>();
-        app.add_systems(Startup, setup);
-        app.add_systems(Update, update_letterbox);
+        app.add_plugins(LetterboxPlugin);
+        app.add_systems(PostStartup, poststartup_nest_elements);
     }
 }

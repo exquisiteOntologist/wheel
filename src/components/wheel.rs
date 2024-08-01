@@ -1,5 +1,3 @@
-use std::f32::consts::TAU;
-
 use bevy::{
     ecs::{
         query::With,
