@@ -6,10 +6,15 @@ use bevy::{
     },
     text::{JustifyText, Text, TextStyle},
     time::Time,
-    ui::{Display, JustifyContent, Node, Style, UiRect, Val},
+    ui::{
+        AlignContent, AlignItems, BorderRadius, Display, JustifyContent, Node, Style, UiRect, Val,
+    },
 };
 
-use super::resources::{Subtitle, SubtitleText, Subtitles, SubtitlesState};
+use super::{
+    constants::FONT_PATH,
+    resources::{Subtitle, SubtitleText, Subtitles, SubtitlesState},
+};
 
 pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let sub_text_bundle = (
@@ -17,17 +22,15 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             text: Text::from_section(
                 "This is not a game or art",
                 TextStyle {
-                    font: asset_server
-                        .load("fonts/Edu_AU_VIC_WA_NT_Hand/EduAUVICWANTHand-VariableFont_wght.ttf"),
-                    font_size: 30.0,
-
+                    font: asset_server.load(FONT_PATH),
+                    font_size: 34.0,
                     ..default()
                 },
             )
             .with_justify(JustifyText::Center),
             style: Style {
-                align_items: bevy::ui::AlignItems::Center,
-                align_content: bevy::ui::AlignContent::Center,
+                align_items: AlignItems::Center,
+                align_content: AlignContent::Center,
                 max_width: Val::Px(300.),
                 max_height: Val::Px(50.),
                 ..default()
@@ -45,11 +48,12 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             max_height: Val::Px(50.),
             bottom: Val::Percent(30.),
             padding: UiRect::axes(Val::Px(30.), Val::Px(10.)),
-            align_items: bevy::ui::AlignItems::Center,
-            align_content: bevy::ui::AlignContent::Center,
+            align_items: AlignItems::Center,
+            align_content: AlignContent::Center,
             ..default()
         },
         background_color: Color::srgba(0., 0., 0., 0.8).into(),
+        border_radius: BorderRadius::all(Val::Px(3.)),
         ..default()
     };
 
