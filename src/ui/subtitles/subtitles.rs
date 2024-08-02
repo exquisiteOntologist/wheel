@@ -2,13 +2,14 @@ use bevy::{
     asset::AssetServer,
     color::Color,
     prelude::{
-        default, BuildChildren, Commands, NodeBundle, Parent, Query, Res, ResMut, TextBundle,
+        default, BuildChildren, Commands, NodeBundle, Parent, Query, Res, ResMut, TextBundle, With,
+        Without,
     },
     text::{JustifyText, Text, TextStyle},
     time::Time,
     ui::{
-        AlignContent, AlignItems, BorderRadius, Display, JustifyContent, Node, RepeatedGridTrack,
-        Style, UiImage, UiRect, Val,
+        AlignContent, AlignItems, BorderRadius, Display, JustifyContent, Node, Style, UiImage,
+        UiRect, Val,
     },
 };
 
@@ -49,7 +50,8 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let quote_left = commands.spawn(quote_left_bundle).id();
     let quote_right = commands.spawn(quote_right_bundle).id();
 
-    let subtitle_content = "Then, whispy and mean, the wind took them";
+    // To change dynamically
+    let subtitle_content = "";
     let subtitle_text_style = TextStyle {
         font: asset_server.load(FONT_PATH),
         font_size: 32.0,
@@ -125,6 +127,8 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             padding: UiRect::axes(Val::Px(30.), Val::Px(10.)),
             align_items: AlignItems::Center,
             align_content: AlignContent::Center,
+            // To change dynamically
+            display: Display::None,
             ..default()
         },
         background_color: Color::srgba(0., 0., 0., 0.).into(),
@@ -158,11 +162,21 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 pub fn update_subtitles(
     time: Res<Time>,
-    mut q_boxes: Query<(&mut Subtitle, &mut Style, &Parent, &Node)>,
+    mut q_boxes: Query<(&mut Subtitle, &mut Style, &Parent, &Node), With<Subtitle>>,
+    mut q_text: Query<
+        (&mut SubtitleText, &mut Text, &mut Style, &Parent, &Node),
+        Without<Subtitle>,
+    >,
     mut subtitles_state: ResMut<SubtitlesState>,
 ) {
     for (mut letterbox, mut style, parent, box_node) in &mut q_boxes {
-        let lb_height = box_node.size().y;
-        //
+        style.display = Display::Flex;
+    }
+
+    // There are 2 Subtitle nodes; the foreground and background shade.
+    // This loop will set the text for both.
+    for (mut letterbox, mut text, mut style, parent, box_node) in &mut q_text {
+        // we only use 1 section at a time
+        text.sections[0].value = "Then, whispy and mean, the wind took them".into();
     }
 }
