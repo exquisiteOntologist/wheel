@@ -81,7 +81,7 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let sub_text = commands.spawn(sub_text_bundle).id();
 
     let subtitle_text_shade_style = TextStyle {
-        color: Color::rgba(0., 0., 0., 0.5),
+        color: Color::srgba(0., 0., 0., 0.5),
         ..subtitle_text_style
     };
 
@@ -90,7 +90,6 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             text: Text::from_section(subtitle_content, subtitle_text_shade_style)
                 .with_justify(JustifyText::Center),
             style: Style {
-                // margin: UiRect::top(Val::Percent(-100.)),
                 bottom: Val::Px(-1.),
                 left: Val::Px(1.),
                 position_type: bevy::ui::PositionType::Absolute,
