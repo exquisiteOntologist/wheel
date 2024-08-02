@@ -52,10 +52,10 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let sub_text_bundle = (
         TextBundle {
             text: Text::from_section(
-                "This is not a game or art",
+                "Then, whispy and mean, the wind took them",
                 TextStyle {
                     font: asset_server.load(FONT_PATH),
-                    font_size: 34.0,
+                    font_size: 32.0,
                     ..default()
                 },
             )
@@ -63,8 +63,9 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             style: Style {
                 align_items: AlignItems::Center,
                 align_content: AlignContent::Center,
-                max_width: Val::Px(300.),
-                max_height: Val::Px(50.),
+                max_width: Val::Percent(100.),
+                // max_height: Val::Px(50.),
+                bottom: Val::Percent(0.),
                 ..default()
             },
             ..default()
@@ -76,15 +77,16 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     let subtitle_bundle = NodeBundle {
         style: Style {
-            max_width: Val::Px(300.),
-            max_height: Val::Px(50.),
-            bottom: Val::Percent(30.),
+            max_width: Val::Percent(70.),
+            // max_width: Val::Px(300.),
+            max_height: Val::Px(100.),
+            bottom: Val::Percent(100.),
             padding: UiRect::axes(Val::Px(30.), Val::Px(10.)),
             align_items: AlignItems::Center,
             align_content: AlignContent::Center,
             ..default()
         },
-        background_color: Color::srgba(0., 0., 0., 0.8).into(),
+        background_color: Color::srgba(0., 0., 0., 0.).into(),
         border_radius: BorderRadius::all(Val::Px(3.)),
         ..default()
     };
