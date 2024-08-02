@@ -1,7 +1,12 @@
+use std::str::FromStr;
+
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
     resources::{DebugRoller, Game},
-    ui::letterbox::resources::LetterboxState,
+    ui::{
+        letterbox::resources::LetterboxState,
+        subtitles::{constants::DEMO_SUBTITLE, resources::SubtitlesState},
+    },
 };
 use bevy::prelude::*;
 
@@ -49,6 +54,7 @@ pub fn keyboard_control_debugging(
     time: Res<Time>,
     mut debug_roller: ResMut<DebugRoller>,
     mut letterbox_state: ResMut<LetterboxState>,
+    mut subtitles_state: ResMut<SubtitlesState>,
 ) {
     const INC: f32 = 0.1;
 
@@ -72,7 +78,18 @@ pub fn keyboard_control_debugging(
     if keyboard_input.any_pressed([KeyCode::Digit4]) {
         debug_roller.w = (debug_roller.w + inc).clamp(-1., 1.);
     }
+
+    // Toggle Letterbox
     if keyboard_input.any_just_pressed([KeyCode::Space]) {
         letterbox_state.active = !letterbox_state.active;
+    }
+
+    // Toggle Subtitles
+    if keyboard_input.any_just_pressed([KeyCode::Quote]) {
+        subtitles_state.text = if subtitles_state.text.is_empty() {
+            vec![DEMO_SUBTITLE.into()]
+        } else {
+            vec![]
+        };
     }
 }

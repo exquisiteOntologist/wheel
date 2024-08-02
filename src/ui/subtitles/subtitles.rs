@@ -170,13 +170,21 @@ pub fn update_subtitles(
     mut subtitles_state: ResMut<SubtitlesState>,
 ) {
     for (mut letterbox, mut style, parent, box_node) in &mut q_boxes {
-        style.display = Display::Flex;
+        style.display = match subtitles_state.text.len() {
+            0 => Display::None,
+            _ => Display::Flex,
+        }
     }
 
     // There are 2 Subtitle nodes; the foreground and background shade.
     // This loop will set the text for both.
     for (mut letterbox, mut text, mut style, parent, box_node) in &mut q_text {
         // we only use 1 section at a time
-        text.sections[0].value = "Then, whispy and mean, the wind took them".into();
+        text.sections[0].value = subtitles_state
+            .text
+            .first()
+            .or(Some(&String::new()))
+            .unwrap()
+            .into()
     }
 }

@@ -11,5 +11,5 @@ pub struct Subtitles;
 
 #[derive(Resource, Default)]
 pub struct SubtitlesState {
-    //
+    pub text: Vec<String>,
 }
