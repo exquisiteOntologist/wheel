@@ -1,6 +1,6 @@
 use bevy::{
     color::Color,
-    prelude::{default, BuildChildren, Commands, Entity, NodeBundle, Parent, Query, Res, ResMut},
+    prelude::{default, BuildChildren, Commands, NodeBundle, Parent, Query, Res, ResMut},
     time::Time,
     ui::{BackgroundColor, JustifyContent, Node, PositionType, Style, Val},
 };
@@ -19,7 +19,7 @@ pub fn letterbox_setup(mut commands: Commands) {
         ..default()
     };
 
-    let node_background: BackgroundColor = Color::srgb(0.4, 0.4, 1.).into();
+    let node_background: BackgroundColor = Color::srgba(0.4, 0.4, 1., 1.).into();
 
     let top = NodeBundle {
         style: Style {
