@@ -1,6 +1,8 @@
 # Wheel
 
-Spin a wheel through a desert.
+The journey.
+
+![Wheel in field](./marketing/screenshot-mt.jpg)
 
 ## Running Wheel
 
