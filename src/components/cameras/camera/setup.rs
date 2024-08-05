@@ -19,7 +19,7 @@ pub fn setup_camera(mut commands: Commands) {
                 ..default()
             },
             // intentionally starting a way behind player so it moves in
-            transform: Transform::from_xyz(-100.0, SPAWN_TRANSFORM.translation.y + 3.0, 0.0)
+            transform: Transform::from_xyz(-100.0, SPAWN_TRANSFORM.translation.y + 3.0 + 20., 0.0)
                 .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
             deband_dither: DebandDither::Enabled,
             tonemapping: Tonemapping::TonyMcMapface,
