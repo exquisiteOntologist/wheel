@@ -1,13 +1,10 @@
 //! Rolls a player-controlled wheel
 
 use bevy::prelude::*;
-use bevy::{
-    input::common_conditions::input_just_pressed, pbr::DirectionalLightShadowMap, prelude::*,
-    window::WindowFocused,
-};
-use bevy_debug_grid::*;
+use bevy::{input::common_conditions::input_just_pressed, pbr::DirectionalLightShadowMap};
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
+use wheel::components::cameras::camera::plugin::PCameraPlugin;
 use wheel::components::characters::player::plugin::PlayerCharacterPlugin;
 use wheel::controls::keyboard_control_debugging;
 use wheel::gens::grass::GrassPlugin;
@@ -15,7 +12,7 @@ use wheel::resources::DebugRoller;
 use wheel::ui::plugin::UserInterfacePlugin;
 use wheel::utils::perlin::PerlinPlugin;
 use wheel::{
-    components::{camera::PCameraPlugin, wheel::WheelPlugin},
+    components::wheel::WheelPlugin,
     controls::keyboard_control,
     gens::{clouds::CloudPlugin, terrain::TerrainPlugin},
     operation::toggle_pause,

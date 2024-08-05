@@ -1,4 +1,5 @@
 use crate::{
+    components::characters::player::resources::PlayerCharacter,
     constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED},
     movement::orientation::look_at_on_y,
     resources::{Game, PlayerCamera},
@@ -14,8 +15,7 @@ use bevy::{
     pbr::ScreenSpaceAmbientOcclusionSettings,
     prelude::*,
 };
-
-use super::characters::player::resources::PlayerCharacter;
+use bevy_rapier3d::prelude::{Collider, RigidBody};
 
 pub fn move_camera(
     time: Res<Time>,
@@ -163,9 +163,7 @@ fn look_in_front(t_cam: &mut Mut<Transform>, t_char: &Mut<Transform>, char_direc
     look_at_on_y(t_cam, &tran_infront_char);
 }
 
-const VIEW_DISTANCE: f32 = 300000.;
-
-fn setup_camera(mut commands: Commands) {
+pub fn setup_camera(mut commands: Commands) {
     commands.spawn((
         Camera3dBundle {
             camera: Camera {
@@ -209,15 +207,8 @@ fn setup_camera(mut commands: Commands) {
         BloomSettings::default(),
         TemporalAntiAliasSettings { ..default() },
         ScreenSpaceAmbientOcclusionSettings { ..default() },
+        RigidBody::KinematicPositionBased,
+        Collider::ball(1.0),
         PlayerCamera,
     ));
-}
-
-pub struct PCameraPlugin;
-
-impl Plugin for PCameraPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Startup, setup_camera);
-        app.add_systems(Update, move_camera);
-    }
 }
