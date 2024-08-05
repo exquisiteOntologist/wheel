@@ -15,7 +15,9 @@ use crate::{
     utils::roll_pitch_yaw::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat, RPY},
 };
 
-fn wheel_rotation(
+use super::resources::WheelState;
+
+pub fn wheel_rotation(
     mut q: Query<&mut Transform, With<PlayerWheel>>,
     time: Res<Time>,
     game: ResMut<Game>,
@@ -166,27 +168,5 @@ pub fn move_wheel(
 
     if !(game.player_wheel.speed_y > 0.0001 || game.player_wheel.speed_y < -0.0001) {
         game.player_wheel.speed_y = 0.;
-    }
-}
-
-fn setup_wheel(mut commands: Commands, mut game: ResMut<Game>) {
-    game.player_wheel.speed_z = FORWARD_SPEED * 10.;
-}
-
-#[derive(Resource, Default)]
-pub struct WheelState {
-    /// Roll is tilting sideways,
-    /// Pitch is rolling the wheel,
-    /// Yaw is turning to another direction
-    pub rpy: RPY,
-}
-
-pub struct WheelPlugin;
-
-impl Plugin for WheelPlugin {
-    fn build(&self, app: &mut App) {
-        app.init_resource::<WheelState>();
-        app.add_systems(Startup, setup_wheel);
-        app.add_systems(Update, (wheel_rotation, move_wheel));
     }
 }

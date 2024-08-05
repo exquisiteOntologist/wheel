@@ -12,7 +12,7 @@ use wheel::resources::DebugRoller;
 use wheel::ui::plugin::UserInterfacePlugin;
 use wheel::utils::perlin::PerlinPlugin;
 use wheel::{
-    components::wheel::WheelPlugin,
+    components::wheel::plugin::WheelPlugin,
     controls::keyboard_control,
     gens::{clouds::CloudPlugin, terrain::TerrainPlugin},
     operation::toggle_pause,

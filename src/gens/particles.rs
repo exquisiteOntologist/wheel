@@ -22,7 +22,7 @@ use bevy_hanabi::{
 use bevy_rapier3d::na::Rotation3;
 
 use crate::{
-    components::wheel::WheelState,
+    components::wheel::resources::WheelState,
     resources::{Game, PlayerWheel, WheelParticles},
     utils::{
         angles::degrees_to_radians,

@@ -25,7 +25,7 @@ use iyes_perf_ui::{
 
 use crate::{
     components::characters::player::resources::PlayerCharacter,
-    constants::{MAX_SPEED, SPAWN_TRANSFORM},
+    constants::SPAWN_TRANSFORM,
     meshes::{image_settings_with_repeat_image_sampler, mesh_update_uv},
     resources::{Game, PlayerWheel},
 };
@@ -85,8 +85,6 @@ pub fn setup(
             ..default()
         },
         cascade_shadow_config: CascadeShadowConfigBuilder {
-            // first_cascade_far_bound: 200.0,
-            // maximum_distance: 400.0,
             maximum_distance: 400.0,
             first_cascade_far_bound: 0.9,
             ..default()
