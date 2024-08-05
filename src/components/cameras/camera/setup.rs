@@ -1,4 +1,4 @@
-use crate::{resources::PlayerCamera, utils::colours::rgba};
+use crate::{constants::SPAWN_TRANSFORM, resources::PlayerCamera, utils::colours::rgba};
 use bevy::{
     core_pipeline::{
         bloom::BloomSettings,
@@ -8,10 +8,10 @@ use bevy::{
     pbr::ScreenSpaceAmbientOcclusionSettings,
     prelude::*,
 };
-use bevy_rapier3d::prelude::{Collider, RigidBody};
+use bevy_rapier3d::prelude::{Collider, KinematicCharacterController, RigidBody};
 
 pub fn setup_camera(mut commands: Commands) {
-    commands.spawn((
+    let mut camera = commands.spawn((
         Camera3dBundle {
             camera: Camera {
                 hdr: true,
@@ -19,7 +19,7 @@ pub fn setup_camera(mut commands: Commands) {
                 ..default()
             },
             // intentionally starting a way behind player so it moves in
-            transform: Transform::from_xyz(-100.0, 3.0, 0.0)
+            transform: Transform::from_xyz(-100.0, SPAWN_TRANSFORM.translation.y + 3.0, 0.0)
                 .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
             deband_dither: DebandDither::Enabled,
             tonemapping: Tonemapping::TonyMcMapface,
@@ -54,8 +54,12 @@ pub fn setup_camera(mut commands: Commands) {
         BloomSettings::default(),
         TemporalAntiAliasSettings { ..default() },
         ScreenSpaceAmbientOcclusionSettings { ..default() },
-        RigidBody::KinematicPositionBased,
-        Collider::ball(1.0),
         PlayerCamera,
     ));
+
+    camera
+        .insert(RigidBody::KinematicPositionBased)
+        .insert(Collider::ball(3.0))
+        .insert(KinematicCharacterController::default())
+        .insert(Name::new("Camera"));
 }
