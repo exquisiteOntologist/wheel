@@ -1,6 +1,6 @@
 use crate::{
     components::characters::player::resources::PlayerCharacter,
-    constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED},
+    constants::{FORWARD_SPEED, MAX_SPEED},
     movement::{
         movement::{diff_translations, move_gravity_translate},
         orientation::look_at_on_y,
@@ -10,7 +10,7 @@ use crate::{
 use bevy::{math::Dir3, prelude::*};
 use bevy_rapier3d::prelude::KinematicCharacterController;
 
-use super::constants::GRAVITY_ACC;
+use super::constants::{GRAVITY_ACC, MAX_CAM_DISTANCE, STOPPING_THRESHOLD};
 
 pub fn move_camera(
     game: Res<Game>,
@@ -27,22 +27,22 @@ pub fn move_camera(
     let (_char, t_char) = q_char.single_mut();
     let (_cam, mut t_cam, mut control_cam) = q_cam.single_mut();
 
-    // Disconnect the cam from the actual object
-    let t_cam_original: Transform = t_cam.clone();
+    let tran_original: Vec3 = t_cam.translation.clone();
     let mut t_cam_new: Transform = t_cam.clone();
 
     let dir_of_char = t_char.right();
 
-    let tran_behind_char = get_tran_behind_char(&t_cam_new, &t_char, dir_of_char, &game);
+    // We will move the camera towards behind the character (not to the character)
+    let target_behind_char = get_tran_behind_char(&t_cam_new, &t_char, dir_of_char, &game);
     let distance = t_cam_new.translation.distance(t_char.translation);
-    move_cam_to(&mut t_cam_new, &tran_behind_char);
-    set_cam_height(&mut t_cam_new, &tran_behind_char, &distance);
-    look_in_front(&mut t_cam_new, &t_char, dir_of_char);
+    move_cam_to(&mut t_cam_new, &target_behind_char);
+    set_cam_height(&mut t_cam_new, &target_behind_char, &distance);
+    turn_look_in_front(&mut t_cam_new, &t_char, dir_of_char);
 
     // Translate by the difference of the old and new transforms.
     // We use the controller instead of the transform
     // to handle collisions.
-    let t_diff = diff_translations(t_cam_new.translation, t_cam_original.translation);
+    let t_diff = diff_translations(t_cam_new.translation, tran_original);
     control_cam.translation = Some(t_diff);
     // Apply rotation of new transform to active transform.
     t_cam.rotation = t_cam_new.rotation;
@@ -78,7 +78,7 @@ pub fn adjust_camera_speed(
         game.camera.speed_x -= FORWARD_SPEED * (game.camera.speed_x / MAX_SPEED) * 0.5 * dir_m;
     }
 
-    if !(game.camera.speed_x > 0.0001 || game.camera.speed_x < -0.001) {
+    if !(game.camera.speed_x > STOPPING_THRESHOLD || game.camera.speed_x < -STOPPING_THRESHOLD) {
         game.camera.speed_x = 0.;
     }
 
@@ -87,7 +87,7 @@ pub fn adjust_camera_speed(
         game.camera.speed_z += FORWARD_SPEED * (game.camera.speed_z / MAX_SPEED) * 0.5 * dir_m;
     }
 
-    if !(game.camera.speed_z > 0.001 || game.camera.speed_z < -0.001) {
+    if !(game.camera.speed_z > STOPPING_THRESHOLD || game.camera.speed_z < -STOPPING_THRESHOLD) {
         game.camera.speed_z = 0.;
     }
 }
@@ -98,12 +98,12 @@ fn get_tran_behind_char(
     char_direction: Dir3,
     game: &Game,
 ) -> Transform {
-    // let dist_behind_char = -10.;
     let m_y = if game.player_wheel.speed_y >= 0. {
         1.
     } else {
         -1.
     };
+    // When the character is turning we want to pull back to see more of the field
     let dist_behind_char =
         -game.player_wheel.speed_z - (game.player_wheel.speed_y * 500. * m_y).max(5.);
     let mut tran_behind_char = t_cam.clone();
@@ -120,8 +120,8 @@ fn _get_tran_behind_char_simple_dev(t_char: &Transform) -> Transform {
 }
 
 fn move_cam_to(t_cam: &mut Transform, t_dest: &Transform) {
-    t_cam.translation.x += (t_dest.translation.x - t_cam.translation.x) * 0.01;
-    t_cam.translation.z += (t_dest.translation.z - t_cam.translation.z) * 0.01;
+    t_cam.translation.x += (t_dest.translation.x - t_cam.translation.x) * 0.05;
+    t_cam.translation.z += (t_dest.translation.z - t_cam.translation.z) * 0.05;
 }
 
 fn _move_cam_exactly_behind(t_cam: &mut Mut<Transform>, t_char: &Transform, char_direction: Dir3) {
@@ -171,11 +171,15 @@ fn _get_char_direction(rotation: Quat) -> Dir3 {
 }
 
 /// Make camera look infront of the character.
+/// This turns the camera on the Y axis, and does not move it.
 /// The direction argument represents the direction the character is facing.
-fn look_in_front(t_cam: &mut Transform, t_char: &Transform, char_direction: Dir3) {
+fn turn_look_in_front(t_cam: &mut Transform, t_char: &Transform, char_direction: Dir3) {
+    // This POI transform will be where the camera will face
     let mut tran_infront_char = t_cam.clone().to_owned();
     let dist_infront_char = 5.;
+    // Here we translate the POI transform in front of the character
     tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_seconds(); */
+    // Now we will turn the camera to face the POI
     look_at_on_y(t_cam, &tran_infront_char);
 }
 
