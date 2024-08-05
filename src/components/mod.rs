@@ -1,3 +1,3 @@
-pub mod camera;
+pub mod cameras;
 pub mod characters;
 pub mod wheel;

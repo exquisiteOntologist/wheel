@@ -7,12 +7,16 @@ use bevy::{
 
 use bevy_rapier3d::prelude::KinematicCharacterController;
 
-use crate::{resources::Game, utils::angles::quat_w_to_axis_adjust};
-
-use super::{
-    constants::{GRAVITY_ACC, GRAVITY_DIR},
-    resources::PlayerCharacter,
+use crate::{
+    movement::{
+        constants::GRAVITY_DIR,
+        movement::{move_dir_translate, move_gravity_translate},
+    },
+    resources::Game,
+    utils::angles::quat_w_to_axis_adjust,
 };
+
+use super::{constants::GRAVITY_ACC, resources::PlayerCharacter};
 
 pub fn turn_character(mut q: Query<&mut Transform, With<PlayerCharacter>>, game: ResMut<Game>) {
     let mut t = q.single_mut();
@@ -36,12 +40,16 @@ fn char_rotation_positive_y(t: &mut Mut<Transform>, new_turn: f32) {
     t.rotation = rot.normalize();
 }
 
-fn gravity_movement_t(time: Res<Time>) -> Vec3 {
+fn gravity_movement_t_old(time: Res<Time>) -> Vec3 {
     let base_movement = GRAVITY_ACC * GRAVITY_DIR * time.delta_seconds();
     base_movement
 }
 
-fn move_in_direction_t(t: &Transform, game: ResMut<Game>) -> Vec3 {
+fn gravity_movement_t(time: Res<Time>) -> Vec3 {
+    move_gravity_translate(GRAVITY_ACC, time)
+}
+
+fn move_in_direction_t_old(t: &Transform, game: ResMut<Game>) -> Vec3 {
     let f = t.right();
     let speed = game.player_wheel.speed_z;
     let movement = Vec3::ZERO + f * speed;
@@ -57,7 +65,7 @@ pub fn move_character(
     let (t, mut c) = q.single_mut();
 
     let gravity_movement = gravity_movement_t(time);
-    let movement = move_in_direction_t(t, game);
+    let movement = move_dir_translate(t.right(), game.player_wheel.speed_z);
 
     // Using not standard transform, but KinematicCharacterController
     c.translation = Some(gravity_movement + movement)

@@ -10,7 +10,6 @@ pub const FORWARD_SPEED: f32 = 0.06;
 // pub const FORWARD_SPEED: f32 = 0.001;
 // we can make the forward speed faster than max when going down hill
 pub const MAX_SPEED: f32 = 8.;
-pub const MAX_CAM_DISTANCE: f32 = 12.;
 
 pub const PLANE_SIZE: f32 = 6000.;
 pub const SIZE_NO_PLAYER: f32 = 6000.; // TODO: This actually causes overlaps if it is bigger than PLANE_SIZE

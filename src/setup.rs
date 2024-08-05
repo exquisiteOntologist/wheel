@@ -1,14 +1,10 @@
 use std::f32::consts::PI;
 
 use bevy::{
-    animation::AnimationPlayer,
     asset::{AssetServer, Assets},
     color::Color,
     core::Name,
-    ecs::{
-        query::Added,
-        system::{Commands, Query, Res, ResMut},
-    },
+    ecs::system::{Commands, Res, ResMut},
     hierarchy::BuildChildren,
     math::{primitives::Plane3d, EulerRot, Quat},
     pbr::{
