@@ -126,7 +126,7 @@ pub fn setup(
 
     parent_character
         .insert(RigidBody::KinematicPositionBased)
-        .insert(Collider::cuboid(1.0, 1.0, 1.0))
+        .insert(Collider::ball(1.0))
         .insert(KinematicCharacterController::default())
         .insert(Name::new("Player"));
 
@@ -135,5 +135,4 @@ pub fn setup(
     println!("Controls:");
     println!("  - arrow up / down: roll");
     println!("  - arrow left / right: turn direction");
-    println!("  - arrow left / right: tilt");
 }

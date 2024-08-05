@@ -9,7 +9,10 @@ use bevy_rapier3d::prelude::KinematicCharacterController;
 
 use crate::{resources::Game, utils::angles::quat_w_to_axis_adjust};
 
-use super::resources::PlayerCharacter;
+use super::{
+    constants::{GRAVITY_ACC, GRAVITY_DIR},
+    resources::PlayerCharacter,
+};
 
 pub fn turn_character(mut q: Query<&mut Transform, With<PlayerCharacter>>, game: ResMut<Game>) {
     let mut t = q.single_mut();
@@ -32,9 +35,6 @@ fn char_rotation_positive_y(t: &mut Mut<Transform>, new_turn: f32) {
     let rot = Quat::from_xyzw(0., y, 0., new_w);
     t.rotation = rot.normalize();
 }
-
-const GRAVITY_ACC: f32 = 4.8;
-const GRAVITY_DIR: Vec3 = Vec3::NEG_Y;
 
 fn gravity_movement_t(time: Res<Time>) -> Vec3 {
     let base_movement = GRAVITY_ACC * GRAVITY_DIR * time.delta_seconds();
