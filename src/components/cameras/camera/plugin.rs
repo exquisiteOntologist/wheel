@@ -1,6 +1,6 @@
 use bevy::app::{App, Plugin, Startup, Update};
 
-use super::movement::{move_camera, setup_camera};
+use super::{movement::move_camera, setup::setup_camera};
 
 pub struct PCameraPlugin;
 
