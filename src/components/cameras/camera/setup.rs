@@ -60,6 +60,9 @@ pub fn setup_camera(mut commands: Commands) {
     camera
         .insert(RigidBody::KinematicPositionBased)
         .insert(Collider::ball(3.0))
-        .insert(KinematicCharacterController::default())
+        .insert(KinematicCharacterController {
+            normal_nudge_factor: 1.0e-3,
+            ..default()
+        })
         .insert(Name::new("Camera"));
 }

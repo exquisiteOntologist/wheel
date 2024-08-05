@@ -1,7 +1,5 @@
-use std::ops::DerefMut;
-
 use crate::{
-    components::characters::player::{constants::GRAVITY_ACC, resources::PlayerCharacter},
+    components::characters::player::resources::PlayerCharacter,
     constants::{FORWARD_SPEED, MAX_CAM_DISTANCE, MAX_SPEED},
     movement::{
         movement::{diff_translations, move_gravity_translate},
@@ -9,41 +7,13 @@ use crate::{
     },
     resources::{Game, PlayerCamera},
 };
-use bevy::{
-    math::{Dir3, VectorSpace},
-    prelude::*,
-};
+use bevy::{math::Dir3, prelude::*};
 use bevy_rapier3d::prelude::KinematicCharacterController;
 
-pub fn move_camera_old(
-    time: Res<Time>,
-    mut game: ResMut<Game>,
-    mut q_char: Query<(&PlayerCharacter, &mut Transform)>,
-    mut q_cam: Query<(&PlayerCamera, &mut Transform), Without<PlayerCharacter>>,
-) {
-    let (_char, t_char) = q_char.single_mut();
-    let (_cam, mut t_cam) = q_cam.single_mut();
-
-    // adjust_camera_speed(&t_cam, &t_char, &mut game);
-
-    let distance = t_cam.translation.distance(t_char.translation);
-    // let d = distance.max(game.camera.speed_z);
-
-    // let rotation = wheel_y_rotation(&t_char.rotation);
-    // let char_direction = get_char_direction(rotation);
-    let char_direction = t_char.right();
-
-    let tran_behind_char = get_tran_behind_char_old(&t_cam, &t_char, char_direction, &game);
-    // let tran_behind_char = get_tran_behind_char_simple_dev(&t_char);
-
-    move_cam_to(&mut t_cam, &tran_behind_char);
-    set_cam_height(&mut t_cam, &tran_behind_char, &distance);
-    look_in_front_old(&mut t_cam, &t_char, char_direction);
-}
+use super::constants::GRAVITY_ACC;
 
 pub fn move_camera(
-    time: Res<Time>,
-    mut game: ResMut<Game>,
+    game: Res<Game>,
     mut q_char: Query<(&PlayerCharacter, &mut Transform)>,
     mut q_cam: Query<
         (
@@ -63,13 +33,11 @@ pub fn move_camera(
 
     let dir_of_char = t_char.right();
 
-    let tran_behind_char = get_tran_behind_char_old(&t_cam_new, &t_char, dir_of_char, &game);
+    let tran_behind_char = get_tran_behind_char(&t_cam_new, &t_char, dir_of_char, &game);
     let distance = t_cam_new.translation.distance(t_char.translation);
     move_cam_to(&mut t_cam_new, &tran_behind_char);
     set_cam_height(&mut t_cam_new, &tran_behind_char, &distance);
-    look_in_front_old(&mut t_cam_new, &t_char, dir_of_char);
-
-    // let t_gravity = gravity_movement_t(time);
+    look_in_front(&mut t_cam_new, &t_char, dir_of_char);
 
     // Translate by the difference of the old and new transforms.
     // We use the controller instead of the transform
@@ -78,22 +46,6 @@ pub fn move_camera(
     control_cam.translation = Some(t_diff);
     // Apply rotation of new transform to active transform.
     t_cam.rotation = t_cam_new.rotation;
-}
-
-pub fn move_camera_gravity(
-    time: Res<Time>,
-    mut q_cam: Query<
-        (
-            &PlayerCamera,
-            &mut Transform,
-            &mut KinematicCharacterController,
-        ),
-        Without<PlayerCharacter>,
-    >,
-) {
-    let (_, _, mut control_cam) = q_cam.single_mut();
-    let gravity_movement = gravity_movement_t(time);
-    control_cam.translation = Some(gravity_movement);
 }
 
 pub fn adjust_camera_speed(
@@ -140,15 +92,11 @@ pub fn adjust_camera_speed(
     }
 }
 
-fn gravity_movement_t(time: Res<Time>) -> Vec3 {
-    move_gravity_translate(GRAVITY_ACC, time)
-}
-
-fn get_tran_behind_char_old(
+fn get_tran_behind_char(
     t_cam: &Transform,
     t_char: &Transform,
     char_direction: Dir3,
-    game: &ResMut<Game>,
+    game: &Game,
 ) -> Transform {
     // let dist_behind_char = -10.;
     let m_y = if game.player_wheel.speed_y >= 0. {
@@ -163,36 +111,12 @@ fn get_tran_behind_char_old(
     tran_behind_char
 }
 
-fn get_tran_behind_char(
-    t_cam: &Transform,
-    t_char: &Transform,
-    char_direction: Dir3,
-    game: &ResMut<Game>,
-) -> Vec3 {
-    // let dist_behind_char = -10.;
-    let m_y = if game.player_wheel.speed_y >= 0. {
-        1.
-    } else {
-        -1.
-    };
-    let dist_behind_char =
-        -game.player_wheel.speed_z - (game.player_wheel.speed_y * 500. * m_y).max(5.);
-    let mut tran_behind_char = Vec3::ZERO;
-    tran_behind_char = Vec3::ZERO + char_direction * dist_behind_char;
-    tran_behind_char
-}
-
-fn get_tran_behind_char_simple_dev(t_char: &Transform) -> Transform {
+fn _get_tran_behind_char_simple_dev(t_char: &Transform) -> Transform {
     let mut tran_behind_char = t_char.clone();
     tran_behind_char.translation.z = -0.;
     tran_behind_char.translation.x = -10.;
     tran_behind_char.translation.x -= 15.;
     tran_behind_char
-}
-
-fn move_cam_to_old(t_cam: &mut Mut<Transform>, t_dest: &Transform) {
-    t_cam.translation.x += (t_dest.translation.x - t_cam.translation.x) * 0.01;
-    t_cam.translation.z += (t_dest.translation.z - t_cam.translation.z) * 0.01;
 }
 
 fn move_cam_to(t_cam: &mut Transform, t_dest: &Transform) {
@@ -239,7 +163,7 @@ fn set_cam_height(t_cam: &mut Transform, t_dest: &Transform, distance: &f32) {
     // );
 }
 
-fn get_char_direction(rotation: Quat) -> Dir3 {
+fn _get_char_direction(rotation: Quat) -> Dir3 {
     match Dir3::new(rotation * -Vec3::X) {
         Ok(v) => v,
         Err(_) => Dir3::NEG_Z,
@@ -248,18 +172,22 @@ fn get_char_direction(rotation: Quat) -> Dir3 {
 
 /// Make camera look infront of the character.
 /// The direction argument represents the direction the character is facing.
-fn look_in_front_old(t_cam: &mut Transform, t_char: &Transform, char_direction: Dir3) {
+fn look_in_front(t_cam: &mut Transform, t_char: &Transform, char_direction: Dir3) {
     let mut tran_infront_char = t_cam.clone().to_owned();
     let dist_infront_char = 5.;
     tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_seconds(); */
     look_at_on_y(t_cam, &tran_infront_char);
 }
 
-/// Make camera look infront of the character.
-/// The direction argument represents the direction the character is facing.
-fn look_in_front(t_cam: &mut Transform, char_direction: Dir3) {
-    let mut tran_infront_char = t_cam.clone().to_owned();
-    let dist_infront_char = 5.;
-    tran_infront_char.translation = Vec3::ZERO + char_direction * dist_infront_char;
-    look_at_on_y(t_cam, &tran_infront_char);
+pub fn move_camera_gravity(
+    time: Res<Time>,
+    mut q_cam: Query<(&PlayerCamera, &mut KinematicCharacterController), Without<PlayerCharacter>>,
+) {
+    let (_, mut control_cam) = q_cam.single_mut();
+    let gravity_movement = gravity_movement_t(time);
+    control_cam.translation = Some(gravity_movement);
+}
+
+fn gravity_movement_t(time: Res<Time>) -> Vec3 {
+    move_gravity_translate(GRAVITY_ACC, time)
 }

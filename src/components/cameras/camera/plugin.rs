@@ -1,7 +1,7 @@
 use bevy::app::{App, Plugin, Startup, Update};
 
 use super::{
-    movement::{adjust_camera_speed, move_camera, move_camera_gravity, move_camera_old},
+    movement::{adjust_camera_speed, move_camera, move_camera_gravity},
     setup::setup_camera,
 };
 
