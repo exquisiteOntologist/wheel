@@ -23,6 +23,7 @@ use crate::constants::{HEIGHT_TEMPERATE_END, HEIGHT_TEMPERATE_START};
 use crate::resources::ContainsPlayer;
 use crate::utils::perlin::{self, sample_terrain_height, PerlinNoiseEntity};
 
+use super::colours::color_gradient_y_based;
 use super::constants::{
     ATTRIBUTE_BASE_Y, ATTRIBUTE_STARTING_POSITION, ATTRIBUTE_WORLD_POSITION, CURVE_POWER,
     DESPAWN_DISTANCE, GRASS_BASE_COLOR_2, GRASS_BLADE_VERTICES, GRASS_HEIGHT,
@@ -456,17 +457,6 @@ pub fn handle_tasks(mut commands: Commands, mut grass_tasks: Query<&mut GenGrass
             commands.append(&mut commands_queue);
         }
     }
-}
-
-//
-fn color_gradient_y_based(y: f32, rgba1: [f32; 4], rgba2: [f32; 4]) -> [f32; 4] {
-    let [r1, g1, b1, a1] = rgba1;
-    let [r2, g2, b2, a2] = rgba2;
-    let r = r1 + (r2 - r1) * (y / GRASS_HEIGHT);
-    let g = g1 + (g2 - g1) * (y / GRASS_HEIGHT);
-    let b = b1 + (b2 - b1) * (y / GRASS_HEIGHT);
-    let a = a1 + (a2 - a1) * (y / GRASS_HEIGHT);
-    [r, g, b, a]
 }
 
 fn apply_wind(

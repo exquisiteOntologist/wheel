@@ -1,3 +1,4 @@
+pub mod colours;
 pub mod constants;
 pub mod grass;
 pub mod materials;
