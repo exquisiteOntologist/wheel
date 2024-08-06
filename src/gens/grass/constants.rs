@@ -1,0 +1,36 @@
+use bevy::render::{mesh::MeshVertexAttribute, render_resource::VertexFormat};
+
+pub const ATTRIBUTE_BASE_Y: MeshVertexAttribute =
+    MeshVertexAttribute::new("BaseY", 988540917, VertexFormat::Float32);
+pub const ATTRIBUTE_STARTING_POSITION: MeshVertexAttribute =
+    MeshVertexAttribute::new("StartingPosition", 988540916, VertexFormat::Float32x3);
+pub const ATTRIBUTE_WORLD_POSITION: MeshVertexAttribute =
+    MeshVertexAttribute::new("WorldPosition", 988540915, VertexFormat::Float32x3);
+
+pub const GRID_SIZE_HALF: i32 = 8;
+
+pub const GRASS_TILE_SIZE_1: f32 = 32.;
+pub const GRASS_TILE_SIZE_2: f32 = 32.; // TODO: like terrain, this causes overlaps if bigger than SIZE_1
+pub const NUM_GRASS_1: u32 = 128; // number of grass blades in one row of a tile
+pub const NUM_GRASS_2: u32 = 32;
+pub const GRASS_BLADE_VERTICES: u32 = 3;
+pub const GRASS_WIDTH: f32 = 0.3;
+pub const GRASS_HEIGHT: f32 = 2.4;
+pub const GRASS_BASE_COLOR_1: [f32; 4] = [0.102, 0.153, 0., 1.];
+pub const GRASS_BASE_COLOR_2: [f32; 4] = [0., 0.019, 0., 1.];
+pub const GRASS_SECOND_COLOR: [f32; 4] = [0.079, 0.079, 0., 1.];
+pub const GRASS_SCALE_FACTOR: f32 = 1.0;
+pub const GRASS_HEIGHT_VARIATION_FACTOR: f32 = 0.2;
+pub const GRASS_STRAIGHTNESS: f32 = 10.0; // for now, as opposed to a curve factor, just modifying denominator for curve calcs
+pub const GRASS_SPACING: f32 = 0.3;
+pub const GRASS_OFFSET: f32 = 0.2;
+pub const ENABLE_WIREFRAME: bool = false;
+pub const WIND_STRENGTH: f32 = 1.;
+pub const WIND_SPEED: f64 = 0.5;
+pub const WIND_CONSISTENCY: f64 = 50.0; //
+pub const WIND_LEAN: f32 = 0.0; // determines how already bent grass will be at 0 wind
+pub const CURVE_POWER: f32 = 1.0; // the linearity / exponentiality of the application/bend of the wind
+pub const DESPAWN_DISTANCE: f32 =
+    (GRID_SIZE_HALF + 1) as f32 * GRASS_TILE_SIZE_1 + GRID_SIZE_HALF as f32;
+pub const WIND_SIM_TRIGGER_DISTANCE: f32 = 3. * GRASS_TILE_SIZE_1;
+pub const WIND_SIM_DISTANCE: f32 = WIND_SIM_TRIGGER_DISTANCE - GRASS_TILE_SIZE_1 / 2.;

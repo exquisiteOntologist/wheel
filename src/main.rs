@@ -7,7 +7,7 @@ use iyes_perf_ui::PerfUiPlugin;
 use wheel::components::cameras::camera::plugin::PCameraPlugin;
 use wheel::components::characters::player::plugin::PlayerCharacterPlugin;
 use wheel::controls::keyboard_control_debugging;
-use wheel::gens::grass::GrassPlugin;
+use wheel::gens::grass::plugin::GrassPlugin;
 use wheel::resources::DebugRoller;
 use wheel::ui::plugin::UserInterfacePlugin;
 use wheel::utils::perlin::PerlinPlugin;
