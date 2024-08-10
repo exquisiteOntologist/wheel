@@ -5,8 +5,8 @@ use bevy::{
 use bevy_pbr::{ExtendedMaterial, MaterialPlugin, StandardMaterial};
 
 use super::{
-    grass::{handle_tasks, update_grass},
     materials::GrassMaterialExtension,
+    update::{handle_tasks, update_grass},
 };
 
 pub struct GrassPlugin;
