@@ -54,7 +54,6 @@ pub fn update_grass(
         return;
     }
 
-    let thread_pool = AsyncComputeTaskPool::get();
     let mut grass_grid = grid.get_single_mut().unwrap();
     let elapsed_time = time.elapsed_seconds_f64();
     let mut grass_w_player: Option<Entity> = None;
@@ -69,87 +68,30 @@ pub fn update_grass(
                 >= GRASS_TILE_SIZE_1 / 2.
         {
             if contains_player.0 {
-                println!("deref contains player");
+                // it no longer contains the player (contains_player outdated)
                 *contains_player = ContainsPlayer(false);
             }
         } else {
             if !contains_player.0 {
+                // it now contains the player (contains_player outdated)
                 *contains_player = ContainsPlayer(true);
-                // generate new grass
-                for i in -GRID_SIZE_HALF..=GRID_SIZE_HALF {
-                    for j in -GRID_SIZE_HALF..=GRID_SIZE_HALF {
-                        let a = grass_trans.translation.x + i as f32 * GRASS_TILE_SIZE_1;
-                        let b = grass_trans.translation.z + j as f32 * GRASS_TILE_SIZE_1;
-                        if let false = *grass_grid.0.get(&(a as i32, b as i32)).unwrap_or(&false) {
-                            grass_grid.0.insert((a as i32, b as i32), true);
-                            // todo: async way
-                            let transform = Transform::from_xyz(a, 0., b);
-
-                            let task_entity = commands.spawn_empty().id();
-                            let task = thread_pool.spawn(async move {
-                                let mut command_queue = CommandQueue::default();
-                                let (mesh, grass_data) =
-                                    generate_grass_mesh(a, b, NUM_GRASS_1, GRASS_TILE_SIZE_1);
-
-                                command_queue.push(move |world: &mut World| {
-                                    let (grass_mesh_handle, grass_mat_handle) = {
-                                        let mut system_state = SystemState::<(
-                                            ResMut<Assets<Mesh>>,
-                                            ResMut<
-                                                Assets<
-                                                    ExtendedMaterial<
-                                                        StandardMaterial,
-                                                        GrassMaterialExtension,
-                                                    >,
-                                                >,
-                                            >,
-                                        )>::new(
-                                            world
-                                        );
-                                        let (mut meshes, mut mats) = system_state.get_mut(world);
-
-                                        (
-                                            meshes.add(mesh),
-                                            mats.add(ExtendedMaterial {
-                                                base: grass_material(),
-                                                extension: GrassMaterialExtension {},
-                                            }),
-                                        )
-                                    };
-
-                                    world
-                                        .entity_mut(task_entity)
-                                        .insert(MaterialMeshBundle {
-                                            mesh: grass_mesh_handle,
-                                            material: grass_mat_handle,
-                                            transform,
-                                            ..default()
-                                        })
-                                        .insert(Grass)
-                                        .insert(grass_data)
-                                        .insert(ContainsPlayer(false))
-                                        // .insert(NotShadowReceiver)
-                                        .insert(ShowAabbGizmo {
-                                            color: Some(Color::Srgba(PURPLE)),
-                                        })
-                                        .remove::<GenGrassTask>();
-                                });
-
-                                command_queue
-                            });
-
-                            // spawn a task marked GenGrassTask in the world to be handled by handle_tasks fn when complete
-                            commands.entity(task_entity).insert(GenGrassTask(task));
-                        }
-                    }
-                }
+                // Generate the grass now that it contains the player
+                update_grass_generate_grid(
+                    &mut commands,
+                    &mut meshes,
+                    &mut materials,
+                    grass_trans,
+                    &mut grass_grid,
+                    contains_player.0,
+                );
             }
         }
+
         if contains_player.0 {
-            println!(
-                "contains player {} {}",
-                grass_trans.translation.x, grass_trans.translation.z,
-            );
+            // println!(
+            //     "contains player {} {}",
+            //     grass_trans.translation.x, grass_trans.translation.z,
+            // );
             // ok so this is reliable
             grass_w_player = Some(ent);
         }
@@ -220,30 +162,17 @@ fn update_grass_empty(
             let a = x + i as f32 * GRASS_TILE_SIZE_1;
             let b = z + j as f32 * GRASS_TILE_SIZE_1;
             grass_grid.0.insert((a as i32, b as i32), true);
-            // println!(
-            //     "player {:1} {:2}",
-            //     player_trans.translation.x, player_trans.translation.z
-            // );
-            // println!(
-            //     "contains {:1} - {:2} = {:3}",
-            //     player_trans.translation.x,
-            //     a,
-            //     (player_trans.translation.x - a).abs()
-            // );
             // Note this is for when the grass is empty
             // in the other section the value comes from the grass query
             let contains_player = (player_trans.translation.x - a).abs() < GRASS_TILE_SIZE_1 / 2.
                 && (player_trans.translation.z - b).abs() < GRASS_TILE_SIZE_1 / 2.;
             let color = if contains_player { RED } else { PURPLE };
-            if contains_player {
-                println!("contains player {:1} {:2}", i, j);
-            }
             let (main_mat, main_grass, main_data) = generate_grass(
                 &mut meshes,
                 &mut materials,
                 a,
                 b,
-                NUM_GRASS_2,
+                NUM_GRASS_1,
                 GRASS_TILE_SIZE_1,
             );
             commands
@@ -258,6 +187,84 @@ fn update_grass_empty(
         }
     }
     commands.spawn(grass_grid);
+}
+
+/// This generates a grid of grass.
+/// Depending on how many grids are being generated at once,
+/// this can be an extremely expensive operation.
+fn update_grass_generate_grid(
+    mut commands: &mut Commands,
+    mut meshes: &mut ResMut<Assets<Mesh>>,
+    mut materials: &mut ResMut<Assets<ExtendedMaterial<StandardMaterial, GrassMaterialExtension>>>,
+    grass_trans: &Transform,
+    mut grass_grid: &mut Mut<GrassGrid>,
+    has_player: bool,
+) {
+    let thread_pool = AsyncComputeTaskPool::get();
+
+    // generate new grass
+    for i in -GRID_SIZE_HALF..=GRID_SIZE_HALF {
+        for j in -GRID_SIZE_HALF..=GRID_SIZE_HALF {
+            let a = grass_trans.translation.x + i as f32 * GRASS_TILE_SIZE_1;
+            let b = grass_trans.translation.z + j as f32 * GRASS_TILE_SIZE_1;
+            if let false = *grass_grid.0.get(&(a as i32, b as i32)).unwrap_or(&false) {
+                grass_grid.0.insert((a as i32, b as i32), true);
+                // todo: async way
+                let transform = Transform::from_xyz(a, 0., b);
+
+                let task_entity = commands.spawn_empty().id();
+                let task = thread_pool.spawn(async move {
+                    let mut command_queue = CommandQueue::default();
+                    let density = if has_player { NUM_GRASS_1 } else { NUM_GRASS_2 };
+                    let (mesh, grass_data) = generate_grass_mesh(a, b, density, GRASS_TILE_SIZE_1);
+
+                    command_queue.push(move |world: &mut World| {
+                        let (grass_mesh_handle, grass_mat_handle) = {
+                            let mut system_state = SystemState::<(
+                                ResMut<Assets<Mesh>>,
+                                ResMut<
+                                    Assets<
+                                        ExtendedMaterial<StandardMaterial, GrassMaterialExtension>,
+                                    >,
+                                >,
+                            )>::new(world);
+                            let (mut meshes, mut mats) = system_state.get_mut(world);
+
+                            (
+                                meshes.add(mesh),
+                                mats.add(ExtendedMaterial {
+                                    base: grass_material(),
+                                    extension: GrassMaterialExtension {},
+                                }),
+                            )
+                        };
+
+                        world
+                            .entity_mut(task_entity)
+                            .insert(MaterialMeshBundle {
+                                mesh: grass_mesh_handle,
+                                material: grass_mat_handle,
+                                transform,
+                                ..default()
+                            })
+                            .insert(Grass)
+                            .insert(grass_data)
+                            .insert(ContainsPlayer(false))
+                            // .insert(NotShadowReceiver)
+                            .insert(ShowAabbGizmo {
+                                color: Some(Color::Srgba(PURPLE)),
+                            })
+                            .remove::<GenGrassTask>();
+                    });
+
+                    command_queue
+                });
+
+                // spawn a task marked GenGrassTask in the world to be handled by handle_tasks fn when complete
+                commands.entity(task_entity).insert(GenGrassTask(task));
+            }
+        }
+    } // END grass generation
 }
 
 pub fn handle_tasks(mut commands: Commands, mut grass_tasks: Query<&mut GenGrassTask>) {
