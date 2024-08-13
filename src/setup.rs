@@ -48,32 +48,32 @@ pub fn setup(
         PerfUiEntryFPS::default(),
     ));
 
-    let image_ground_settings = image_settings_with_repeat_image_sampler();
-    let texture_ground =
-        asset_server.load_with_settings("textures/ground/sand.png", image_ground_settings);
+    // let image_ground_settings = image_settings_with_repeat_image_sampler();
+    // let texture_ground =
+    //     asset_server.load_with_settings("textures/ground/sand.png", image_ground_settings);
 
-    let ground_size = (5000., 5000.);
-    let mut ground_mesh: Mesh =
-        Mesh::from(Plane3d::default().mesh().size(ground_size.0, ground_size.1));
+    // let ground_size = (5000., 5000.);
+    // let mut ground_mesh: Mesh =
+    //     Mesh::from(Plane3d::default().mesh().size(ground_size.0, ground_size.1));
 
-    mesh_update_uv(&mut ground_mesh, ground_size.0 / 2., ground_size.1 / 2.);
+    // mesh_update_uv(&mut ground_mesh, ground_size.0 / 2., ground_size.1 / 2.);
 
-    // Plane
-    commands.spawn(PbrBundle {
-        // mesh: meshes.add(Plane3d::default().mesh().size(500000.0, 500000.0)),
-        mesh: meshes.add(ground_mesh),
-        // material: materials.add(Color::hex("#887A63").unwrap().as_rgba()),
-        // see https://bevyengine.org/news/bevy-0-12/#asset-meta-files
-        // see https://github.com/bevyengine/bevy/issues/399#issuecomment-2042133456
-        material: materials.add(StandardMaterial {
-            // base_color: Color::hex("#887A63").unwrap(),
-            base_color_texture: Some(texture_ground.clone()),
-            // alpha_mode: bevy::pbr::AlphaMode::Opaque,
-            fog_enabled: true,
-            ..default()
-        }),
-        ..default()
-    });
+    // // Plane
+    // commands.spawn(PbrBundle {
+    //     // mesh: meshes.add(Plane3d::default().mesh().size(500000.0, 500000.0)),
+    //     mesh: meshes.add(ground_mesh),
+    //     // material: materials.add(Color::hex("#887A63").unwrap().as_rgba()),
+    //     // see https://bevyengine.org/news/bevy-0-12/#asset-meta-files
+    //     // see https://github.com/bevyengine/bevy/issues/399#issuecomment-2042133456
+    //     material: materials.add(StandardMaterial {
+    //         // base_color: Color::hex("#887A63").unwrap(),
+    //         base_color_texture: Some(texture_ground.clone()),
+    //         // alpha_mode: bevy::pbr::AlphaMode::Opaque,
+    //         fog_enabled: true,
+    //         ..default()
+    //     }),
+    //     ..default()
+    // });
 
     // Light
     commands.spawn(DirectionalLightBundle {

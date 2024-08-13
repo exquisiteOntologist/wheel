@@ -12,8 +12,8 @@ use crate::utils::perlin::{self, sample_terrain_height};
 
 use super::colours::color_gradient_y_based;
 use super::constants::{
-    GRASS_BASE_COLOR_2, GRASS_HEIGHT, GRASS_HEIGHT_VARIATION_FACTOR, GRASS_OFFSET,
-    GRASS_SECOND_COLOR,
+    GRASS_BASE_COLOR_2, GRASS_BASE_COLOR_3, GRASS_HEIGHT, GRASS_HEIGHT_VARIATION_FACTOR,
+    GRASS_OFFSET, GRASS_SECOND_COLOR, GRASS_SECOND_COLOR_2, GRASS_SECOND_COLOR_3,
 };
 use super::gen_geometry::generate_grass_geometry;
 use super::gen_verts::generate_single_blade_verts;
@@ -73,10 +73,13 @@ pub fn generate_grass_mesh(
                     let r_color_shift = (terrain_perlin.get([
                         (spawn_x + x_offset) as f64 / 100.,
                         (spawn_z + z_offset) as f64 / 100.,
-                    ]) * 0.01) as f32;
+                    ]) * 0.001) as f32;
                     let mut color =
-                        color_gradient_y_based(v.y - y, GRASS_BASE_COLOR_2, GRASS_SECOND_COLOR);
-                    color[0] += r_color_shift;
+                        color_gradient_y_based(v.y - y, GRASS_BASE_COLOR_3, GRASS_SECOND_COLOR_3);
+                    color[1] += r_color_shift;
+                    // let b_color_shift = r_color_shift;
+                    // color[2] += b_color_shift;
+                    let color = GRASS_BASE_COLOR_3;
                     all_colors.push(color);
                 }
                 all_verts.append(&mut verts);

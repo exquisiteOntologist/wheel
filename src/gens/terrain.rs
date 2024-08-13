@@ -155,7 +155,7 @@ fn spawn_terrain_chunk(
         alpha_mode: AlphaMode::Opaque,
         double_sided: true,
         perceptual_roughness: 0.8,
-        reflectance: 0.4,
+        reflectance: 0.3,
         cull_mode: Some(Face::Back),
         flip_normal_map_y: true,
         base_color_texture: Some(texture_ground.clone()),

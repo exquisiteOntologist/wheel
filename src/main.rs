@@ -27,7 +27,7 @@ fn main() {
     App::new()
         .insert_resource(AmbientLight {
             color: Color::WHITE,
-            brightness: 2000.,
+            brightness: 1000.,
         })
         .insert_resource(DirectionalLightShadowMap { size: 8192 })
         .insert_resource(ClearColor(rgb(52., 167., 211.)))
