@@ -59,6 +59,7 @@ pub fn generate_grass_mesh(
             };
             let x_offset = x + rand1;
             let z_offset = z + rand2;
+            // this calculation is based on the perlin used to generate the geometry, not the geometry itself
             let y = sample_terrain_height(&terrain_perlin, spawn_x + x_offset, spawn_z + z_offset)
                 - 0.2; // minus small amount to avoid floating
             let blade_height = GRASS_HEIGHT
@@ -70,16 +71,22 @@ pub fn generate_grass_mesh(
                     generate_single_blade_verts(x_offset, y, z_offset, blade_number, blade_height);
                 for v in &verts {
                     grass_offsets.push([spawn_x + x_offset, y, spawn_z + z_offset]);
-                    let r_color_shift = (terrain_perlin.get([
-                        (spawn_x + x_offset) as f64 / 100.,
-                        (spawn_z + z_offset) as f64 / 100.,
-                    ]) * 0.001) as f32;
-                    let mut color =
-                        color_gradient_y_based(v.y - y, GRASS_BASE_COLOR_3, GRASS_SECOND_COLOR_3);
-                    color[1] += r_color_shift;
+                    // let r_color_shift = (terrain_perlin.get([
+                    //     (spawn_x + x_offset) as f64 / 100.,
+                    //     (spawn_z + z_offset) as f64 / 100.,
+                    // ]) * 0.001) as f32;
+                    // let mut color =
+                    //     color_gradient_y_based(v.y - y, GRASS_BASE_COLOR_3, GRASS_SECOND_COLOR_3);
+                    // color[1] += r_color_shift;
                     // let b_color_shift = r_color_shift;
                     // color[2] += b_color_shift;
-                    let color = GRASS_BASE_COLOR_3;
+                    let color = if (i + j) % 2 == 0 {
+                        // darker, more blue
+                        GRASS_BASE_COLOR_3
+                    } else {
+                        // lighter, more green
+                        GRASS_BASE_COLOR_2
+                    };
                     all_colors.push(color);
                 }
                 all_verts.append(&mut verts);

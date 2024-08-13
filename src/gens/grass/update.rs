@@ -38,7 +38,7 @@ pub fn update_grass(
     time: Res<Time>,
     player: Query<(Entity, &Transform), With<PlayerCharacter>>,
 ) {
-    let (plyr_e, player_trans) = player.get_single().unwrap();
+    let (_, player_trans) = player.get_single().unwrap();
     let x = player_trans.translation.x;
     let z = player_trans.translation.z;
 
@@ -55,18 +55,24 @@ pub fn update_grass(
     }
 
     let mut grass_grid = grid.get_single_mut().unwrap();
-    let elapsed_time = time.elapsed_seconds_f64();
+    // let elapsed_time = time.elapsed_seconds_f64();
     let mut grass_w_player: Option<Entity> = None;
     let mut grasses_without_player: Vec<Entity> = Vec::new();
-    for (ent, mh, grass_data, grass_trans, visibility, mut contains_player) in grass.iter_mut() {
+    let mut num_grass: i32 = 0;
+    for (ent, _mh, _grass_data, grass_trans, visibility, mut contains_player) in grass.iter_mut() {
+        num_grass += 1;
         // because we are despawning distant grass
         let mut exists = true;
 
-        // remove or add ContainsPlayer if applicable
-        if (player_trans.translation.x - grass_trans.translation.x).abs() >= GRASS_TILE_SIZE_1 / 2.
+        println!("gt {}", grass_trans.translation);
+
+        let player_within_tile = (player_trans.translation.x - grass_trans.translation.x).abs()
+            >= GRASS_TILE_SIZE_1 / 2.
             || (player_trans.translation.z - grass_trans.translation.z).abs()
-                >= GRASS_TILE_SIZE_1 / 2.
-        {
+                >= GRASS_TILE_SIZE_1 / 2.;
+
+        // remove or add ContainsPlayer if applicable
+        if player_within_tile {
             if contains_player.0 {
                 // it no longer contains the player (contains_player outdated)
                 *contains_player = ContainsPlayer(false);
@@ -88,10 +94,6 @@ pub fn update_grass(
         }
 
         if contains_player.0 {
-            // println!(
-            //     "contains player {} {}",
-            //     grass_trans.translation.x, grass_trans.translation.z,
-            // );
             // ok so this is reliable
             grass_w_player = Some(ent);
         }
@@ -124,6 +126,8 @@ pub fn update_grass(
             grasses_without_player.push(ent);
         }
     }
+
+    println!("num grass {}", num_grass);
 
     for grass_not_with_player in grasses_without_player {
         // (debugging) make purple so if player leaves grass it is not still red
@@ -202,14 +206,13 @@ fn update_grass_generate_grid(
 ) {
     let thread_pool = AsyncComputeTaskPool::get();
 
-    // generate new grass
+    // generate new grass for a single tile
     for i in -GRID_SIZE_HALF..=GRID_SIZE_HALF {
         for j in -GRID_SIZE_HALF..=GRID_SIZE_HALF {
             let a = grass_trans.translation.x + i as f32 * GRASS_TILE_SIZE_1;
             let b = grass_trans.translation.z + j as f32 * GRASS_TILE_SIZE_1;
             if let false = *grass_grid.0.get(&(a as i32, b as i32)).unwrap_or(&false) {
                 grass_grid.0.insert((a as i32, b as i32), true);
-                // todo: async way
                 let transform = Transform::from_xyz(a, 0., b);
 
                 let task_entity = commands.spawn_empty().id();

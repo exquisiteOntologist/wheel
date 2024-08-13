@@ -17,7 +17,9 @@ pub struct GrassData {
 #[derive(Component, Clone)]
 pub struct Grass;
 
-/// Grass offsets component
+/// Grass offsets component.
+/// (X, Z) are the coordinates.
+/// The boolean represents generation state.
 #[derive(Component)]
 pub struct GrassGrid(pub HashMap<(i32, i32), bool>);
 
