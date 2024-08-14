@@ -6,7 +6,7 @@ use bevy::{
 };
 
 use super::{
-    constants::LETTERBOX_HEIGHT,
+    constants::{COLOR_BLACK, LETTERBOX_HEIGHT},
     resources::{Letterbox, LetterboxBottom, LetterboxSide, LetterboxState, LetterboxTop},
 };
 
@@ -19,7 +19,7 @@ pub fn letterbox_setup(mut commands: Commands) {
         ..default()
     };
 
-    let node_background: BackgroundColor = Color::srgba(0.4, 0.4, 1., 1.).into();
+    let node_background: BackgroundColor = COLOR_BLACK.into();
 
     let top = NodeBundle {
         style: Style {

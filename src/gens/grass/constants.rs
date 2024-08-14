@@ -38,5 +38,6 @@ pub const WIND_LEAN: f32 = 0.3; // determines how already bent grass will be at 
 pub const CURVE_POWER: f32 = 1.0; // the linearity / exponentiality of the application/bend of the wind
 pub const DESPAWN_DISTANCE: f32 =
     (GRID_SIZE_HALF + 1) as f32 * GRASS_TILE_SIZE_1 + GRID_SIZE_HALF as f32;
-pub const WIND_SIM_TRIGGER_DISTANCE: f32 = 3. * GRASS_TILE_SIZE_1;
+// pub const DESPAWN_DISTANCE: f32 = 2. * GRASS_TILE_SIZE_1;
+pub const WIND_SIM_TRIGGER_DISTANCE: f32 = 1.5 * GRASS_TILE_SIZE_1;
 pub const WIND_SIM_DISTANCE: f32 = WIND_SIM_TRIGGER_DISTANCE - GRASS_TILE_SIZE_1 / 2.;

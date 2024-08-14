@@ -39,9 +39,9 @@ fn main() {
             primary_window: Some(Window {
                 title: "Wheel".into(),
                 name: Some("Wheel.app".into()),
-                // resolution: (1920., 1080.).into(),
-                resolution: (3840., 2160.).into(),
-                mode: bevy::window::WindowMode::BorderlessFullscreen,
+                resolution: (1920., 1080.).into(),
+                // resolution: (3840., 2160.).into(),
+                // mode: bevy::window::WindowMode::BorderlessFullscreen,
                 ..default()
             }),
             ..default()

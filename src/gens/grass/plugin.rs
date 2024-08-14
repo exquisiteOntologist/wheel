@@ -19,6 +19,7 @@ impl Plugin for GrassPlugin {
             prepass_enabled: false,
             ..default()
         });
+        // update_grass may call functions that add tasks for handle_tasks.
         app.add_systems(Update, (update_grass, handle_tasks));
     }
 }

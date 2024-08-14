@@ -20,6 +20,7 @@ pub struct Grass;
 /// Grass offsets component.
 /// (X, Z) are the coordinates.
 /// The boolean represents generation state.
+/// We set it to false when despawning.
 #[derive(Component)]
 pub struct GrassGrid(pub HashMap<(i32, i32), bool>);
 
