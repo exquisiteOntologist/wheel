@@ -11,8 +11,7 @@ use crate::resources::ContainsPlayer;
 use crate::utils::perlin::PerlinNoiseEntity;
 
 use super::constants::{
-    DESPAWN_DISTANCE, GRASS_TILE_SIZE_1, GRID_SIZE_HALF, NUM_GRASS_1, 
-    WIND_SIM_TRIGGER_DISTANCE,
+    DESPAWN_DISTANCE, GRASS_TILE_SIZE_1, GRID_SIZE_HALF, NUM_GRASS_1, WIND_SIM_TRIGGER_DISTANCE,
 };
 use super::gen_init::{generate_grass, generate_grass_mesh};
 use super::materials::{grass_material, GrassMaterialExtension};
@@ -126,7 +125,6 @@ pub fn update_grass(
         }
     }
 
-
     // for grass_not_with_player in grasses_without_player {
     //     // (debugging) make purple so if player leaves grass it is not still red
     //     if let Some(mut nwp_ent) = commands.get_entity(grass_not_with_player) {
@@ -182,10 +180,10 @@ fn update_grass_empty(
                 .insert(main_grass)
                 .insert(main_data)
                 .insert(ContainsPlayer(contains_player));
-                // .insert(NotShadowReceiver)
-                // .insert(ShowAabbGizmo {
-                //     color: Some(Color::Srgba(color)),
-                // });
+            // .insert(NotShadowReceiver)
+            // .insert(ShowAabbGizmo {
+            //     color: Some(Color::Srgba(color)),
+            // });
         }
     }
     commands.spawn(grass_grid);
@@ -220,7 +218,8 @@ fn update_grass_generate_grid(
                     let mut command_queue = CommandQueue::default();
 
                     // in addition to density, we can customize the number of vertices that go to generate_single_blade_verts
-                    let (mesh, grass_data) = generate_grass_mesh(a, b, NUM_GRASS_1, GRASS_TILE_SIZE_1);
+                    let (mesh, grass_data) =
+                        generate_grass_mesh(a, b, NUM_GRASS_1, GRASS_TILE_SIZE_1);
 
                     command_queue.push(move |world: &mut World| {
                         let (grass_mesh_handle, grass_mat_handle) = {

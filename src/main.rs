@@ -14,7 +14,7 @@ use wheel::utils::perlin::PerlinPlugin;
 use wheel::{
     components::wheel::plugin::WheelPlugin,
     controls::keyboard_control,
-    gens::{clouds::CloudPlugin, terrain::TerrainPlugin},
+    gens::{clouds::CloudPlugin, terrain::plugin::TerrainPlugin},
     operation::toggle_pause,
     resources::Game,
     setup::setup,

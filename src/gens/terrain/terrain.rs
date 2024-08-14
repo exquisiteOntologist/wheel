@@ -1,86 +1,36 @@
 use bevy::{
-    app::{App, Plugin, Startup, Update},
     asset::{AssetServer, Assets, Handle},
     ecs::{
-        component::Component,
         entity::Entity,
         query::{With, Without},
         system::{Commands, Query, Res, ResMut},
     },
     math::{Vec2, Vec3},
     pbr::{PbrBundle, StandardMaterial},
-    prelude::{default, Image, Plane3d},
+    prelude::default,
     render::{
         alpha::AlphaMode,
-        mesh::{Mesh, Meshable, PlaneMeshBuilder, PrimitiveTopology, VertexAttributeValues},
+        mesh::{Mesh, PlaneMeshBuilder, VertexAttributeValues},
         render_resource::Face,
-        texture::{ImageAddressMode, ImageLoaderSettings, ImageSampler, ImageSamplerDescriptor},
     },
     transform::components::Transform,
 };
-use bevy_rapier3d::{
-    geometry::{Collider, ComputedColliderShape},
-    parry::shape,
-    rapier::geometry::ColliderBuilder,
-};
+use bevy_rapier3d::geometry::{Collider, ComputedColliderShape};
 
 use crate::{
     components::characters::player::resources::PlayerCharacter,
     constants::{
-        COLOR_PEAKS, COLOR_SAND, COLOR_TEMPERATE, HEIGHT_PEAKS, HEIGHT_SAND, HEIGHT_TEMPERATE_END,
-        HEIGHT_TEMPERATE_START, PLANE_SIZE, SIZE_NO_PLAYER, SUBDIVISIONS_LEVEL_1,
-        SUBDIVISIONS_LEVEL_2, TEXTURE_SCALE, TILE_WIDTH,
+        COLOR_SAND, PLANE_SIZE, SIZE_NO_PLAYER, SUBDIVISIONS_LEVEL_1, SUBDIVISIONS_LEVEL_2,
+        TEXTURE_SCALE, TILE_WIDTH,
     },
-    meshes::image_settings_with_repeat_image_sampler,
     utils::perlin::{self, sample_terrain_height},
 };
 
-// struct for marking terrain
-#[derive(Component)]
-pub struct Terrain;
-
-#[derive(Component)]
-pub struct MainTerrain;
-
-fn get_terrain_color(y: f32) -> [f32; 4] {
-    if y < HEIGHT_SAND {
-        COLOR_SAND
-    } else if y > HEIGHT_PEAKS {
-        COLOR_PEAKS
-    } else if y < HEIGHT_TEMPERATE_START {
-        terrain_color_gradient(
-            (y - HEIGHT_SAND) / (HEIGHT_TEMPERATE_START - HEIGHT_SAND),
-            COLOR_SAND,
-            COLOR_TEMPERATE,
-        )
-    } else if y < HEIGHT_TEMPERATE_END {
-        COLOR_TEMPERATE
-    } else {
-        terrain_color_gradient(
-            (y - HEIGHT_TEMPERATE_END) / (HEIGHT_PEAKS - HEIGHT_TEMPERATE_END),
-            COLOR_TEMPERATE,
-            COLOR_PEAKS,
-        )
-    }
-}
-
-fn get_terrain_texture(asset_server: &Res<AssetServer>, t_color: &[f32; 4]) -> Handle<Image> {
-    let asset_settings = image_settings_with_repeat_image_sampler();
-    let t_texture = asset_server.load_with_settings("textures/ground/sand.png", asset_settings);
-    t_texture
-}
-
-fn terrain_color_gradient(ratio: f32, rgba1: [f32; 4], rgba2: [f32; 4]) -> [f32; 4] {
-    let [r1, g1, b1, a1] = rgba1;
-    let [r2, g2, b2, a2] = rgba2;
-
-    [
-        r1 + (r2 - r1) * (ratio),
-        g1 + (g2 - g1) * (ratio),
-        b1 + (b2 - b1) * (ratio),
-        a1 + (a2 - a1) * (ratio),
-    ]
-}
+use super::{
+    colours::get_terrain_color,
+    resources::{MainTerrain, Terrain},
+    texture::get_terrain_texture,
+};
 
 /// Generate terrain mesh
 pub fn generate_terrain_mesh(x: f32, z: f32, size: f32, subdivisions: u32) -> Mesh {
@@ -317,14 +267,5 @@ pub fn update_terrain(
                 );
             }
         }
-    }
-}
-
-pub struct TerrainPlugin;
-
-impl Plugin for TerrainPlugin {
-    fn build(&self, app: &mut App) {
-        // app.add_systems(Startup, update_terrain);
-        app.add_systems(Update, update_terrain);
     }
 }
