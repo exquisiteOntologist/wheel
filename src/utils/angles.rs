@@ -1,6 +1,6 @@
 use std::f32::consts::PI;
 
-use cgmath::{Angle, InnerSpace, Rotation3};
+use cgmath::Angle;
 
 /// Degrees to Radians
 /// https://clickcalculators.com/degree-to-radian-converter/90

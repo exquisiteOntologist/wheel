@@ -24,9 +24,10 @@ pub const WATER_LEVEL: f32 = 189.;
 pub const WATER_SCROLL_SPEED: f32 = 0.0002;
 pub const HEIGHT_PEAKS: f32 = 1500.;
 pub const HEIGHT_SAND: f32 = 200.;
+/// At what height do we start drawing grass? At the temperate height!
 pub const HEIGHT_TEMPERATE_START: f32 = 210.;
 pub const HEIGHT_TEMPERATE_END: f32 = 800.;
-pub const COLOR_TEMPERATE: [f32; 4] = [0.079, 0.079, 0., 1.];
+pub const COLOR_TEMPERATE: [f32; 4] = [0.03254901961, 0.05176470588, 0.03254901961, 1.];
 // pub const COLOR_SAND: [f32; 4] = [80. / 255., 72. / 255., 49. / 255., 255. / 255.];
 pub const COLOR_SAND: [f32; 4] = [255. / 255., 255. / 255., 255. / 255., 255. / 255.];
 pub const COLOR_PEAKS: [f32; 4] = [255. / 255., 255. / 255., 255. / 255., 255. / 255.];

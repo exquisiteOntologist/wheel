@@ -7,7 +7,7 @@ use iyes_perf_ui::PerfUiPlugin;
 use wheel::components::cameras::camera::plugin::PCameraPlugin;
 use wheel::components::characters::player::plugin::PlayerCharacterPlugin;
 use wheel::controls::keyboard_control_debugging;
-use wheel::gens::grass::GrassPlugin;
+use wheel::gens::grass::plugin::GrassPlugin;
 use wheel::resources::DebugRoller;
 use wheel::ui::plugin::UserInterfacePlugin;
 use wheel::utils::perlin::PerlinPlugin;
@@ -27,7 +27,7 @@ fn main() {
     App::new()
         .insert_resource(AmbientLight {
             color: Color::WHITE,
-            brightness: 2000.,
+            brightness: 1000.,
         })
         .insert_resource(DirectionalLightShadowMap { size: 8192 })
         .insert_resource(ClearColor(rgb(52., 167., 211.)))
@@ -39,7 +39,9 @@ fn main() {
             primary_window: Some(Window {
                 title: "Wheel".into(),
                 name: Some("Wheel.app".into()),
-                resolution: (1280., 720.).into(),
+                resolution: (1920., 1080.).into(),
+                // resolution: (3840., 2160.).into(),
+                // mode: bevy::window::WindowMode::BorderlessFullscreen,
                 ..default()
             }),
             ..default()
