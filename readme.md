@@ -14,6 +14,20 @@ cargo run --release
 
 or
 
+To perform profiling using [Tracy](https://github.com/bevyengine/bevy/blob/main/docs/profiling.md#tracy-profiler)
+
+```cli
+tracy
+```
+
+```cli
+cargo run --release --features bevy/trace_tracy
+```
+
+or
+
+To process assets
+
 ```cli
 cargo run --features bevy/file_watcher bevy/asset_processor
 ```

@@ -1,7 +1,7 @@
-//! Rolls a player-controlled wheel
-
+use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy::{input::common_conditions::input_just_pressed, pbr::DirectionalLightShadowMap};
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
 use wheel::components::cameras::camera::plugin::PCameraPlugin;
@@ -50,12 +50,16 @@ fn main() {
             Update,
             (toggle_pause.run_if(input_just_pressed(KeyCode::Escape)),),
         )
-        .add_plugins(bevy::diagnostic::FrameTimeDiagnosticsPlugin)
+        .add_plugins((
+            FrameTimeDiagnosticsPlugin,
+            WorldInspectorPlugin::new(),
+            LogDiagnosticsPlugin::default(),
+        ))
         .add_plugins((PerfUiPlugin, RapierPhysicsPlugin::<NoUserData>::default()))
         .add_plugins((PlayerCharacterPlugin, WheelPlugin))
         .add_plugins((PCameraPlugin, CloudPlugin))
         .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin))
-        .add_plugins((UserInterfacePlugin))
+        .add_plugins(UserInterfacePlugin)
         .add_systems(Startup, setup)
         .add_systems(Update, (keyboard_control, keyboard_control_debugging))
         .run();
