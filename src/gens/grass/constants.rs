@@ -9,13 +9,13 @@ pub const ATTRIBUTE_WORLD_POSITION: MeshVertexAttribute =
 
 pub const GRID_SIZE_HALF: i32 = 8;
 
-pub const GRASS_TILE_SIZE_1: f32 = 32.;
+pub const GRASS_TILE_SIZE_1: f32 = 16.; // 32.;
 pub const GRASS_TILE_SIZE_2: f32 = 32.; // TODO: like terrain, this causes overlaps if bigger than SIZE_1
-pub const NUM_GRASS_1: u32 = 128; // number of grass blades in one row of a tile
+pub const NUM_GRASS_1: u32 = 64; // 128; // number of grass blades in one row of a tile
 pub const NUM_GRASS_2: u32 = 32;
 pub const GRASS_BLADE_VERTICES: u32 = 3;
-pub const GRASS_WIDTH: f32 = 0.05;
-pub const GRASS_HEIGHT: f32 = 2.4;
+pub const GRASS_WIDTH: f32 = 0.15;
+pub const GRASS_HEIGHT: f32 = 2.1;
 pub const GRASS_BASE_COLOR_1: [f32; 4] = [0.102, 0.153, 0., 1.];
 pub const GRASS_BASE_COLOR_2: [f32; 4] = [0., 0.019, 0., 1.];
 pub const GRASS_BASE_COLOR_3: [f32; 4] = [0.01019607843, 0.04803921569, 0.0123529412, 1.];
