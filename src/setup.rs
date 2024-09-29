@@ -6,17 +6,18 @@ use bevy::{
     core::Name,
     ecs::system::{Commands, Res, ResMut},
     hierarchy::BuildChildren,
-    math::{primitives::Plane3d, EulerRot, Quat},
+    math::{EulerRot, Quat},
     pbr::{
         light_consts, CascadeShadowConfigBuilder, DirectionalLight, DirectionalLightBundle,
-        PbrBundle, StandardMaterial,
+        StandardMaterial,
     },
     prelude::SpatialBundle,
-    render::mesh::{Mesh, Meshable},
+    render::mesh::Mesh,
     scene::SceneBundle,
     transform::components::Transform,
     utils::default,
 };
+use bevy_pbr::PbrBundle;
 use bevy_rapier3d::prelude::{Collider, KinematicCharacterController, RigidBody};
 use iyes_perf_ui::{
     prelude::{PerfUiEntryFPS, PerfUiEntryFPSWorst},
@@ -26,16 +27,15 @@ use iyes_perf_ui::{
 use crate::{
     components::characters::player::resources::PlayerCharacter,
     constants::SPAWN_TRANSFORM,
-    meshes::{image_settings_with_repeat_image_sampler, mesh_update_uv},
     resources::{Game, PlayerWheel},
 };
 
 pub fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-    mut game: ResMut<Game>,
+    meshes: ResMut<Assets<Mesh>>,
+    materials: ResMut<Assets<StandardMaterial>>,
+    game: ResMut<Game>,
 ) {
     // Performance FPS
     commands.spawn((
@@ -92,6 +92,13 @@ pub fn setup(
         .into(),
         ..default()
     });
+
+    // Sun Blocker -- to test perf difference when blocking the horizon
+    // let wall_mesh = Mesh::from(),
+    // let sun_blocker = commands.spawn(PbrBundle {
+    //     mesh: meshes.add(wall_mesh),
+    //     ..default()
+    // });
 
     // Wheel
     let child_wheel = commands

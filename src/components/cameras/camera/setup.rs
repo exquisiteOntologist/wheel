@@ -51,7 +51,7 @@ pub fn setup_camera(mut commands: Commands) {
             ..default()
         },
         // bloom is what adds the intense shine on ground (+ everywhere)
-        BloomSettings::default(),
+        // BloomSettings::default(),
         TemporalAntiAliasSettings { ..default() },
         ScreenSpaceAmbientOcclusionSettings { ..default() },
         PlayerCamera,

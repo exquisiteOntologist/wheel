@@ -10,10 +10,9 @@ use rand::{thread_rng, Rng};
 use crate::constants::{HEIGHT_TEMPERATE_END, HEIGHT_TEMPERATE_START};
 use crate::utils::perlin::{self, sample_terrain_height};
 
-use super::colours::color_gradient_y_based;
 use super::constants::{
     GRASS_BASE_COLOR_2, GRASS_BASE_COLOR_3, GRASS_HEIGHT, GRASS_HEIGHT_VARIATION_FACTOR,
-    GRASS_OFFSET, GRASS_SECOND_COLOR, GRASS_SECOND_COLOR_2, GRASS_SECOND_COLOR_3,
+    GRASS_OFFSET,
 };
 use super::gen_geometry::generate_grass_geometry;
 use super::gen_verts::generate_single_blade_verts;

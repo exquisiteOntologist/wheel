@@ -1,33 +1,23 @@
 use bevy::{
-    app::{App, Plugin, PostStartup, Startup, Update},
+    app::{App, Plugin, Startup, Update},
     asset::Assets,
-    color::Color,
-    core_pipeline::{bloom::BloomSettings, tonemapping::Tonemapping},
-    ecs::system::EntityCommands,
-    hierarchy::{BuildChildren, Parent},
+    hierarchy::Parent,
     math::{Quat, Vec2, Vec3, Vec4},
-    prelude::{default, Camera3dBundle, Commands, Entity, EntityRef, Query, Res, ResMut, With},
-    reflect::Reflect,
-    render::camera::Camera,
+    prelude::{Commands, Entity, Query, Res, ResMut, With},
     time::Time,
-    transform::{bundles::TransformBundle, components::Transform},
+    transform::components::Transform,
 };
 use bevy_hanabi::{
-    Attribute, ColorOverLifetimeModifier, EffectAsset, EffectProperties, ExprWriter, Gradient,
-    HanabiPlugin, LinearDragModifier, OrientMode, OrientModifier, ParticleEffect,
-    ParticleEffectBundle, SetAttributeModifier, SetPositionCircleModifier,
-    SetPositionCone3dModifier, SetPositionSphereModifier, SetVelocityTangentModifier,
-    ShapeDimension, SizeOverLifetimeModifier, Spawner, TangentAccelModifier,
+    Attribute, ColorOverLifetimeModifier, EffectAsset, ExprWriter, Gradient, HanabiPlugin,
+    LinearDragModifier, OrientMode, OrientModifier, ParticleEffect, ParticleEffectBundle,
+    SetAttributeModifier, SetPositionCone3dModifier, SetVelocityTangentModifier, ShapeDimension,
+    SizeOverLifetimeModifier, Spawner, TangentAccelModifier,
 };
-use bevy_rapier3d::na::Rotation3;
 
 use crate::{
     components::wheel::resources::WheelState,
-    resources::{Game, PlayerWheel, WheelParticles},
-    utils::{
-        angles::degrees_to_radians,
-        roll_pitch_yaw::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
-    },
+    resources::{Game, WheelParticles},
+    utils::angles::degrees_to_radians,
 };
 
 pub fn move_particles(
@@ -35,13 +25,13 @@ pub fn move_particles(
     mut q_p: Query<&mut Transform, With<WheelParticles>>,
     // mut q_w: Query<&mut Transform, With<PlayerWheel>>,
     time: Res<Time>,
-    mut game: ResMut<Game>,
+    game: ResMut<Game>,
     // to find the direction
-    mut wheel: ResMut<WheelState>,
+    wheel: ResMut<WheelState>,
 ) {
     // let mut wheels = q_w.iter_mut();
 
-    for mut particles in q_p.iter_mut() {
+    for particles in q_p.iter_mut() {
         // let wheel_rotation = wheels.next().unwrap().rotation;
 
         // particles.rotate_x(0.);
@@ -98,7 +88,7 @@ pub const MAX_SAND_RATE: f32 = 5000.;
 pub fn setup_particles(
     mut commands: Commands,
     mut effects: ResMut<Assets<EffectAsset>>,
-    mut parent: Query<&Parent>,
+    parent: Query<&Parent>,
 ) -> Entity {
     let mut color_gradient1 = Gradient::new();
     color_gradient1.add_key(
@@ -224,7 +214,7 @@ pub fn setup_particles(
     //     writer.lit(10.).uniform(writer.lit(30.)).expr(),
     // );
 
-    let mut module = writer.finish();
+    let module = writer.finish();
 
     let effect1 = effects.add(
         EffectAsset::new(vec![16384, 16384], spawner, module)
@@ -276,6 +266,6 @@ impl Plugin for ParticlesPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(HanabiPlugin);
         app.add_systems(Startup, setup);
-        app.add_systems(Update, (move_particles /*update_particles*/,));
+        // app.add_systems(Update, (move_particles /*update_particles*/,));
     }
 }

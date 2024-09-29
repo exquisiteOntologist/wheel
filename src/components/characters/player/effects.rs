@@ -52,7 +52,7 @@ pub fn attach_particles(
 
 pub fn update_particles_relative_to_char(
     time: Res<Time>,
-    mut commands: Commands,
+    commands: Commands,
     // mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
     mut q_character: Query<(&mut Transform, &PlayerWheel)>,
     // mut q_particles: Query<(&mut Transform, &PlayerParticles), Without<PlayerWheel>>,
@@ -61,13 +61,13 @@ pub fn update_particles_relative_to_char(
         Without<PlayerWheel>,
     >,
     mut q_spawner: Query<&mut EffectSpawner>,
-    mut game: ResMut<Game>,
+    game: ResMut<Game>,
 ) {
     let mut particle_emitters = q_particles.iter_mut();
     let mut effect_spawners = q_spawner.iter_mut();
 
     for character in q_character.iter_mut() {
-        let (mut p_t, mut p_ep, _) = particle_emitters.next().unwrap();
+        let (p_t, mut p_ep, _) = particle_emitters.next().unwrap();
         let Some(mut e_s) = effect_spawners.next() else {
             // println!("No spawners");
             // On startup the spawners may not yet exist.
@@ -84,12 +84,12 @@ pub fn update_particles_relative_to_char(
 fn update_particles_axis(
     time: Res<Time>,
     mut query: Query<(&mut EffectProperties, &mut Transform), With<WheelParticles>>,
-    mut q_character: Query<(&mut Transform, &PlayerCharacter), Without<WheelParticles>>,
-    mut d_r: ResMut<DebugRoller>,
+    q_character: Query<(&mut Transform, &PlayerCharacter), Without<WheelParticles>>,
+    d_r: ResMut<DebugRoller>,
 ) {
-    let (mut properties, mut transform) = query.single_mut();
+    let (mut properties, transform) = query.single_mut();
 
-    let mut c_t = q_character.single().0.clone();
+    let c_t = q_character.single().0.clone();
 
     // This value does not have to change as much as the character's rotation,
     // it can remain relatively static for most of a turn

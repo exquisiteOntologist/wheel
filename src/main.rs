@@ -29,23 +29,30 @@ fn main() {
             color: Color::WHITE,
             brightness: 1000.,
         })
-        .insert_resource(DirectionalLightShadowMap { size: 8192 })
+        .insert_resource(DirectionalLightShadowMap {
+            size: 1024, // size: 8192
+        })
         .insert_resource(ClearColor(rgb(52., 167., 211.)))
-        .insert_resource(Msaa::Sample4)
+        .insert_resource(Msaa::Sample2)
         .init_resource::<Game>()
         .init_resource::<DebugRoller>()
         // .add_plugins((DebugGridPlugin::without_floor_grid()))
-        .add_plugins((DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                title: "Wheel".into(),
-                name: Some("Wheel.app".into()),
-                resolution: (1920., 1080.).into(),
-                // resolution: (3840., 2160.).into(),
-                // mode: bevy::window::WindowMode::BorderlessFullscreen,
+        .add_plugins((DefaultPlugins
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: "Wheel".into(),
+                    name: Some("Wheel.app".into()),
+                    resolution: (1920., 1080.).into(),
+                    // resolution: (3840., 2160.).into(),
+                    // mode: bevy::window::WindowMode::BorderlessFullscreen,
+                    ..default()
+                }),
                 ..default()
-            }),
-            ..default()
-        }),))
+            })
+            .set(AssetPlugin {
+                mode: AssetMode::Processed,
+                ..default()
+            }),))
         .add_systems(
             Update,
             (toggle_pause.run_if(input_just_pressed(KeyCode::Escape)),),
