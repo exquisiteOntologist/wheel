@@ -10,7 +10,7 @@ use bevy_hanabi::{EffectProperties, EffectSpawner};
 
 use crate::{
     constants::{HEIGHT_TEMPERATE_START, MAX_SPEED},
-    gens::sand_particles::MAX_SAND_RATE,
+    gens::particles::sand_particles::MAX_SAND_RATE,
     resources::{DebugRoller, Game, PlayerWheel, WheelParticles},
     utils::{
         angles::{degrees_to_radians, quat_w_to_axis_adjust},

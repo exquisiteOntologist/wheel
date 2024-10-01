@@ -1,6 +1,6 @@
 use bevy::app::{App, Plugin, PostStartup, Update};
 
-use crate::gens::sand_particles::SandParticlesPlugin;
+use crate::gens::particles::sand_particles::SandParticlesPlugin;
 
 use super::{
     effects::{attach_particles, update_particles_relative_to_char},
