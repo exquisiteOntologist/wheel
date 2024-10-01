@@ -253,7 +253,8 @@ fn update_grass_generate_grid(
                             .insert(Grass)
                             .insert(grass_data)
                             .insert(ContainsPlayer(false))
-                            .insert(NotShadowReceiver)
+                            // casting shadows costs 4 FPS
+                            // .insert(NotShadowReceiver)
                             // .insert(ShowAabbGizmo {
                             //     color: Some(Color::Srgba(PURPLE)),
                             // })

@@ -15,7 +15,7 @@ pub fn setup_camera(mut commands: Commands) {
     let mut camera = commands.spawn((
         Camera3dBundle {
             camera: Camera {
-                hdr: true,
+                hdr: false, // HDR is 4-7 FPS
                 // clear_color: Color::BLACK.into(),
                 ..default()
             },
@@ -51,8 +51,8 @@ pub fn setup_camera(mut commands: Commands) {
             // falloff: FogFalloff::from_visibility(70.0),
             ..default()
         },
-        // bloom is what adds the intense shine on ground (+ everywhere)
-        // BloomSettings::default(),
+        // bloom is what adds the intense shine on ground (+ everywhere). It costs 8+ FPS.
+        BloomSettings::default(),
         TemporalAntiAliasSettings { ..default() },
         ScreenSpaceAmbientOcclusionSettings { ..default() },
         PlayerCamera,

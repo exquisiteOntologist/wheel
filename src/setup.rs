@@ -17,6 +17,7 @@ use bevy::{
     transform::components::Transform,
     utils::default,
 };
+use bevy_framepace::{FramepaceSettings, Limiter};
 use bevy_pbr::PbrBundle;
 use bevy_rapier3d::prelude::{Collider, KinematicCharacterController, RigidBody};
 use iyes_perf_ui::{
@@ -136,4 +137,8 @@ pub fn setup(
     println!("Controls:");
     println!("  - arrow up / down: roll");
     println!("  - arrow left / right: turn direction");
+}
+
+pub fn setup_framerate(mut settings: ResMut<FramepaceSettings>) {
+    // settings.limiter = Limiter::from_framerate(32.0);
 }
