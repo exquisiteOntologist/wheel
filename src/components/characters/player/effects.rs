@@ -9,7 +9,7 @@ use bevy::{
 use bevy_hanabi::{EffectProperties, EffectSpawner};
 
 use crate::{
-    constants::MAX_SPEED,
+    constants::{HEIGHT_TEMPERATE_START, MAX_SPEED},
     gens::particles::MAX_SAND_RATE,
     resources::{DebugRoller, Game, PlayerWheel, WheelParticles},
     utils::{
@@ -53,31 +53,39 @@ pub fn attach_particles(
 pub fn update_particles_relative_to_char(
     time: Res<Time>,
     commands: Commands,
-    // mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
-    mut q_character: Query<(&mut Transform, &PlayerWheel)>,
+    mut q_character: Query<(&mut Transform, &PlayerCharacter)>,
+    // mut q_wheel: Query<(&mut Transform, &PlayerWheel)>,
     // mut q_particles: Query<(&mut Transform, &PlayerParticles), Without<PlayerWheel>>,
     mut q_particles: Query<
         (&mut Transform, &mut EffectProperties, &WheelParticles),
-        Without<PlayerWheel>,
+        Without<PlayerCharacter>,
     >,
     mut q_spawner: Query<&mut EffectSpawner>,
     game: ResMut<Game>,
 ) {
     let mut particle_emitters = q_particles.iter_mut();
     let mut effect_spawners = q_spawner.iter_mut();
-
     for character in q_character.iter_mut() {
         let (p_t, mut p_ep, _) = particle_emitters.next().unwrap();
         let Some(mut e_s) = effect_spawners.next() else {
-            // println!("No spawners");
             // On startup the spawners may not yet exist.
             return;
         };
         let x = game.player_wheel.speed_z / (MAX_SPEED * time.delta_seconds());
-        e_s.set_active(x > 1.);
-        let rate: f32 = (1. - x) / MAX_SAND_RATE;
-        e_s.spawner().with_count(rate.into());
-        p_ep.set("opacity", (x / 2.).into());
+        let moving = x > 1.;
+        let on_sand = character.0.translation.y < HEIGHT_TEMPERATE_START;
+        let show_particles = moving && on_sand;
+
+        e_s.set_active(show_particles);
+
+        if show_particles {
+            let rate: f32 = (1. - x) / MAX_SAND_RATE;
+            e_s.spawner().with_count(rate.into());
+            p_ep.set("opacity", (x / 2.).into());
+        } else {
+            e_s.spawner().with_count((0.).into());
+            p_ep.set("opacity", (0.).into());
+        }
     }
 }
 

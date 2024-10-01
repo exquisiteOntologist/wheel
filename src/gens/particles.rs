@@ -94,18 +94,18 @@ pub fn setup_particles(
     color_gradient1.add_key(
         0.0,
         // Vec4::new(255.0 / 100., 255.0 / 100., 227.0 / 100., 0.9),
-        clr(238., 218., 187., 0.9, 100.),
+        clr(238., 218., 187., 0.5, 100.),
         // clr(0., 0., 0., 0.9, 100.),
     );
     color_gradient1.add_key(
         0.1,
         // Vec4::new(255.0 / 100., 255.0 / 100., 227.0 / 100., 0.5),
-        clr(246., 229., 202., 0.5, 100.),
+        clr(246., 229., 202., 0.3, 100.),
     );
     color_gradient1.add_key(
         0.9,
         // Vec4::new(255.0 / 100., 255.0 / 100., 227.0 / 100., 0.3),
-        clr(255., 255., 227., 0.3, 100.),
+        clr(255., 255., 227., 0.1, 100.),
     );
     color_gradient1.add_key(
         1.0,
@@ -161,7 +161,7 @@ pub fn setup_particles(
         axis: writer.lit(Vec3::Z).expr(),
         // axis: writer.prop(pos_axis).expr(),
         // speed: writer.lit(1.6).uniform(writer.lit(3.)).expr(),
-        speed: writer.lit(-0.5).uniform(writer.lit(3.)).expr(),
+        speed: writer.lit(-0.5).uniform(writer.lit(1.)).expr(),
     };
 
     //
@@ -186,14 +186,14 @@ pub fn setup_particles(
     let init_lifetime = SetAttributeModifier::new(Attribute::LIFETIME, lifetime);
 
     // Add drag to make particles slow down a bit after the initial acceleration
-    let drag = writer.lit(2.).expr();
+    let drag = writer.lit(0.3).expr();
     let update_drag = LinearDragModifier::new(drag);
 
     // rotation
     let rotation = writer.lit(-0.).uniform(writer.lit(1.59)).expr();
 
     // opacity
-    let opacity = writer.lit(0.2).uniform(writer.lit(0.9)).expr();
+    let opacity = writer.lit(0.05).uniform(writer.lit(0.2)).expr();
     let init_opacity = SetAttributeModifier::new(Attribute::ALPHA, opacity);
 
     // spawner
@@ -204,7 +204,7 @@ pub fn setup_particles(
     let tangent_accel = TangentAccelModifier::new(
         writer.lit(Vec3::ZERO).expr(),
         writer.lit(Vec3::Y).expr(),
-        writer.lit(10.).uniform(writer.lit(30.)).expr(),
+        writer.lit(10.).uniform(writer.lit(100.)).expr(),
     );
     //
     // let tangent_accel = TangentAccelModifier::new(
@@ -217,7 +217,7 @@ pub fn setup_particles(
     let module = writer.finish();
 
     let effect1 = effects.add(
-        EffectAsset::new(vec![16384, 16384], spawner, module)
+        EffectAsset::new(vec![1000, 1640], spawner, module)
             .with_name("particles_portal")
             .init(init_pos)
             .init(init_age)
@@ -242,10 +242,10 @@ pub fn setup_particles(
         // Name::new("portal"),
         ParticleEffectBundle {
             effect: ParticleEffect::new(effect1),
-            transform: Transform::from_xyz(-2.7, 0., 0.)
+            transform: Transform::from_xyz(-2.7, -0.6, 0.)
                 // transform: Transform::from_xyz(0., 1.1, 0.)
                 // .with_rotation(Quat::from_rotation_x(degrees_to_radians(-90.))),
-                .with_rotation(Quat::from_rotation_z(degrees_to_radians(-120.))),
+                .with_rotation(Quat::from_rotation_z(degrees_to_radians(-100.))),
             // .with_rotation(Quat::from_rotation_z(degrees_to_radians(-0.))),
             ..Default::default()
         },
