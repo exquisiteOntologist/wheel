@@ -2,6 +2,7 @@ use crate::{constants::SPAWN_TRANSFORM, resources::PlayerCamera, utils::colours:
 use bevy::{
     core_pipeline::{
         bloom::BloomSettings,
+        dof::{DepthOfFieldMode, DepthOfFieldSettings},
         experimental::taa::TemporalAntiAliasSettings,
         tonemapping::{DebandDither, Tonemapping},
     },
@@ -14,7 +15,7 @@ pub fn setup_camera(mut commands: Commands) {
     let mut camera = commands.spawn((
         Camera3dBundle {
             camera: Camera {
-                hdr: true,
+                hdr: false, // HDR is 4-7 FPS
                 // clear_color: Color::BLACK.into(),
                 ..default()
             },
@@ -50,7 +51,7 @@ pub fn setup_camera(mut commands: Commands) {
             // falloff: FogFalloff::from_visibility(70.0),
             ..default()
         },
-        // bloom is what adds the intense shine on ground (+ everywhere)
+        // bloom is what adds the intense shine on ground (+ everywhere). It costs 8+ FPS.
         BloomSettings::default(),
         TemporalAntiAliasSettings { ..default() },
         ScreenSpaceAmbientOcclusionSettings { ..default() },
@@ -62,6 +63,23 @@ pub fn setup_camera(mut commands: Commands) {
         .insert(Collider::ball(3.0))
         .insert(KinematicCharacterController {
             normal_nudge_factor: 1.0e-3,
+            ..default()
+        })
+        .insert(DepthOfFieldSettings {
+            // // /// The distance from the camera to the area in the most focus.
+            // focal_distance: 10.,
+
+            // // /// The [f-number]. Lower numbers cause objects outside the focal distance
+            // // /// to be blurred more.
+            // // ///
+            // // /// [f-number]: https://en.wikipedia.org/wiki/F-number
+            // aperture_f_stops: 1.0 / 3.0,
+
+            // max_depth: 50.,
+
+            // // /// Whether depth of field is on, and, if so, whether we're in Gaussian or
+            // // /// bokeh mode.
+            // mode: DepthOfFieldMode::Gaussian,
             ..default()
         })
         .insert(Name::new("Camera"));

@@ -3,7 +3,8 @@ use bevy::prelude::Transform;
 pub const PLAYER_HEIGHT: f32 = 1.0;
 // starts on sand with given generation seed (HEIGHT_SAND)
 pub const SPAWN_Y: f32 = 200.;
-pub const SPAWN_TRANSFORM: Transform = Transform::from_xyz(0.0, SPAWN_Y + PLAYER_HEIGHT + 5., 0.0);
+pub const SPAWN_TRANSFORM: Transform =
+    Transform::from_xyz(0.0, SPAWN_Y + (PLAYER_HEIGHT * 0.5) + 0., 0.0);
 pub const TURN_SPEED: f32 = 0.2;
 pub const MAX_TURN_SPEED: f32 = 1.;
 pub const FORWARD_SPEED: f32 = 0.06;
@@ -12,10 +13,13 @@ pub const FORWARD_SPEED: f32 = 0.06;
 pub const MAX_SPEED: f32 = 8.;
 
 pub const PLANE_SIZE: f32 = 6000.;
+// pub const PLANE_SIZE: f32 = 500.;
 pub const SIZE_NO_PLAYER: f32 = 6000.; // TODO: This actually causes overlaps if it is bigger than PLANE_SIZE
-pub const SUBDIVISIONS_LEVEL_1: u32 = 1024;
+                                       // pub const SUBDIVISIONS_LEVEL_1: u32 = 1024;
+pub const SUBDIVISIONS_LEVEL_1: u32 = 256;
 pub const SUBDIVISIONS_LEVEL_2: u32 = 256;
 pub const SUBDIVISIONS_LEVEL_3: u32 = 2;
+// pub const TILE_WIDTH: f32 = 0.25; // how wide a tile should be
 pub const TILE_WIDTH: f32 = 0.25; // how wide a tile should be
 pub const TEXTURE_SCALE: f32 = 7.;
 pub const WATER_TEXTURE_SCALE: f32 = 20.;

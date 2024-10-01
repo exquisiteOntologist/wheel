@@ -12,7 +12,7 @@ use bevy::{
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
     resources::{Game, PlayerWheel},
-    utils::roll_pitch_yaw::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat, RPY},
+    utils::roll_pitch_yaw::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
 };
 
 use super::resources::WheelState;
@@ -88,7 +88,7 @@ pub fn _spin_wheel(
     time: Res<Time>,
     game: ResMut<Game>,
 ) {
-    for mut t in &mut q {
+    for t in &mut q {
         // spinning the wheel
         // t.rotate_local_z(game.player_wheel.speed_z * 0.5);
     }
@@ -99,7 +99,7 @@ pub fn _turn_wheel(
     time: Res<Time>,
     game: ResMut<Game>,
 ) {
-    for mut t in &mut q {
+    for t in &mut q {
         // turning
         // t.rotate_y(game.player_wheel.speed_y);
     }
@@ -128,7 +128,7 @@ pub fn move_wheel(
     time: Res<Time>,
     mut game: ResMut<Game>,
 ) {
-    let mut t = q.single_mut();
+    let t = q.single_mut();
     let speed = game.player_wheel.speed_z;
 
     // since we are also spinning the wheel,

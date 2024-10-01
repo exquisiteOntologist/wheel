@@ -1,7 +1,7 @@
 use bevy::{
     asset::AssetServer,
     prelude::{default, BuildChildren, Commands, EntityRef, NodeBundle, Query, Res, With, Without},
-    ui::{JustifyContent, Style, Val},
+    ui::{Style, Val},
 };
 
 use super::{letterbox::resources::Letterbox, subtitles::resources::Subtitles};

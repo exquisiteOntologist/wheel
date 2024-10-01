@@ -103,9 +103,9 @@ fn spawn_terrain_chunk(
         // base_color_texture: Some(texture_handle.clone()),
         // normal_map_texture: Some(normal_handle.clone()),
         alpha_mode: AlphaMode::Opaque,
-        double_sided: true,
-        perceptual_roughness: 0.8,
-        reflectance: 0.3,
+        double_sided: false,
+        perceptual_roughness: 1., // 0.8,
+        reflectance: 0.3,         // 0.3,
         cull_mode: Some(Face::Back),
         flip_normal_map_y: true,
         base_color_texture: Some(texture_ground.clone()),
@@ -223,6 +223,9 @@ pub fn update_terrain(
             (-1, 1),
             (-1, -1),
         ] {
+            // continue;
+            //
+            // 8FPS improvement not generating these other chunks
             let calc_dx = dx as f32 * (PLANE_SIZE / 2. + SIZE_NO_PLAYER / 2.);
             let calc_dz = dz as f32 * (PLANE_SIZE / 2. + SIZE_NO_PLAYER / 2.);
             spawn_terrain_chunk(

@@ -58,9 +58,9 @@ pub fn grass_material() -> StandardMaterial {
     StandardMaterial {
         base_color: Color::WHITE,
         double_sided: false,
-        perceptual_roughness: 1.0,
-        reflectance: 0.5,
-        cull_mode: None,
+        perceptual_roughness: 0.9,
+        reflectance: 0.2,
+        // cull_mode: None,
         opaque_render_method: bevy::pbr::OpaqueRendererMethod::Forward,
         unlit: false,
         ..default()

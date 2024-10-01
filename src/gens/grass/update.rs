@@ -1,10 +1,10 @@
-use bevy::color::palettes::css::{PURPLE, RED};
 use bevy::ecs::system::SystemState;
 use bevy::ecs::world::CommandQueue;
 use bevy::pbr::ExtendedMaterial;
 
 use bevy::tasks::{block_on, poll_once, AsyncComputeTaskPool};
 use bevy::{prelude::*, utils::HashMap};
+use bevy_pbr::NotShadowReceiver;
 
 use crate::components::characters::player::resources::PlayerCharacter;
 use crate::resources::ContainsPlayer;
@@ -193,11 +193,11 @@ fn update_grass_empty(
 /// Depending on how many grids are being generated at once,
 /// this can be an extremely expensive operation.
 fn update_grass_generate_grid(
-    mut commands: &mut Commands,
-    mut meshes: &mut ResMut<Assets<Mesh>>,
-    mut materials: &mut ResMut<Assets<ExtendedMaterial<StandardMaterial, GrassMaterialExtension>>>,
+    commands: &mut Commands,
+    meshes: &mut ResMut<Assets<Mesh>>,
+    materials: &mut ResMut<Assets<ExtendedMaterial<StandardMaterial, GrassMaterialExtension>>>,
     grass_trans: &Transform,
-    mut grass_grid: &mut Mut<GrassGrid>,
+    grass_grid: &mut Mut<GrassGrid>,
     player_trans: &Transform,
     has_player: bool,
 ) {
@@ -253,6 +253,7 @@ fn update_grass_generate_grid(
                             .insert(Grass)
                             .insert(grass_data)
                             .insert(ContainsPlayer(false))
+                            // casting shadows costs 4 FPS
                             // .insert(NotShadowReceiver)
                             // .insert(ShowAabbGizmo {
                             //     color: Some(Color::Srgba(PURPLE)),

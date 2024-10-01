@@ -959,6 +959,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "bevy_framepace"
+version = "0.17.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fa5f7d858e66d0f4c4fe3e1a678da440037ce383c4c51bff3c1fa06a121ebc0"
+dependencies = [
+ "bevy_app 0.14.0",
+ "bevy_diagnostic 0.14.0",
+ "bevy_ecs 0.14.0",
+ "bevy_log 0.14.0",
+ "bevy_reflect 0.14.0",
+ "bevy_render 0.14.0",
+ "bevy_time 0.14.0",
+ "bevy_utils 0.14.0",
+ "bevy_window 0.14.0",
+ "bevy_winit 0.14.0",
+ "spin_sleep",
+]
+
+[[package]]
 name = "bevy_gilrs"
 version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3624,7 +3643,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0c2a198fb6b0eada2a8df47933734e6d35d350665a33a3593d7164fa52c75c19"
 dependencies = [
  "cfg-if",
- "windows-targets 0.48.5",
+ "windows-targets 0.52.6",
 ]
 
 [[package]]
@@ -5118,6 +5137,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "spin_sleep"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64bd7227d85bfd1b8df51e0d83da36d9baaee85eb75730386ef8e3ab6f2a2ea3"
+dependencies = [
+ "windows-sys 0.59.0",
+]
+
+[[package]]
 name = "spirv"
 version = "0.3.0+sdk-1.3.268.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6029,6 +6057,7 @@ dependencies = [
  "bevy 0.14.0",
  "bevy-inspector-egui",
  "bevy_debug_grid",
+ "bevy_framepace",
  "bevy_hanabi",
  "bevy_pbr 0.14.0",
  "bevy_rapier3d",
@@ -6279,6 +6308,15 @@ name = "windows-sys"
 version = "0.52.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "282be5f36a8ce781fad8c8ae18fa3f9beff57ec1b52cb3de0789201425d9a33d"
+dependencies = [
+ "windows-targets 0.52.6",
+]
+
+[[package]]
+name = "windows-sys"
+version = "0.59.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
 dependencies = [
  "windows-targets 0.52.6",
 ]

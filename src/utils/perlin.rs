@@ -1,17 +1,13 @@
-use crate::{
-    constants::{
+use crate::constants::{
         BASE_LEVEL, GRASS_HEIGHT_SEED, HILL_HEIGHTS, MOUNTAIN_HEIGHTS, TERRAIN_BUMPINESS,
         TERRAIN_SEED, TORCH_SEED, WIND_SEED,
-    },
-    gens::terrain,
-};
+    };
 use bevy::{
     app::{App, Plugin, Startup},
     prelude::{Commands, Resource},
 };
 use noise::{NoiseFn, Perlin};
 
-use bevy::prelude::*;
 
 #[derive(Resource)]
 pub struct PerlinNoiseEntity {

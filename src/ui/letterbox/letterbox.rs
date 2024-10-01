@@ -1,5 +1,4 @@
 use bevy::{
-    color::Color,
     prelude::{default, BuildChildren, Commands, NodeBundle, Parent, Query, Res, ResMut},
     time::Time,
     ui::{BackgroundColor, JustifyContent, Node, PositionType, Style, Val},
@@ -63,9 +62,9 @@ pub fn letterbox_setup(mut commands: Commands) {
 pub fn update_letterbox(
     time: Res<Time>,
     mut q_boxes: Query<(&mut LetterboxSide, &mut Style, &Parent, &Node)>,
-    mut lb_state: ResMut<LetterboxState>,
+    lb_state: ResMut<LetterboxState>,
 ) {
-    for (mut letterbox, mut style, parent, box_node) in &mut q_boxes {
+    for (letterbox, mut style, parent, box_node) in &mut q_boxes {
         let lb_height = box_node.size().y;
         // println!("lb height {}", lb_height);
         // println!("active {}", lb_state.active);

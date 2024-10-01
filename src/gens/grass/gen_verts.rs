@@ -11,6 +11,10 @@ pub fn generate_single_blade_verts(
     blade_number: u32,
     blade_height: f32,
 ) -> (Vec<Vec3>, Vec<u32>) {
+    if blade_height < (GRASS_HEIGHT * 0.25) {
+        return (Vec::new(), Vec::new());
+    }
+
     // For grass with 7 vertices, uncomment t3-6, and uncomment indices
     // vertex transforms
     let t1 = Transform::from_xyz(x, y, z);

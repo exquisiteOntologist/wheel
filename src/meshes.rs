@@ -17,12 +17,13 @@ pub fn image_settings_with_repeat_image_sampler() -> impl Fn(&mut ImageLoaderSet
         address_mode_u: ImageAddressMode::Repeat,
         address_mode_v: ImageAddressMode::Repeat,
         address_mode_w: ImageAddressMode::Repeat,
-        mag_filter: ImageFilterMode::Nearest,
+        // mag_filter: ImageFilterMode::Nearest,
+        mag_filter: ImageFilterMode::Linear,
         min_filter: ImageFilterMode::Linear,
         mipmap_filter: ImageFilterMode::Linear,
         lod_min_clamp: 0.0,
         lod_max_clamp: 32.0,
-        anisotropy_clamp: 1,
+        anisotropy_clamp: 100,
         ..default()
     };
 
