@@ -260,9 +260,9 @@ fn setup(commands: Commands, effects: ResMut<Assets<EffectAsset>>, parent: Query
     setup_particles(commands, effects, parent);
 }
 
-pub struct ParticlesPlugin;
+pub struct SandParticlesPlugin;
 
-impl Plugin for ParticlesPlugin {
+impl Plugin for SandParticlesPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(HanabiPlugin);
         app.add_systems(Startup, setup);

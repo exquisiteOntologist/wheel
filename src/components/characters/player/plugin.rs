@@ -1,6 +1,6 @@
 use bevy::app::{App, Plugin, PostStartup, Update};
 
-use crate::gens::particles::ParticlesPlugin;
+use crate::gens::sand_particles::SandParticlesPlugin;
 
 use super::{
     effects::{attach_particles, update_particles_relative_to_char},
@@ -20,7 +20,7 @@ impl Plugin for PlayerCharacterPlugin {
                 // update_axis,
             ),
         );
-        app.add_plugins(ParticlesPlugin);
+        app.add_plugins(SandParticlesPlugin);
         app.add_systems(PostStartup, attach_particles);
     }
 }
