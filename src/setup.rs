@@ -120,7 +120,7 @@ pub fn setup(
 
     let mut parent_character = commands.spawn((
         SpatialBundle {
-            transform: SPAWN_TRANSFORM,
+            transform: SPAWN_TRANSFORM.with_rotation(Quat::from_rotation_y(-60.)),
             ..default()
         },
         PlayerCharacter,
