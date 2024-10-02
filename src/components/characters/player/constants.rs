@@ -1,1 +1,1 @@
-pub const GRAVITY_ACC: f32 = 4.8;
+pub const GRAVITY_ACC: f32 = 12.;
