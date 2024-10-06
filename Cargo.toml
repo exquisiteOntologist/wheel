@@ -4,19 +4,19 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = "0.14.0"
+bevy = "0.14.2"
 bevy-inspector-egui = "0.25.2"
 bevy_debug_grid = "0.6.0"
 bevy_framepace = "0.17.1"
-bevy_hanabi = "0.12.0"
-bevy_pbr = "0.14.0"
+bevy_hanabi = "0.12.2"
+bevy_pbr = "0.14.2"
 bevy_rapier3d = "0.27.0"
 bevy_shader_utils = "0.7.0"
 cgmath = "0.18.0"
 iyes_perf_ui = "0.3.0"
 noise = "0.9.0"
 rand = "0.8.5"
-tracing-tracy = "0.11.0"
+tracing-tracy = "0.11.3"
 
 # Enable a small amount of optimization in debug mode
 [profile.dev]

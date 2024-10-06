@@ -9,6 +9,7 @@ use wheel::components::cameras::camera::plugin::PCameraPlugin;
 use wheel::components::characters::player::plugin::PlayerCharacterPlugin;
 use wheel::controls::keyboard_control_debugging;
 use wheel::gens::grass::plugin::GrassPlugin;
+use wheel::gens::rocks::plugin::RockPlugin;
 use wheel::resources::DebugRoller;
 use wheel::setup::{setup, setup_framerate};
 use wheel::ui::plugin::UserInterfacePlugin;
@@ -68,7 +69,7 @@ fn main() {
         .add_plugins((PerfUiPlugin, RapierPhysicsPlugin::<NoUserData>::default()))
         .add_plugins((PlayerCharacterPlugin, WheelPlugin))
         .add_plugins((PCameraPlugin, CloudPlugin))
-        .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin))
+        .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin, RockPlugin))
         .add_plugins(UserInterfacePlugin)
         .add_systems(Startup, (setup, setup_framerate))
         .add_systems(Update, (keyboard_control, keyboard_control_debugging))
