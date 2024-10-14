@@ -1,7 +1,6 @@
-
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
-    resources::{DebugRoller, Game},
+    resources::{DebugRoller, DebugState, Game},
     ui::{
         letterbox::resources::LetterboxState,
         subtitles::{constants::DEMO_SUBTITLE, resources::SubtitlesState},
@@ -51,10 +50,15 @@ pub fn keyboard_control(
 pub fn keyboard_control_debugging(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
+    mut debug: ResMut<DebugState>,
     mut debug_roller: ResMut<DebugRoller>,
     mut letterbox_state: ResMut<LetterboxState>,
     mut subtitles_state: ResMut<SubtitlesState>,
 ) {
+    if keyboard_input.any_pressed([KeyCode::KeyR]) {
+        debug.reset = true;
+    }
+
     const INC: f32 = 0.1;
 
     let inc = if keyboard_input.any_pressed([KeyCode::PageDown]) {

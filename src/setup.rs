@@ -17,8 +17,7 @@ use bevy::{
     transform::components::Transform,
     utils::default,
 };
-use bevy_framepace::{FramepaceSettings, Limiter};
-use bevy_pbr::PbrBundle;
+use bevy_framepace::FramepaceSettings;
 use bevy_rapier3d::prelude::{Collider, KinematicCharacterController, RigidBody};
 use iyes_perf_ui::{
     prelude::{PerfUiEntryFPS, PerfUiEntryFPSWorst},
@@ -137,6 +136,7 @@ pub fn setup(
     println!("Controls:");
     println!("  - arrow up / down: roll");
     println!("  - arrow left / right: turn direction");
+    println!("  - 'r' key: reset");
 }
 
 pub fn setup_framerate(mut settings: ResMut<FramepaceSettings>) {

@@ -1,4 +1,3 @@
-use bevy::app::ScheduleRunnerPlugin;
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::prelude::*;
 use bevy::{input::common_conditions::input_just_pressed, pbr::DirectionalLightShadowMap};
@@ -8,6 +7,7 @@ use iyes_perf_ui::PerfUiPlugin;
 use wheel::components::cameras::camera::plugin::PCameraPlugin;
 use wheel::components::characters::player::plugin::PlayerCharacterPlugin;
 use wheel::controls::keyboard_control_debugging;
+use wheel::debug::debug_reset_actors;
 use wheel::gens::grass::plugin::GrassPlugin;
 use wheel::gens::rocks::plugin::RockPlugin;
 use wheel::resources::DebugRoller;
@@ -73,5 +73,6 @@ fn main() {
         .add_plugins(UserInterfacePlugin)
         .add_systems(Startup, (setup, setup_framerate))
         .add_systems(Update, (keyboard_control, keyboard_control_debugging))
+        .add_systems(Update, (debug_reset_actors))
         .run();
 }

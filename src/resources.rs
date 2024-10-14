@@ -27,6 +27,12 @@ pub struct Game {
 }
 
 #[derive(Resource, Default)]
+pub struct DebugState {
+    /// Reset the player's position
+    pub reset: bool,
+}
+
+#[derive(Resource, Default)]
 pub struct DebugRoller {
     pub x: f32,
     pub y: f32,
