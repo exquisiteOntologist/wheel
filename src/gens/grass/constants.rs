@@ -35,10 +35,10 @@ pub const GRASS_SPACING: f32 = 0.1;
 pub const GRASS_OFFSET: f32 = 0.2;
 pub const ENABLE_WIREFRAME: bool = false;
 pub const WIND_STRENGTH: f32 = 1.;
-pub const WIND_SPEED: f64 = 0.5;
+pub const WIND_SPEED: f64 = 0.1;
 pub const WIND_CONSISTENCY: f64 = 50.0; //
-pub const WIND_LEAN: f32 = 0.3; // determines how already bent grass will be at 0 wind
-pub const CURVE_POWER: f32 = 1.0; // the linearity / exponentiality of the application/bend of the wind
+pub const WIND_LEAN: f32 = 0.6; // determines how already bent grass will be at 0 wind
+pub const CURVE_POWER: f32 = 3.0; // the linearity / exponentiality of the application/bend of the wind
 pub const DESPAWN_DISTANCE: f32 =
     (GRID_SIZE_HALF + 1) as f32 * GRASS_TILE_SIZE_1 + GRID_SIZE_HALF as f32;
 // pub const DESPAWN_DISTANCE: f32 = 2. * GRASS_TILE_SIZE_1;

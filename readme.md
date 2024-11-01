@@ -31,6 +31,7 @@ To process assets
 ```cli
 cargo run --features bevy/file_watcher bevy/asset_processor
 ```
+*Note that on first build you may need to run the asset processor without the file watcher feature flag in the command.*
 
 ## Disclaimer
 
