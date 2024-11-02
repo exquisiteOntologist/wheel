@@ -200,7 +200,12 @@ pub fn update_terrain(
     if main_terrain.is_empty() {
         // scene start
         // spawn chunk at player
-        let player_trans = q_char.get_single().unwrap().translation;
+        let player_trans = if let Ok(char) = q_char.get_single() {
+            char.translation
+        } else {
+            // if no player return (assuming player will exist later on)
+            return;
+        };
         spawn_terrain_chunk(
             &mut commands,
             &mut meshes,

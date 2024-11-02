@@ -3,6 +3,7 @@ pub mod constants;
 pub mod controls;
 pub mod debug;
 pub mod gens;
+pub mod levels;
 pub mod meshes;
 pub mod movement;
 pub mod operation;

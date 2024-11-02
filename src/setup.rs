@@ -103,11 +103,6 @@ pub fn setup(
     //     ..default()
     // });
 
-    // Player character with wheel.
-    // TODO: be moved to a level function.
-    let child_wheel = spawn_wheel(&mut commands, &asset_server);
-    let _player_character = spawn_player(&mut commands, child_wheel);
-
     println!("Controls:");
     println!("  - arrow up / down: roll");
     println!("  - arrow left / right: turn direction");

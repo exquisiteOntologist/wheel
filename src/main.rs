@@ -10,6 +10,7 @@ use wheel::controls::keyboard_control_debugging;
 use wheel::debug::debug_reset_actors;
 use wheel::gens::grass::plugin::GrassPlugin;
 use wheel::gens::rocks::plugin::RockPlugin;
+use wheel::levels::plugin::LevelsPlugin;
 use wheel::resources::{DebugRoller, DebugState};
 use wheel::setup::{setup, setup_framerate};
 use wheel::ui::plugin::UserInterfacePlugin;
@@ -73,6 +74,7 @@ fn main() {
         .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin, RockPlugin))
         .add_plugins(UserInterfacePlugin)
         .add_systems(Startup, (setup, setup_framerate))
+        .add_plugins((LevelsPlugin))
         .add_systems(Update, (keyboard_control, keyboard_control_debugging))
         .add_systems(Update, (debug_reset_actors))
         .run();
