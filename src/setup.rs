@@ -25,9 +25,12 @@ use iyes_perf_ui::{
 };
 
 use crate::{
-    components::characters::player::resources::PlayerCharacter,
+    components::{
+        characters::player::{resources::PlayerCharacter, spawn::spawn_player},
+        wheel::spawn::spawn_wheel,
+    },
     constants::SPAWN_TRANSFORM,
-    resources::{Game, PlayerWheel},
+    resources::Game,
 };
 
 pub fn setup(
@@ -100,38 +103,10 @@ pub fn setup(
     //     ..default()
     // });
 
-    // Wheel
-    let child_wheel = commands
-        .spawn((
-            SceneBundle {
-                scene: asset_server.load("models/Wheel.glb#Scene0"),
-                // also see parent character Y position
-                transform: Transform::from_xyz(0., 0., 0.),
-                ..default()
-            },
-            // PbrBundle {
-            //     mesh: asset_server.load("models/Wheel.glb#Mesh0"),
-            //     ..default()
-            // },
-            PlayerWheel,
-        ))
-        .id();
-
-    let mut parent_character = commands.spawn((
-        SpatialBundle {
-            transform: SPAWN_TRANSFORM.with_rotation(Quat::from_rotation_y(-60.)),
-            ..default()
-        },
-        PlayerCharacter,
-    ));
-
-    parent_character
-        .insert(RigidBody::KinematicPositionBased)
-        .insert(Collider::ball(1.0))
-        .insert(KinematicCharacterController::default())
-        .insert(Name::new("Player"));
-
-    parent_character.add_child(child_wheel);
+    // Player character with wheel.
+    // TODO: be moved to a level function.
+    let child_wheel = spawn_wheel(&mut commands, &asset_server);
+    let _player_character = spawn_player(&mut commands, child_wheel);
 
     println!("Controls:");
     println!("  - arrow up / down: roll");

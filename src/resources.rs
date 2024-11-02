@@ -4,9 +4,6 @@ use bevy::ecs::{component::Component, system::Resource};
 pub struct PlayerCamera;
 
 #[derive(Component)]
-pub struct PlayerWheel;
-
-#[derive(Component)]
 pub struct WheelParticles;
 
 // struct for marking terrain that contains the player

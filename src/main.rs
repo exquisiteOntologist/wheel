@@ -10,7 +10,7 @@ use wheel::controls::keyboard_control_debugging;
 use wheel::debug::debug_reset_actors;
 use wheel::gens::grass::plugin::GrassPlugin;
 use wheel::gens::rocks::plugin::RockPlugin;
-use wheel::resources::DebugRoller;
+use wheel::resources::{DebugRoller, DebugState};
 use wheel::setup::{setup, setup_framerate};
 use wheel::ui::plugin::UserInterfacePlugin;
 use wheel::utils::perlin::PerlinPlugin;
@@ -38,6 +38,7 @@ fn main() {
         .insert_resource(Msaa::Sample2)
         .init_resource::<Game>()
         .init_resource::<DebugRoller>()
+        .init_resource::<DebugState>()
         // .add_plugins((DebugGridPlugin::without_floor_grid()))
         .add_plugins((DefaultPlugins
             .set(WindowPlugin {

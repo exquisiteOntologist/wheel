@@ -11,11 +11,11 @@ use bevy::{
 
 use crate::{
     constants::{FORWARD_SPEED, MAX_SPEED, MAX_TURN_SPEED, TURN_SPEED},
-    resources::{Game, PlayerWheel},
+    resources::Game,
     utils::roll_pitch_yaw::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},
 };
 
-use super::resources::WheelState;
+use super::resources::{PlayerWheel, WheelState};
 
 pub fn wheel_rotation(
     mut q: Query<&mut Transform, With<PlayerWheel>>,

@@ -11,7 +11,7 @@ use bevy_hanabi::{EffectProperties, EffectSpawner};
 use crate::{
     constants::{HEIGHT_TEMPERATE_START, MAX_SPEED},
     gens::particles::sand_particles::MAX_SAND_RATE,
-    resources::{DebugRoller, Game, PlayerWheel, WheelParticles},
+    resources::{DebugRoller, Game, WheelParticles},
     utils::{
         angles::{degrees_to_radians, quat_w_to_axis_adjust},
         roll_pitch_yaw::{quaternion_from_rpy_quat, roll_pitch_yaw_from_quat},

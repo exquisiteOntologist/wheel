@@ -1,6 +1,9 @@
-use bevy::prelude::Resource;
+use bevy::prelude::{Component, Resource};
 
 use crate::utils::roll_pitch_yaw::RPY;
+
+#[derive(Component)]
+pub struct PlayerWheel;
 
 #[derive(Resource, Default)]
 pub struct WheelState {

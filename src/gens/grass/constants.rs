@@ -28,7 +28,7 @@ pub const GRASS_SECOND_COLOR_3: [f32; 4] = [0.008, 0.03, 0.01, 1.];
 pub const GRASS_SCALE_FACTOR: f32 = 1.0;
 pub const GRASS_HEIGHT_VARIATION_FACTOR: f32 = 0.6;
 // 10. default straightness. 3. for leaning, 1. for trampled.
-pub const GRASS_STRAIGHTNESS: f32 = 3.0; // 10. default for now, as opposed to a curve factor, just modifying denominator for curve calcs
+pub const GRASS_STRAIGHTNESS: f32 = 0.5; // 10. default for now, as opposed to a curve factor, just modifying denominator for curve calcs
 pub const GRASS_STRAIGHTNESS_MIN: u32 = 1;
 pub const GRASS_STRAIGHTNESS_MAX: u32 = 12;
 pub const GRASS_SPACING: f32 = 0.1;
