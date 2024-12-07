@@ -6,7 +6,7 @@ pub struct PlayerCamera;
 #[derive(Component)]
 pub struct WheelParticles;
 
-// struct for marking terrain that contains the player
+/// struct for marking terrain that contains the player
 #[derive(Component)]
 pub struct ContainsPlayer(pub bool);
 
@@ -21,6 +21,11 @@ pub struct MotionState {
 pub struct Game {
     pub camera: MotionState,
     pub player_wheel: MotionState,
+}
+
+#[derive(Resource, Default)]
+pub struct PlayState {
+    pub paused: bool,
 }
 
 #[derive(Resource, Default)]

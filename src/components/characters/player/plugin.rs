@@ -1,6 +1,15 @@
-use bevy::app::{App, Plugin, PostStartup, Update};
+use bevy::{
+    app::{App, Plugin, PostStartup, Update},
+    prelude::{IntoSystemConfigs, OnEnter},
+};
 
-use crate::gens::particles::sand_particles::SandParticlesPlugin;
+use crate::{
+    gens::particles::sand_particles::SandParticlesPlugin,
+    levels::{
+        common::{cond_player_missing, cond_player_present},
+        resources::CurrentSceneState,
+    },
+};
 
 use super::{
     effects::{attach_particles, update_particles_relative_to_char},
@@ -18,9 +27,11 @@ impl Plugin for PlayerCharacterPlugin {
                 turn_character,
                 update_particles_relative_to_char,
                 // update_axis,
-            ),
+            )
+                .run_if(cond_player_present),
         );
         app.add_plugins(SandParticlesPlugin);
-        app.add_systems(PostStartup, attach_particles);
+        // app.add_systems(PostStartup, attach_particles);
+        app.add_systems(OnEnter(CurrentSceneState::SceneSandHills), attach_particles);
     }
 }

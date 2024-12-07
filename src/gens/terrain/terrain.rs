@@ -197,6 +197,9 @@ pub fn update_terrain(
     // player: Query<&Transform, (With<player::Player>, Without<Terrain>)>,
     q_char: Query<&Transform, (With<PlayerCharacter>, Without<Terrain>)>,
 ) {
+    if meshes.is_empty() {
+        return;
+    }
     if main_terrain.is_empty() {
         // scene start
         // spawn chunk at player

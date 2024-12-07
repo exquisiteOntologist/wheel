@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use super::{constants::NUM_ROCKS, resources::Rock, rock::spawn_rock};
 
-/// Update rocks spawns rocks near the player
+/// Controls spawning of rocks. Does not update rocks.
 pub fn update_rocks(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>) {
     //
 }

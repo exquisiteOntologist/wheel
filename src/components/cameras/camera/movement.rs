@@ -24,6 +24,9 @@ pub fn move_camera(
         Without<PlayerCharacter>,
     >,
 ) {
+    if q_char.is_empty() {
+        return;
+    }
     let (_char, t_char) = q_char.single_mut();
     let (_cam, mut t_cam, mut control_cam) = q_cam.single_mut();
 
@@ -53,6 +56,9 @@ pub fn adjust_camera_speed(
     q_char: Query<(&PlayerCharacter, &Transform)>,
     q_cam: Query<(&PlayerCamera, &Transform), Without<PlayerCharacter>>,
 ) {
+    if q_char.is_empty() || q_cam.is_empty() {
+        return;
+    }
     let (_, t_char) = q_char.single();
     let (_, t_cam) = q_cam.single();
     let distance_x = t_char.translation.x - t_cam.translation.x;

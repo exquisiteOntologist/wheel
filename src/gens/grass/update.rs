@@ -37,7 +37,9 @@ pub fn update_grass(
     time: Res<Time>,
     player: Query<(Entity, &Transform), With<PlayerCharacter>>,
 ) {
-    let (_, player_trans) = player.get_single().unwrap();
+    let Ok((_, player_trans)) = player.get_single() else {
+        return;
+    };
     let x = player_trans.translation.x;
     let z = player_trans.translation.z;
 

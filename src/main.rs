@@ -4,24 +4,17 @@ use bevy::{input::common_conditions::input_just_pressed, pbr::DirectionalLightSh
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_rapier3d::plugin::{NoUserData, RapierPhysicsPlugin};
 use iyes_perf_ui::PerfUiPlugin;
-use wheel::components::cameras::camera::plugin::PCameraPlugin;
+use wheel::components::cameras::camera::plugin::PlayerCameraPlugin;
 use wheel::components::characters::player::plugin::PlayerCharacterPlugin;
 use wheel::controls::keyboard_control_debugging;
 use wheel::debug::debug_reset_actors;
-use wheel::gens::grass::plugin::GrassPlugin;
-use wheel::gens::rocks::plugin::RockPlugin;
 use wheel::levels::plugin::LevelsPlugin;
 use wheel::resources::{DebugRoller, DebugState};
 use wheel::setup::{setup, setup_framerate};
 use wheel::ui::plugin::UserInterfacePlugin;
-use wheel::utils::perlin::PerlinPlugin;
 use wheel::{
-    components::wheel::plugin::WheelPlugin,
-    controls::keyboard_control,
-    gens::{clouds::CloudPlugin, terrain::plugin::TerrainPlugin},
-    operation::toggle_pause,
-    resources::Game,
-    utils::colours::rgb,
+    components::wheel::plugin::WheelPlugin, controls::keyboard_control, operation::toggle_pause,
+    resources::Game, utils::colours::rgb,
 };
 
 fn main() {
@@ -70,11 +63,12 @@ fn main() {
         ))
         .add_plugins((PerfUiPlugin, RapierPhysicsPlugin::<NoUserData>::default()))
         .add_plugins((PlayerCharacterPlugin, WheelPlugin))
-        .add_plugins((PCameraPlugin, CloudPlugin))
-        .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin, RockPlugin))
+        .add_plugins((PlayerCameraPlugin))
+        // .add_plugins((CloudPlugin))
+        // .add_plugins((PerlinPlugin, TerrainPlugin, GrassPlugin, RockPlugin))
         .add_plugins(UserInterfacePlugin)
         .add_systems(Startup, (setup, setup_framerate))
-        .add_plugins((LevelsPlugin))
+        .add_plugins(LevelsPlugin)
         .add_systems(Update, (keyboard_control, keyboard_control_debugging))
         .add_systems(Update, (debug_reset_actors))
         .run();

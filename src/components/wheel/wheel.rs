@@ -128,6 +128,9 @@ pub fn move_wheel(
     time: Res<Time>,
     mut game: ResMut<Game>,
 ) {
+    if q.is_empty() {
+        return;
+    }
     let t = q.single_mut();
     let speed = game.player_wheel.speed_z;
 

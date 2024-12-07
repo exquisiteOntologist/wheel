@@ -5,9 +5,9 @@ use super::{
     setup::setup_camera,
 };
 
-pub struct PCameraPlugin;
+pub struct PlayerCameraPlugin;
 
-impl Plugin for PCameraPlugin {
+impl Plugin for PlayerCameraPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, setup_camera);
         app.add_systems(
