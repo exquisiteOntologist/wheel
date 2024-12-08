@@ -55,13 +55,13 @@ pub fn keyboard_control_debugging(
     mut letterbox_state: ResMut<LetterboxState>,
     mut subtitles_state: ResMut<SubtitlesState>,
 ) {
-    if keyboard_input.any_pressed([KeyCode::KeyR]) {
+    if keyboard_input.any_just_pressed([KeyCode::KeyR]) {
         debug.reset = true;
     }
 
     const INC: f32 = 0.1;
 
-    let inc = if keyboard_input.any_pressed([KeyCode::PageDown]) {
+    let inc = if keyboard_input.any_just_pressed([KeyCode::PageDown]) {
         // page down down
         -INC
     } else {
@@ -69,16 +69,16 @@ pub fn keyboard_control_debugging(
         INC
     };
 
-    if keyboard_input.any_pressed([KeyCode::Digit1]) {
+    if keyboard_input.any_just_pressed([KeyCode::Digit1]) {
         debug_roller.x = (debug_roller.x + inc).clamp(-1., 1.);
     }
-    if keyboard_input.any_pressed([KeyCode::Digit2]) {
+    if keyboard_input.any_just_pressed([KeyCode::Digit2]) {
         debug_roller.y = (debug_roller.y + inc).clamp(-1., 1.);
     }
-    if keyboard_input.any_pressed([KeyCode::Digit3]) {
+    if keyboard_input.any_just_pressed([KeyCode::Digit3]) {
         debug_roller.z = (debug_roller.z + inc).clamp(-1., 1.);
     }
-    if keyboard_input.any_pressed([KeyCode::Digit4]) {
+    if keyboard_input.any_just_pressed([KeyCode::Digit4]) {
         debug_roller.w = (debug_roller.w + inc).clamp(-1., 1.);
     }
 

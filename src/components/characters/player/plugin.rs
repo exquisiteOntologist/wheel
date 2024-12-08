@@ -5,10 +5,7 @@ use bevy::{
 
 use crate::{
     gens::particles::sand_particles::SandParticlesPlugin,
-    levels::{
-        common::{cond_player_missing, cond_player_present},
-        resources::CurrentSceneState,
-    },
+    levels::{conditions::cond_player_present, resources::CurrentSceneState},
 };
 
 use super::{
