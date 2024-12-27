@@ -55,10 +55,5 @@ pub fn quaternion_from_rpy(roll: f32, pitch: f32, yaw: f32) -> (f32, f32, f32, f
 pub fn quaternion_from_rpy_quat(roll: f32, pitch: f32, yaw: f32) -> Quat {
     let (q0, q1, q2, q3) = quaternion_from_rpy(roll, pitch, yaw);
 
-    Quat {
-        x: q0,
-        y: q1,
-        z: q2,
-        w: q3,
-    }
+    Quat::from_xyzw(q0, q1, q2, q3)
 }

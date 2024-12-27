@@ -9,6 +9,7 @@ use bevy::{
     pbr::ScreenSpaceAmbientOcclusionSettings,
     prelude::*,
 };
+use bevy_pbr::FogSettings;
 use bevy_rapier3d::prelude::{Collider, KinematicCharacterController, RigidBody};
 
 pub fn setup_camera(mut commands: Commands) {
@@ -23,6 +24,7 @@ pub fn setup_camera(mut commands: Commands) {
             transform: Transform::from_xyz(-100.0, SPAWN_TRANSFORM.translation.y + 3.0 + 20., 0.0)
                 .looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
             deband_dither: DebandDither::Enabled,
+            msaa: Msaa::Sample2,
             tonemapping: Tonemapping::TonyMcMapface,
             // tonemapping: Tonemapping::None,
             // projection: bevy::prelude::Projection::Perspective(PerspectiveProjection {
@@ -54,7 +56,7 @@ pub fn setup_camera(mut commands: Commands) {
         // bloom is what adds the intense shine on ground (+ everywhere). It costs 8+ FPS.
         BloomSettings::default(),
         TemporalAntiAliasSettings { ..default() },
-        ScreenSpaceAmbientOcclusionSettings { ..default() },
+        // ScreenSpaceAmbientOcclusionSettings { ..default() }, // requires MSAA:Off
         PlayerCamera,
     ));
 

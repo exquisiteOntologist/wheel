@@ -142,7 +142,7 @@ fn _turn_move(
     game: &mut ResMut<Game>,
     time: &Res<Time>,
 ) {
-    t_cam.translation += char_direction * (game.player_wheel.speed_z * 10.) * time.delta_seconds();
+    t_cam.translation += char_direction * (game.player_wheel.speed_z * 10.) * time.delta_secs();
 }
 
 fn _get_turn_multiplier(t_cam: &Transform, t_dest: &Transform) -> f32 {
@@ -184,7 +184,7 @@ fn turn_look_in_front(t_cam: &mut Transform, t_char: &Transform, char_direction:
     let mut tran_infront_char = t_cam.clone().to_owned();
     let dist_infront_char = 5.;
     // Here we translate the POI transform in front of the character
-    tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_seconds(); */
+    tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_secs(); */
     // Now we will turn the camera to face the POI
     look_at_on_y(t_cam, &tran_infront_char);
 }

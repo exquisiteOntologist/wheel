@@ -16,7 +16,7 @@ pub fn move_dir_translate(dir: Dir3, speed: f32) -> Vec3 {
 }
 
 pub fn move_gravity_translate(gravity_acceleration: f32, time: Res<Time>) -> Vec3 {
-    let translation = gravity_acceleration * GRAVITY_DIR * time.delta_seconds();
+    let translation = gravity_acceleration * GRAVITY_DIR * time.delta_secs();
     translation
 }
 

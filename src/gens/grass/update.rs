@@ -24,7 +24,7 @@ pub fn update_grass(
     mut grass: Query<
         (
             Entity,
-            &Handle<Mesh>,
+            &Mesh3d,
             &GrassData,
             &Transform,
             &ViewVisibility,
@@ -246,12 +246,19 @@ fn update_grass_generate_grid(
 
                         world
                             .entity_mut(task_entity)
-                            .insert(MaterialMeshBundle {
-                                mesh: grass_mesh_handle,
-                                material: grass_mat_handle,
-                                transform,
-                                ..default()
-                            })
+                            .insert(
+                                // MaterialMeshBundle {
+                                //     mesh: grass_mesh_handle,
+                                //     material: grass_mat_handle,
+                                //     transform,
+                                //     ..default()
+                                // }
+                                (
+                                    Mesh3d(grass_mesh_handle.into()),
+                                    MeshMaterial3d(grass_mat_handle.into()),
+                                    transform,
+                                ),
+                            )
                             .insert(Grass)
                             .insert(grass_data)
                             .insert(ContainsPlayer(false))

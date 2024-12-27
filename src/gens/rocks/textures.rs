@@ -1,10 +1,10 @@
 use bevy::{
     asset::{AssetServer, Handle},
-    prelude::{default, Image, Res},
-    render::texture::{
+    image::{
         ImageAddressMode, ImageFilterMode, ImageLoaderSettings, ImageSampler,
         ImageSamplerDescriptor,
     },
+    prelude::{default, Image, Res},
 };
 
 const ROCK_TEXTURE_PATHS: [&str; 1] = ["textures/rocks/ochre-bna.png"];

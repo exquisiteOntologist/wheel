@@ -15,8 +15,8 @@ pub fn keyboard_control(
 ) {
     // println!("Wheel Y speed {:?}", game.player_wheel.speed_y);
 
-    let forward = FORWARD_SPEED * time.delta_seconds();
-    let turn = TURN_SPEED * time.delta_seconds();
+    let forward = FORWARD_SPEED * time.delta_secs();
+    let turn = TURN_SPEED * time.delta_secs();
 
     if keyboard_input.any_pressed([KeyCode::ArrowUp, KeyCode::KeyW]) {
         if game.player_wheel.speed_z < MAX_SPEED {

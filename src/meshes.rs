@@ -1,12 +1,10 @@
 use bevy::{
-    prelude::default,
-    render::{
-        mesh::{Mesh, VertexAttributeValues},
-        texture::{
-            ImageAddressMode, ImageFilterMode, ImageLoaderSettings, ImageSampler,
-            ImageSamplerDescriptor,
-        },
+    image::{
+        ImageAddressMode, ImageFilterMode, ImageLoaderSettings, ImageSampler,
+        ImageSamplerDescriptor,
     },
+    prelude::default,
+    render::mesh::{Mesh, VertexAttributeValues},
 };
 
 // this is necessary, but also necessary is for the UV of the mesh to repeat

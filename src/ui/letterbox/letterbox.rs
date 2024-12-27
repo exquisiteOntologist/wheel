@@ -1,7 +1,7 @@
 use bevy::{
-    prelude::{default, BuildChildren, Commands, NodeBundle, Parent, Query, Res, ResMut},
+    prelude::{default, BuildChildren, Commands, Parent, Query, Res, ResMut},
     time::Time,
-    ui::{BackgroundColor, JustifyContent, Node, PositionType, Style, Val},
+    ui::{BackgroundColor, ComputedNode, JustifyContent, Node, PositionType, Val},
 };
 
 use super::{
@@ -10,7 +10,7 @@ use super::{
 };
 
 pub fn letterbox_setup(mut commands: Commands) {
-    let letterbox_style = Style {
+    let letterbox_style = Node {
         width: Val::Percent(100.0),
         height: Val::Px(LETTERBOX_HEIGHT),
         position_type: PositionType::Absolute,
@@ -20,36 +20,49 @@ pub fn letterbox_setup(mut commands: Commands) {
 
     let node_background: BackgroundColor = COLOR_BLACK.into();
 
-    let top = NodeBundle {
-        style: Style {
+    // let top = NodeBundle {
+    //     style: Style {
+    //         top: Val::Px(0.),
+    //         ..letterbox_style.clone()
+    //     },
+    //     background_color: node_background.clone(),
+    //     ..default()
+    // };
+    let top = (
+        Node {
             top: Val::Px(0.),
             ..letterbox_style.clone()
         },
-        background_color: node_background.clone(),
-        ..default()
-    };
+        node_background.clone(),
+        LetterboxTop,
+        LetterboxSide,
+    );
 
-    let bottom = NodeBundle {
-        style: Style {
+    // let bottom = NodeBundle {
+    //     style: Style {
+    //         bottom: Val::Px(0.),
+    //         ..letterbox_style
+    //     },
+    //     background_color: node_background,
+    //     ..default()
+    // };
+    let bottom = (
+        Node {
             bottom: Val::Px(0.),
             ..letterbox_style
         },
-        background_color: node_background,
-        ..default()
-    };
+        node_background,
+        LetterboxBottom,
+        LetterboxSide,
+    );
 
-    let box_top = commands.spawn((top, LetterboxTop, LetterboxSide)).id();
-    let box_bottom = commands
-        .spawn((bottom, LetterboxBottom, LetterboxSide))
-        .id();
+    let box_top = commands.spawn(top).id();
+    let box_bottom = commands.spawn(bottom).id();
     let mut letterbox = commands.spawn((
-        NodeBundle {
-            style: Style {
-                width: Val::Percent(100.0),
-                height: Val::Percent(100.0),
-                justify_content: JustifyContent::SpaceBetween,
-                ..default()
-            },
+        Node {
+            width: Val::Percent(100.0),
+            height: Val::Percent(100.0),
+            justify_content: JustifyContent::SpaceBetween,
             ..default()
         },
         Letterbox,
@@ -61,24 +74,24 @@ pub fn letterbox_setup(mut commands: Commands) {
 
 pub fn update_letterbox(
     time: Res<Time>,
-    mut q_boxes: Query<(&mut LetterboxSide, &mut Style, &Parent, &Node)>,
+    mut q_boxes: Query<(&mut LetterboxSide, &mut Node, &ComputedNode, &Parent, &Node)>,
     lb_state: ResMut<LetterboxState>,
 ) {
-    for (letterbox, mut style, parent, box_node) in &mut q_boxes {
-        let lb_height = box_node.size().y;
+    for (_letterbox, mut node, computed_node, _parent, _box_node) in &mut q_boxes {
+        let lb_height = computed_node.size().y;
         // println!("lb height {}", lb_height);
         // println!("active {}", lb_state.active);
-        // println!("air delta {}", time.delta_seconds());
+        // println!("air delta {}", time.delta_secs());
 
         // to be letterbox, not fully letterbox
         if lb_state.active && lb_height < LETTERBOX_HEIGHT {
-            let n_h = lb_height + (50. * time.delta_seconds());
-            style.height = Val::Px(n_h);
+            let n_h = lb_height + (50. * time.delta_secs());
+            node.height = Val::Px(n_h);
         }
         // to not be letterbox, letterbox still visible
         else if !lb_state.active && lb_height > 0. {
-            let n_h = lb_height - (50. * time.delta_seconds());
-            style.height = Val::Px(n_h);
+            let n_h = lb_height - (50. * time.delta_secs());
+            node.height = Val::Px(n_h);
         }
     }
 }

@@ -8,10 +8,11 @@ use bevy::{
     transform::components::Transform,
 };
 use bevy_hanabi::{
-    Attribute, ColorOverLifetimeModifier, EffectAsset, ExprWriter, Gradient, HanabiPlugin,
-    LinearDragModifier, OrientMode, OrientModifier, ParticleEffect, ParticleEffectBundle,
-    SetAttributeModifier, SetPositionCone3dModifier, SetVelocityTangentModifier, ShapeDimension,
-    SizeOverLifetimeModifier, Spawner, TangentAccelModifier,
+    Attribute, ColorOverLifetimeModifier, CpuValue, EffectAsset, ExprWriter, Gradient,
+    HanabiPlugin, LinearDragModifier, OrientMode, OrientModifier, ParticleEffect,
+    ParticleEffectBundle, SetAttributeModifier, SetPositionCone3dModifier,
+    SetVelocityTangentModifier, ShapeDimension, SizeOverLifetimeModifier, Spawner,
+    TangentAccelModifier,
 };
 
 use crate::{
@@ -19,6 +20,8 @@ use crate::{
     resources::{Game, WheelParticles},
     utils::angles::degrees_to_radians,
 };
+
+use super::resources::MyParticleSpawner;
 
 pub fn move_particles(
     // this may have to be global transform
@@ -114,8 +117,8 @@ pub fn setup_particles(
     );
 
     let mut size_gradient1 = Gradient::new();
-    size_gradient1.add_key(0.3, Vec2::new(0.08, 0.01));
-    size_gradient1.add_key(1.0, Vec2::splat(0.0));
+    size_gradient1.add_key(0.3, Vec3::new(0.08, 0.01, 0.));
+    size_gradient1.add_key(1.0, Vec3::splat(0.0));
 
     let writer = ExprWriter::new();
 
@@ -217,7 +220,8 @@ pub fn setup_particles(
     let module = writer.finish();
 
     let effect1 = effects.add(
-        EffectAsset::new(vec![1000, 1640], spawner, module)
+        // EffectAsset::new(vec![1000, 1640], spawner, module)
+        EffectAsset::new(1640, spawner, module)
             .with_name("particles_portal")
             .init(init_pos)
             .init(init_age)
@@ -249,6 +253,7 @@ pub fn setup_particles(
             // .with_rotation(Quat::from_rotation_z(degrees_to_radians(-0.))),
             ..Default::default()
         },
+        MyParticleSpawner { spawner },
         // TransformBundle::default(),
         WheelParticles,
     ));

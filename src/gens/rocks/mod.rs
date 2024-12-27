@@ -4,4 +4,5 @@ pub mod plugin;
 pub mod resources;
 pub mod rock;
 pub mod textures;
+pub mod types;
 pub mod update;
