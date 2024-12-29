@@ -6,11 +6,11 @@ use bevy::{
     transform::components::Transform,
     utils::default,
 };
-use bevy_hanabi::{EffectProperties, EffectSpawner};
+use bevy_hanabi::EffectProperties;
 
 use crate::{
     constants::{HEIGHT_TEMPERATE_START, MAX_SPEED},
-    gens::particles::sand_particles::MAX_SAND_RATE,
+    gens::particles::{resources::MyParticleSpawner, sand_particles::MAX_SAND_RATE},
     resources::{DebugRoller, Game, WheelParticles},
     utils::{
         angles::{degrees_to_radians, quat_w_to_axis_adjust},
@@ -60,7 +60,7 @@ pub fn update_particles_relative_to_char(
         (&mut Transform, &mut EffectProperties, &WheelParticles),
         Without<PlayerCharacter>,
     >,
-    mut q_spawner: Query<&mut EffectSpawner>,
+    mut q_spawner: Query<&mut MyParticleSpawner, With<WheelParticles>>,
     game: ResMut<Game>,
 ) {
     let mut particle_emitters = q_particles.iter_mut();
@@ -71,19 +71,22 @@ pub fn update_particles_relative_to_char(
             // On startup the spawners may not yet exist.
             return;
         };
-        let x = game.player_wheel.speed_z / (MAX_SPEED * time.delta_seconds());
+        let x = game.player_wheel.speed_z / (MAX_SPEED * time.delta_secs());
         let moving = x > 1.;
         let on_sand = character.0.translation.y < HEIGHT_TEMPERATE_START;
         let show_particles = moving && on_sand;
 
-        e_s.set_active(show_particles);
+        // Toggle effects on and off when spawner initialises (should be handled just by count)
+        e_s.spawner.set_starts_active(show_particles);
 
         if show_particles {
             let rate: f32 = (1. - x) / MAX_SAND_RATE;
-            e_s.spawner().with_count(rate.into());
+
+            // set the particle rate (API changed)
+            e_s.spawner.with_count(rate.into());
             p_ep.set("opacity", (x / 2.).into());
         } else {
-            e_s.spawner().with_count((0.).into());
+            e_s.spawner.with_count((0.).into());
             p_ep.set("opacity", (0.).into());
         }
     }

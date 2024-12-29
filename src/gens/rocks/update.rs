@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::{constants::NUM_ROCKS, resources::Rock, rock::spawn_rock};
+use super::{constants::NUM_ROCKS, resources::Rock, rock::spawn_rock, types::RockBundle};
 
 /// Controls spawning of rocks. Does not update rocks.
 pub fn update_rocks(mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>) {
@@ -15,7 +15,7 @@ pub fn spawn_rocks_basic(
     mut materials: ResMut<Assets<StandardMaterial>>,
     rocks: Query<(Entity), With<Rock>>,
 ) {
-    let mut new_rocks: Vec<(MaterialMeshBundle<StandardMaterial>, Rock)> = Vec::new();
+    let mut new_rocks = Vec::<RockBundle>::new();
     let quantity = NUM_ROCKS - rocks.iter().count() as u32;
 
     if quantity == 0 {

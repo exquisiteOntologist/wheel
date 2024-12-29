@@ -1,3 +1,4 @@
+use bevy_pbr::MeshMaterial3d;
 use rand::Rng;
 use std::f32::consts::PI;
 
@@ -10,8 +11,8 @@ use bevy::{
         system::{Commands, Query, Res, ResMut},
     },
     math::{primitives::Plane3d, Dir3, EulerRot, Quat, Vec3},
-    pbr::{NotShadowCaster, PbrBundle, StandardMaterial},
-    prelude::default,
+    pbr::{NotShadowCaster, StandardMaterial},
+    prelude::{default, Bundle, Mesh3d},
     render::{
         alpha::AlphaMode,
         mesh::{Mesh, Meshable},
@@ -66,9 +67,8 @@ pub fn create_cloud<'a>(
     x: f32,
     z: f32,
     y: f32,
-) -> PbrBundle {
+) -> impl Bundle {
     let mut rng = rand::thread_rng();
-    // let x = rand::random::<f32>();
     let path_index = rng.gen_range(0..CLOUD_TEXTURES.len() - 0);
     let texture_path = CLOUD_TEXTURES[path_index];
     let texture_cloud = asset_server.load(texture_path);
@@ -85,9 +85,9 @@ pub fn create_cloud<'a>(
     let rotation = Quat::from_euler(EulerRot::ZYX, 0., PI / 1., PI / 2.);
     cloud_mesh.rotate_by(rotation);
 
-    PbrBundle {
-        mesh: meshes.add(cloud_mesh),
-        material: materials.add(StandardMaterial {
+    (
+        Mesh3d(meshes.add(cloud_mesh)),
+        MeshMaterial3d(materials.add(StandardMaterial {
             base_color_texture: Some(texture_cloud),
             alpha_mode: AlphaMode::Add,
             fog_enabled: false,
@@ -95,10 +95,9 @@ pub fn create_cloud<'a>(
             metallic: 0.1,
             cull_mode: None,
             ..default()
-        }),
-        transform: Transform::from_xyz(x, y, z), //.looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
-        ..default()
-    }
+        })),
+        Transform::from_xyz(x, y, z),
+    )
 }
 
 pub fn update_clouds(
@@ -117,8 +116,8 @@ pub fn update_cloud_positions(
 ) {
     // Clouds are affected by wind and drift
     for (_, mut t_cloud) in q_clouds {
-        t_cloud.translation.x -= 0.9 * time.delta_seconds();
-        t_cloud.translation.z -= 0.5 * time.delta_seconds();
+        t_cloud.translation.x -= 0.9 * time.delta_secs();
+        t_cloud.translation.z -= 0.5 * time.delta_secs();
     }
 }
 

@@ -41,7 +41,7 @@ fn char_rotation_positive_y(t: &mut Mut<Transform>, new_turn: f32) {
 }
 
 fn gravity_movement_t_old(time: Res<Time>) -> Vec3 {
-    let base_movement = GRAVITY_ACC * GRAVITY_DIR * time.delta_seconds();
+    let base_movement = GRAVITY_ACC * GRAVITY_DIR * time.delta_secs();
     base_movement
 }
 

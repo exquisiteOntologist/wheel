@@ -1,13 +1,13 @@
 use bevy::{
-    asset::{AssetServer, Assets, Handle},
+    asset::{AssetServer, Assets},
     ecs::{
         entity::Entity,
         query::{With, Without},
         system::{Commands, Query, Res, ResMut},
     },
     math::{Vec2, Vec3},
-    pbr::{PbrBundle, StandardMaterial},
-    prelude::default,
+    pbr::StandardMaterial,
+    prelude::{default, Mesh3d},
     render::{
         alpha::AlphaMode,
         mesh::{Mesh, PlaneMeshBuilder, VertexAttributeValues},
@@ -15,7 +15,11 @@ use bevy::{
     },
     transform::components::Transform,
 };
-use bevy_rapier3d::geometry::{Collider, ComputedColliderShape};
+use bevy_pbr::MeshMaterial3d;
+use bevy_rapier3d::{
+    geometry::{Collider, ComputedColliderShape},
+    prelude::TriMeshFlags,
+};
 
 use crate::{
     components::characters::player::resources::PlayerCharacter,
@@ -85,7 +89,6 @@ fn spawn_terrain_chunk(
     subdivisions: u32,
 ) -> Entity {
     let mesh = generate_terrain_mesh(x, z, size, subdivisions);
-
     let texture_ground = get_terrain_texture(&asset_server, &COLOR_SAND);
 
     // let sampler_desc = ImageSamplerDescriptor {
@@ -113,15 +116,13 @@ fn spawn_terrain_chunk(
         ..default()
     };
 
-    // terrain
-    let collider_shape = ComputedColliderShape::TriMesh;
+    let collider_shape = ComputedColliderShape::TriMesh(TriMeshFlags::default());
 
-    let mut binding = commands.spawn(PbrBundle {
-        mesh: meshes.add(mesh.clone()),
-        material: materials.add(terrain_material),
-        transform: Transform::from_xyz(x, 0., z),
-        ..default()
-    });
+    let mut binding = commands.spawn((
+        Mesh3d(meshes.add(mesh.clone())),
+        MeshMaterial3d(materials.add(terrain_material)),
+        Transform::from_xyz(x, 0., z),
+    ));
     let parent_terrain = binding
         .insert(Terrain)
         .insert(Collider::from_bevy_mesh(&mesh, &collider_shape).unwrap());
@@ -136,17 +137,14 @@ fn regenerate_terrain(
     meshes: &mut ResMut<Assets<Mesh>>,
     materials: &mut ResMut<Assets<StandardMaterial>>,
     asset_server: &Res<AssetServer>,
-    main_terrain: &mut Query<
-        (Entity, &mut Transform, &Handle<Mesh>),
-        (With<Terrain>, With<MainTerrain>),
-    >,
+    main_terrain: &mut Query<(Entity, &mut Transform, &Mesh3d), (With<Terrain>, With<MainTerrain>)>,
     distant_terrain: &mut Query<
-        (Entity, &mut Transform, &Handle<Mesh>),
+        (Entity, &mut Transform, &Mesh3d),
         (With<Terrain>, Without<MainTerrain>),
     >,
     delta: Vec3,
 ) {
-    let collider_shape = ComputedColliderShape::TriMesh;
+    let collider_shape = ComputedColliderShape::TriMesh(TriMeshFlags::default());
 
     // shift over and regen terrain
     for (ent, mut trans, mh) in main_terrain.iter_mut() {
@@ -186,12 +184,9 @@ pub fn update_terrain(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     asset_server: Res<AssetServer>,
-    mut main_terrain: Query<
-        (Entity, &mut Transform, &Handle<Mesh>),
-        (With<Terrain>, With<MainTerrain>),
-    >,
+    mut main_terrain: Query<(Entity, &mut Transform, &Mesh3d), (With<Terrain>, With<MainTerrain>)>,
     mut distant_terrain: Query<
-        (Entity, &mut Transform, &Handle<Mesh>),
+        (Entity, &mut Transform, &Mesh3d),
         (With<Terrain>, Without<MainTerrain>),
     >,
     // player: Query<&Transform, (With<player::Player>, Without<Terrain>)>,

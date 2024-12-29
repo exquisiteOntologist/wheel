@@ -140,8 +140,8 @@ pub fn generate_grass(
     };
 
     let bundle = MaterialMeshBundle {
-        mesh: meshes.add(mesh),
-        material: materials.add(grass_material),
+        mesh: Mesh3d(meshes.add(mesh)),
+        material: MeshMaterial3d(materials.add(grass_material)),
         transform: Transform::from_xyz(spawn_x, 0., spawn_z),
         ..default()
     };

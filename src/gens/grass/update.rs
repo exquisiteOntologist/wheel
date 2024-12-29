@@ -4,7 +4,6 @@ use bevy::pbr::ExtendedMaterial;
 
 use bevy::tasks::{block_on, poll_once, AsyncComputeTaskPool};
 use bevy::{prelude::*, utils::HashMap};
-use bevy_pbr::NotShadowReceiver;
 
 use crate::components::characters::player::resources::PlayerCharacter;
 use crate::resources::ContainsPlayer;
@@ -24,7 +23,7 @@ pub fn update_grass(
     mut grass: Query<
         (
             Entity,
-            &Handle<Mesh>,
+            &Mesh3d,
             &GrassData,
             &Transform,
             &ViewVisibility,
@@ -246,12 +245,11 @@ fn update_grass_generate_grid(
 
                         world
                             .entity_mut(task_entity)
-                            .insert(MaterialMeshBundle {
-                                mesh: grass_mesh_handle,
-                                material: grass_mat_handle,
+                            .insert((
+                                Mesh3d(grass_mesh_handle.into()),
+                                MeshMaterial3d(grass_mat_handle.into()),
                                 transform,
-                                ..default()
-                            })
+                            ))
                             .insert(Grass)
                             .insert(grass_data)
                             .insert(ContainsPlayer(false))
