@@ -155,11 +155,11 @@ pub fn subtitles_setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 pub fn update_subtitles(
     _time: Res<Time>,
-    mut q_boxes: Query<(&mut Subtitle, &mut Node, &Parent, &Node), With<Subtitle>>,
-    mut q_text: Query<(&mut SubtitleText, &mut Text, &mut Node, &Parent, &Node), Without<Subtitle>>,
+    mut q_boxes: Query<(&mut Subtitle, &mut Node, &Parent), With<Subtitle>>,
+    mut q_text: Query<(&mut SubtitleText, &mut Text, &mut Node, &Parent), Without<Subtitle>>,
     subtitles_state: ResMut<SubtitlesState>,
 ) {
-    for (_letterbox, mut node, _parent, _box_node) in &mut q_boxes {
+    for (_letterbox, mut node, _parent) in &mut q_boxes {
         node.display = match subtitles_state.text.len() {
             0 => Display::None,
             _ => Display::Flex,
@@ -168,7 +168,7 @@ pub fn update_subtitles(
 
     // There are 2 Subtitle nodes; the foreground and background shade.
     // This loop will set the text for both.
-    for (_letterbox, mut text_query, _style, _parent, _box_node) in &mut q_text {
+    for (_letterbox, mut text_query, _style, _parent) in &mut q_text {
         // we only use 1 section at a time
         text_query.clear();
         text_query.push_str(
