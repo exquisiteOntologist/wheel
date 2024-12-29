@@ -116,11 +116,6 @@ fn spawn_terrain_chunk(
         ..default()
     };
 
-    // terrain
-    //
-    //
-    // NOTE -> The `TriMeshFlag` default may not be appropriate
-    //
     let collider_shape = ComputedColliderShape::TriMesh(TriMeshFlags::default());
 
     let mut binding = commands.spawn((

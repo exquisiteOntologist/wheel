@@ -30,13 +30,6 @@ pub fn spawn_rock(
     let pos_offset = i as f32 * 10.;
 
     (
-        // PbrBundle {
-        //     mesh: Mesh3d(mesh),
-        //     material: MeshMaterial3d(mat),
-        //     transform: Transform::from_xyz(0. + pos_offset, SPAWN_Y, 0.)
-        //         .with_rotation(Quat::from_rotation_x(-PI / 1.)),
-        //     ..default()
-        // },
         Mesh3d(meshes.add(Mesh::from(sphere_mesh))),
         MeshMaterial3d(rock_material(asset_server, images, materials)),
         Transform::from_xyz(0. + pos_offset, SPAWN_Y, 0.)

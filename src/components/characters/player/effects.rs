@@ -60,7 +60,6 @@ pub fn update_particles_relative_to_char(
         (&mut Transform, &mut EffectProperties, &WheelParticles),
         Without<PlayerCharacter>,
     >,
-    // mut q_spawner: Query<&mut EffectSpawner, With<WheelParticles>>,
     mut q_spawner: Query<&mut MyParticleSpawner, With<WheelParticles>>,
     game: ResMut<Game>,
 ) {

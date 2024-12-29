@@ -69,7 +69,6 @@ pub fn create_cloud<'a>(
     y: f32,
 ) -> impl Bundle {
     let mut rng = rand::thread_rng();
-    // let x = rand::random::<f32>();
     let path_index = rng.gen_range(0..CLOUD_TEXTURES.len() - 0);
     let texture_path = CLOUD_TEXTURES[path_index];
     let texture_cloud = asset_server.load(texture_path);
@@ -86,20 +85,6 @@ pub fn create_cloud<'a>(
     let rotation = Quat::from_euler(EulerRot::ZYX, 0., PI / 1., PI / 2.);
     cloud_mesh.rotate_by(rotation);
 
-    // PbrBundle {
-    //     mesh: Mesh3d(meshes.add(cloud_mesh)),
-    //     material: MeshMaterial3d(materials.add(StandardMaterial {
-    //         base_color_texture: Some(texture_cloud),
-    //         alpha_mode: AlphaMode::Add,
-    //         fog_enabled: false,
-    //         double_sided: true,
-    //         metallic: 0.1,
-    //         cull_mode: None,
-    //         ..default()
-    //     })),
-    //     transform: Transform::from_xyz(x, y, z), //.looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
-    //     ..default()
-    // }
     (
         Mesh3d(meshes.add(cloud_mesh)),
         MeshMaterial3d(materials.add(StandardMaterial {
@@ -111,7 +96,7 @@ pub fn create_cloud<'a>(
             cull_mode: None,
             ..default()
         })),
-        Transform::from_xyz(x, y, z), //.looking_at(Vec3::new(0.0, 1.0, -0.0), Vec3::Y),
+        Transform::from_xyz(x, y, z),
     )
 }
 

@@ -220,7 +220,6 @@ pub fn setup_particles(
     let module = writer.finish();
 
     let effect1 = effects.add(
-        // EffectAsset::new(vec![1000, 1640], spawner, module)
         EffectAsset::new(1640, spawner, module)
             .with_name("particles_portal")
             .init(init_pos)

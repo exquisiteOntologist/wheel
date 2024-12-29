@@ -184,7 +184,7 @@ fn turn_look_in_front(t_cam: &mut Transform, t_char: &Transform, char_direction:
     let mut tran_infront_char = t_cam.clone().to_owned();
     let dist_infront_char = 5.;
     // Here we translate the POI transform in front of the character
-    tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char; /* * time.delta_secs(); */
+    tran_infront_char.translation = t_char.translation + char_direction * dist_infront_char;
     // Now we will turn the camera to face the POI
     look_at_on_y(t_cam, &tran_infront_char);
 }
