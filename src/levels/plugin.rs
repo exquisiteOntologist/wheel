@@ -1,5 +1,5 @@
 use bevy::{
-    app::{App, Plugin, PostUpdate, PreUpdate, Startup, Update},
+    app::{App, Plugin, PostUpdate, Startup, Update},
     prelude::{resource_exists, IntoSystemConfigs, IntoSystemSetConfigs, OnEnter},
 };
 
@@ -7,13 +7,10 @@ use crate::components::characters::player::spawn::spawn_player_with_wheel;
 
 use super::{
     common::{finish_level_init, setup_level, unload_level},
-    conditions::{
-        cond_level_initialising, cond_level_initialising_alt, cond_level_is, cond_level_loading,
-        cond_player_missing,
-    },
+    conditions::{cond_level_initialising, cond_level_is, cond_level_loading, cond_player_missing},
     resources::{
-        CurrentSceneState, LevelLoadSet, LevelLoadSetPostUpdate, LevelLoadSetPreUpdate,
-        LevelLoadSetUpdate, LevelState, SceneId,
+        CurrentSceneState, LevelLoadSetPostUpdate, LevelLoadSetPreUpdate, LevelLoadSetUpdate,
+        LevelState, SceneId,
     },
     scenes::sand_hills::{scene_sand_hills_world, LevelOnePlugins},
 };
@@ -76,6 +73,7 @@ impl Plugin for LevelsPlugin {
                 .after(LevelLoadSetPreUpdate),
             // .in_set(LevelLoadSetUpdate),
         );
+
         app.add_systems(
             PostUpdate,
             (finish_level_init).in_set(LevelLoadSetPostUpdate),

@@ -5,8 +5,8 @@ use bevy::{
 
 use crate::{
     gens::{
-        clouds::CloudPlugin, grass::plugin::GrassPlugin, rocks::plugin::RockPlugin,
-        terrain::plugin::TerrainPlugin,
+        clouds::CloudPlugin, grass::plugin::GrassPlugin, rain::plugin::RainPlugin,
+        rocks::plugin::RockPlugin, terrain::plugin::TerrainPlugin,
     },
     utils::perlin::PerlinPlugin,
 };
@@ -32,5 +32,6 @@ impl PluginGroup for LevelOnePlugins {
             .add(TerrainPlugin)
             .add(GrassPlugin)
             .add(RockPlugin)
+            .add(RainPlugin)
     }
 }
